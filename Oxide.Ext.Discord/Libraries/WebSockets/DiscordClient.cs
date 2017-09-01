@@ -56,7 +56,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
             Socket.OnClose += Handler.SocketClosed;
             Socket.OnError += Handler.SocketErrored;
             Socket.OnMessage += Handler.SocketMessage;
-            Socket.Connect();
+            Socket.ConnectAsync();
         }
 
         public void Disconnect()
