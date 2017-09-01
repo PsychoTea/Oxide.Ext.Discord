@@ -97,17 +97,17 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                             Message message = JsonConvert.DeserializeObject<Message>(obj["d"].ToString());
                             Interface.Oxide.CallHook("Discord_TextMessage", message);
                             break;
-                        //case "GUILD_CREATE":
-                        //    client.server = JsonConvert.DeserializeObject<Server>(obj["d"].ToString());
-                        //    break;
-                        //case "GUILD_MEMBER_ADD":
-                        //    User add = JsonConvert.DeserializeObject<User>(obj["d"].ToString());
-                        //    Interface.Oxide.CallHook("Discord_MemberAdded", add);
-                        //    break;
-                        //case "GUILD_MEMBER_REMOVE":
-                        //    User remove = JsonConvert.DeserializeObject<User>(obj["d"].ToString());
-                        //    Interface.Oxide.CallHook("Discord_MemberRemoved", remove);
-                        //    break;
+                        case "GUILD_CREATE":
+                            client.server = JsonConvert.DeserializeObject<Server>(obj["d"].ToString());
+                            break;
+                        case "GUILD_MEMBER_ADD":
+                            User add = JsonConvert.DeserializeObject<User>(obj["d"].ToString());
+                            Interface.Oxide.CallHook("Discord_MemberAdded", add);
+                            break;
+                        case "GUILD_MEMBER_REMOVE":
+                            User remove = JsonConvert.DeserializeObject<User>(obj["d"].ToString());
+                            Interface.Oxide.CallHook("Discord_MemberRemoved", remove);
+                            break;
                         default:
                             Interface.Oxide.CallHook("Discord_RawMessage", obj);
                             break;

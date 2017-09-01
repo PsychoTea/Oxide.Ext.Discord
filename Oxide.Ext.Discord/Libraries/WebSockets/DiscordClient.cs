@@ -21,22 +21,33 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
         public SocketHandler handler;
         public DiscordClient(bool connectAuto = true)
         {
+            if (!Discord.IsConfigured)
+            {
+                Interface.Oxide.LogWarning("[Discord Ext] DiscordExt has not been configured correctly. Please verify your config file.");
+                return;
+            }
+
             if (Discord.settings.ApiToken == "change-me-please")
             {
                 Interface.Oxide.LogWarning("[Discord Ext] Please change the API KEY before using this extension!");
                 Interface.Oxide.CallHook("DiscordSocket_APIKeyException");
+                return;
             }
-            if (Connect())
-            {
-                if (connectAuto)
-                    if (Interface.Oxide.CallHook("DiscordSocket_SocketConnecting", WSSURL) != null) return;
-                    else CreateSocket();
-                else Interface.Oxide.CallHook("DiscordSocket_SocketReady", WSSURL, this);
-            } else
+
+            if (!Connect())
             {
                 Interface.Oxide.LogWarning("[Discord Ext] There was an error grabbing the connection url.");
                 Interface.Oxide.CallHook("DiscordSocket_SocketUrlError");
+                return;
             }
+
+            if (!connectAuto)
+            {
+                Interface.Oxide.CallHook("DiscordSocket_SocketReady", WSSURL, this);
+                return;
+            }
+
+            CreateSocket();
         }
         public void SendMessage(string id, string text)
         {
@@ -80,7 +91,10 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
         }
         public void CreateSocket()
         {
+            if (Interface.Oxide.CallHook("DiscordSocket_SocketConnecting", WSSURL) != null) return;
+
             if (WSSURL == "starter_url") return;
+            
             socket = new WebSocket(WSSURL + "?v=5&encoding=json");
             handler = new SocketHandler(this);
             socket.OnOpen += handler.SocketOpened;
