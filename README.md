@@ -29,6 +29,9 @@ namespace Oxide.Plugins
 		void Unload(){
 			client.Disconnect(); //Disconnects  the client via unload. If this is not done, the wss server will never unload(probably).
 		}
+		void SendMessage(string channel, string text){
+			client.SendMessage(channel, text);
+		}
     }
 }
 ```
