@@ -7,6 +7,7 @@ namespace Oxide.Ext.Discord.Libraries
     {
         [JsonProperty("API KEY/TOKEN")]
         public string ApiToken { get; set; }
+
         [JsonProperty("VERSION")]
         public string Version { get; set; }
     }
