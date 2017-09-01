@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="DiscordExtension.cs" />
     <Compile Include="Libraries\Discord.cs" />
+    <Compile Include="Libraries\DiscordObjects\Channel.cs" />
     <Compile Include="Libraries\DiscordObjects\User.cs" />
     <Compile Include="Libraries\SocketObjects\DiscordPayload.cs" />
     <Compile Include="Libraries\SocketObjects\Handshake.cs" />
