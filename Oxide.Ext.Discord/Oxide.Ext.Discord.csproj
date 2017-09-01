@@ -34,8 +34,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="DiscordExtension.cs" />
     <Compile Include="Libraries\Discord.cs" />
+    <Compile Include="DiscordExtension.cs" />
     <Compile Include="Libraries\DiscordObjects\Author.cs" />
     <Compile Include="Libraries\DiscordObjects\Channel.cs" />
     <Compile Include="Libraries\DiscordObjects\Embed.cs" />

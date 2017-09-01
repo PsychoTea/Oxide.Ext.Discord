@@ -14,8 +14,5 @@ namespace Oxide.Ext.Discord
         public override string Name => "Discord";
         public override string Author => "DylanSMR";
         public override VersionNumber Version => new VersionNumber(AssemblyVersion.Major, AssemblyVersion.Minor, AssemblyVersion.Build);
-
-        private Libraries.Discord discord;
-        public override void Load() => Manager.RegisterLibrary("Discord", discord = new Libraries.Discord());
     }
 }

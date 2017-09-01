@@ -16,7 +16,7 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
         public bool pinned { get; set; }
         public object nonce { get; set; }
         public List<User> mentions { get; set; }
-        public List<Role> mention_roles { get; set; }
+        public List<string> mention_roles { get; set; }
         public bool mention_everyone { get; set; }
         public string id { get; set; }
         public List<Embed> embeds { get; set; }

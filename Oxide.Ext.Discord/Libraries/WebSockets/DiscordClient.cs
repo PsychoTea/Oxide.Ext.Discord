@@ -9,12 +9,11 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
 {
     public class DiscordClient
     {
-        public string APIKey { get; private set; }
-        public DiscordSettings Settings { get; private set; }
-        public Server DiscordServer { get; private set; }
+        public DiscordSettings Settings { get; private set; } = new DiscordSettings();
+        public Server DiscordServer { get; set; }
         public RESTHandler REST { get; private set; }
         public string WSSURL { get; private set; }
-        private WebSocket Socket;
+        private WebSocket Socket = null;
         private SocketHandler Handler;
         private Timer TimerLib = Interface.Oxide.GetLibrary<Timer>("Timer");
         private Timer.TimerInstance Timer;
@@ -27,8 +26,8 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                 return;
             }
 
-            APIKey = apiKey;
-            REST = new RESTHandler(APIKey);
+            Settings.ApiToken = apiKey;
+            REST = new RESTHandler(Settings.ApiToken);
 
             this.GetURL();
 
