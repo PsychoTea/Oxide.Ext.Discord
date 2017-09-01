@@ -9,9 +9,10 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
 {
     public class DiscordClient
     {
-        public Server DiscordServer;
-        public RESTHandler REST { get; private set; }
+        public string APIKey { get; private set; }
         public DiscordSettings Settings { get; private set; }
+        public Server DiscordServer { get; private set; }
+        public RESTHandler REST { get; private set; }
         public string WSSURL { get; private set; }
         private WebSocket Socket;
         private SocketHandler Handler;
@@ -26,7 +27,8 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                 return;
             }
 
-            REST = new RESTHandler(apiKey);
+            APIKey = apiKey;
+            REST = new RESTHandler(APIKey);
 
             this.GetURL();
 
