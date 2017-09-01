@@ -54,43 +54,6 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
             callback?.Invoke(resMessage);
         }
 
-        public void CreateReaction(DiscordClient client, string messageID, string emoji)
-        {
-            client.REST.DoRequest($"/channels/{id}/messages/{messageID}/reactions/{emoji}/@me", "PUT");
-        }
-
-        public void DeleteOwnReaction(DiscordClient client, string messageID, string emoji)
-        {
-            client.REST.DoRequest($"/channels/{id}/messages/{messageID}/reactions/{emoji}/@me", "DELETE");
-        }
-
-        public void DeleteOwnReaction(DiscordClient client, string messageID, string emoji, string userID)
-        {
-            client.REST.DoRequest($"/channels/{id}/messages/{messageID}/reactions/{emoji}/{userID}", "DELETE");
-        }
-
-        public void GetReactions(DiscordClient client, string messageID, string emoji, Action<List<User>> callback = null)
-        {
-            var users = client.REST.DoRequest<List<User>>($"/channels/{id}/messages/{messageID}/reactions/{emoji}", "GET");
-            callback?.Invoke(users);
-        }
-
-        public void DeleteAllReactions(DiscordClient client, string messageID)
-        {
-            client.REST.DoRequest($"/channels/{id}/messages/{messageID}/reactions", "DELETE");
-        }
-
-        public void EditMessage(DiscordClient client, Message message, Action<Message> callback = null)
-        {
-            var newMessage = client.REST.DoRequest<Message>($"/channels/{id}/messages/{message.id}", "PATCH", message);
-            callback?.Invoke(newMessage);
-        }
-
-        public void DeleteMessage(DiscordClient client, string messageID, Action<Message> callback = null)
-        {
-            client.REST.DoRequest($"/channels/{id}/messages/{messageID}", "DELETE");
-        }
-
         public void BulkDeleteMessages(DiscordClient client, string[] messageIds)
         {
             var jsonObj = new Dictionary<string, string[]>() { { "messages", messageIds } };
@@ -141,16 +104,6 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
         {
             var messages = client.REST.DoRequest<List<Message>>($"/channels/{id}/pins", "GET");
             callback?.Invoke(messages);
-        }
-
-        public void AddPinnedChannelMessage(DiscordClient client, string messageID)
-        {
-            client.REST.DoRequest($"/channels/{id}/pins/{messageID}", "PUT");
-        }
-
-        public void DeletePinnedChannelMessage(DiscordClient client, string messageID)
-        {
-            client.REST.DoRequest($"/channels/{id}/pins/{messageID}", "DELETE");
         }
 
         public void GroupDMAddRecipient(DiscordClient client, string userID, string accessToken, string nick)
