@@ -46,10 +46,7 @@ namespace Oxide.Ext.Discord.Libraries
             SaveConfig();
         }
 
-        private void SaveConfig()
-        {
-            _DataFileSystem.WriteObject(Path.Combine(_ConfigDirectory, "Discord"), settings);
-        }
+        private void SaveConfig() => _DataFileSystem.WriteObject(Path.Combine(_ConfigDirectory, "Discord"), settings);
 
         internal void Load()
         {
