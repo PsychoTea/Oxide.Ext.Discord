@@ -4,6 +4,7 @@ using System.Net;
 using System.Text;
 using Newtonsoft.Json;
 using Oxide.Core.Libraries;
+using Oxide.Core;
 
 namespace Oxide.Ext.Discord.Libraries.WebSockets
 {
@@ -38,6 +39,16 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                     stream.Write(bytes, 0, bytes.Length);
                 }
             }
+
+            var response = req.GetResponse() as HttpWebResponse;
+            var reader = new StreamReader(response.GetResponseStream());
+            string output = reader.ReadToEnd().Trim();
+
+            if (response.StatusCode != HttpStatusCode.OK && response.StatusCode != HttpStatusCode.NoContent)
+            {
+                Interface.Oxide.LogWarning($"An error occured whilst submitting a request to {req.RequestUri} (code {response.StatusCode}): {output}");
+                return;
+            }
         }
 
         public T DoRequest<T>(string URL, string method, object data = null)
@@ -58,9 +69,17 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                 }
             }
 
-            var response = req.GetResponse();
+            var response = req.GetResponse() as HttpWebResponse;
             var reader = new StreamReader(response.GetResponseStream());
-            return (T)JsonConvert.DeserializeObject(reader.ReadToEnd().Trim(), typeof(T));
+            string output = reader.ReadToEnd().Trim();
+
+            if (response.StatusCode != HttpStatusCode.OK && response.StatusCode != HttpStatusCode.NoContent)
+            {
+                Interface.Oxide.LogWarning($"An error occured whilst submitting a request to {req.RequestUri} (code {response.StatusCode}): {output}");
+                return default(T);
+            }
+            
+            return (T)JsonConvert.DeserializeObject(output, typeof(T));
         }
     }
 }
