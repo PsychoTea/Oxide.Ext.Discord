@@ -9,18 +9,14 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
 {
     public class RESTHandler
     {
-        private DiscordClient Client;
-
         private Dictionary<string, string> Headers;
         private const string URLBase = "https://discordapp.com/api";
 
-        public RESTHandler(DiscordClient client)
+        public RESTHandler(string apiKey)
         {
-            Client = client;
-
             Headers = new Dictionary<string, string>()
             {
-                { "Authorization", $"Bot {Client.Settings.ApiToken}" },
+                { "Authorization", $"Bot {apiKey}" },
                 { "Content-Type", "application/json" }
             };
         }

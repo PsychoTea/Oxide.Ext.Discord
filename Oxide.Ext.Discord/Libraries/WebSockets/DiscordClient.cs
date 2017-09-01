@@ -26,7 +26,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                 return;
             }
 
-            REST = new RESTHandler(this);
+            REST = new RESTHandler(apiKey);
 
             this.GetURL();
 
