@@ -12,10 +12,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
     {
         private DiscordClient Client;
 
-        public SocketHandler(DiscordClient client)
-        {
-            Client = client;
-        }
+        public SocketHandler(DiscordClient client) { Client = client; }
 
         public void SocketOpened(object sender, EventArgs e)
         {
@@ -34,7 +31,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                         referring_domain = ""
                     },
                     Compress = false,
-                    Large_Threshold = 250,
+                    Large_Threshold = 250
                 }
             };
 

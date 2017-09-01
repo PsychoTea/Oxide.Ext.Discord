@@ -1,5 +1,4 @@
-﻿using Oxide.Core.Libraries;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Oxide.Ext.Discord.Libraries
 {

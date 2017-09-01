@@ -1,4 +1,3 @@
-using System.Net;
 using Oxide.Core;
 using Oxide.Core.Libraries;
 using Oxide.Ext.Discord.Libraries.DiscordObjects;
@@ -32,12 +31,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                 return;
             }
 
-            if (!GetURL())
-            {
-                Interface.Oxide.LogWarning("[Discord Ext] There was an error grabbing the connection url.");
-                Interface.Oxide.CallHook("DiscordSocket_SocketUrlError");
-                return;
-            }
+            this.GetURL();
 
             if (!connectAuto)
             {
@@ -45,7 +39,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                 return;
             }
 
-            CreateSocket();
+            this.CreateSocket();
         }
 
         public void CreateSocket()
@@ -114,23 +108,10 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
             });
         }
 
-        private bool GetURL()
+        private void GetURL()
         {
-            JObject data = null;
-            try
-            {
-                using (var client = new WebClient())
-                {
-                    data = JObject.Parse(client.DownloadString("https://discordapp.com/api/gateway"));
-                }
-                WSSURL = data.GetValue("url").ToString();
-                return true;
-            }
-            catch (WebException ex)
-            {
-                Interface.Oxide.LogWarning("There was an error asking discord for the wss connection string: " + ex.StackTrace);
-                return false;
-            }
+            var data = RESTHandler.DoRequest<JObject>("/gateway", "GET");
+            WSSURL = data.GetValue("url").ToString();
         }
     }
 }

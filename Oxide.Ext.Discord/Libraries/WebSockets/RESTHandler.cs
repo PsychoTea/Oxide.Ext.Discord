@@ -35,10 +35,8 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
             }
 
             var response = req.GetResponse();
-
             var reader = new StreamReader(response.GetResponseStream());
-            var output = JsonConvert.DeserializeObject(reader.ReadToEnd().Trim(), typeof(T));
-            return (T)output;
+            return (T)JsonConvert.DeserializeObject(reader.ReadToEnd().Trim(), typeof(T));
         }
     }
 }
