@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using Oxide.Core;
 using Oxide.Ext.Discord.Libraries.DiscordObjects;
 using System;
+using System.IO;
 using WebSocketSharp;
 
 namespace Oxide.Ext.Discord.Libraries.WebSockets
@@ -45,7 +46,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
             Interface.Oxide.LogWarning($"[Discord Ext] Discord connection closed: \nCode: {e.Code}\nResponse:{e.Reason}\nClean:{e.WasClean}");
             Interface.Oxide.CallHook("DiscordSocket_WebsocketClosed", e.Reason, e.Code, e.WasClean);
         }
-        public void SocketErrored(object sender, ErrorEventArgs e)
+        public void SocketErrored(object sender, WebSocketSharp.ErrorEventArgs e)
         {
             if (client.socket.IsAlive) client.Disconnect();
             Interface.Oxide.LogWarning($"[Discord Ext] An error has occured: Response: {e.Message}");
@@ -54,7 +55,9 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
         Core.Libraries.Timer.TimerInstance timer;
         public void SocketMessage(object sender, MessageEventArgs e)
         {
-            JObject obj = JObject.Parse(e.Data);
+            JsonReader reader = new JsonTextReader(new StringReader(e.Data));
+            reader.DateParseHandling = DateParseHandling.None;
+            JObject obj = JObject.Load(reader);
             JToken token;
             int tempS;
             if (obj.TryGetValue("s", out token) && int.TryParse(token.ToString(), out tempS)) client.lastS = tempS;
@@ -91,24 +94,20 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                     switch (obj["t"].ToString())
                     {
                         case "MESSAGE_CREATE":
-                            JsonSerializerSettings settings = new JsonSerializerSettings();
-                            settings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
-                            settings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-
                             Message message = JsonConvert.DeserializeObject<Message>(obj["d"].ToString());
                             Interface.Oxide.CallHook("Discord_TextMessage", message);
                             break;
-                        case "GUILD_CREATE":
-                            client.server = JsonConvert.DeserializeObject<Server>(obj["d"].ToString());
-                            break;
-                        case "GUILD_MEMBER_ADD":
-                            User add = JsonConvert.DeserializeObject<User>(obj["d"].ToString());
-                            Interface.Oxide.CallHook("Discord_MemberAdded", add);
-                            break;
-                        case "GUILD_MEMBER_REMOVE":
-                            User remove = JsonConvert.DeserializeObject<User>(obj["d"].ToString());
-                            Interface.Oxide.CallHook("Discord_MemberRemoved", remove);
-                            break;
+                        //case "GUILD_CREATE":
+                        //    client.server = JsonConvert.DeserializeObject<Server>(obj["d"].ToString());
+                        //    break;
+                        //case "GUILD_MEMBER_ADD":
+                        //    User add = JsonConvert.DeserializeObject<User>(obj["d"].ToString());
+                        //    Interface.Oxide.CallHook("Discord_MemberAdded", add);
+                        //    break;
+                        //case "GUILD_MEMBER_REMOVE":
+                        //    User remove = JsonConvert.DeserializeObject<User>(obj["d"].ToString());
+                        //    Interface.Oxide.CallHook("Discord_MemberRemoved", remove);
+                        //    break;
                         default:
                             Interface.Oxide.CallHook("Discord_RawMessage", obj);
                             break;
