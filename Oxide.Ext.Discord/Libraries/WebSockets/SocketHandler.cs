@@ -22,7 +22,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                 Op = 2,
                 payload = new Payload()
                 {
-                    Token = Discord.Settings.ApiToken,
+                    Token = Client.Settings.ApiToken,
                     Property = new Payload_Property()
                     {
                         os = Environment.OSVersion.ToString(),

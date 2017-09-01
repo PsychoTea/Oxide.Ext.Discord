@@ -16,6 +16,6 @@ namespace Oxide.Ext.Discord
         public override VersionNumber Version => new VersionNumber(AssemblyVersion.Major, AssemblyVersion.Minor, AssemblyVersion.Build);
 
         private Libraries.Discord discord;
-        public override void Load() => Manager.RegisterLibrary("Discord", discord = new Libraries.Discord(this));
+        public override void Load() => Manager.RegisterLibrary("Discord", discord = new Libraries.Discord());
     }
 }

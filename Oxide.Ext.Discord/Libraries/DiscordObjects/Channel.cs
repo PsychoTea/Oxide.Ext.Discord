@@ -7,12 +7,6 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
 {
     public class Channel
     {
-        class DiscordPayload
-        {
-            [JsonProperty("content")]
-            public string MessageText { get; set; }
-        }
-
         public string id { get; set; }
         public string type { get; set; }
         public int? position { get; set; }
@@ -24,9 +18,9 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
         public List<User> recipients { get; set; }
         public string icon { get; set; }
 
-        public static void GetChannel(string channelID, Action<Channel> callback = null)
+        public static void GetChannel(DiscordClient client, string channelID, Action<Channel> callback = null)
         {
-            var channel = RESTHandler.DoRequest<Channel>($"/channels/{channelID}", "GET");
+            var channel = client.REST.DoRequest<Channel>($"/channels/{channelID}", "GET");
             callback?.Invoke(channel);
         }
 

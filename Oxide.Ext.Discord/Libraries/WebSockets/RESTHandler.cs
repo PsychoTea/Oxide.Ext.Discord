@@ -7,16 +7,25 @@ using Oxide.Core.Libraries;
 
 namespace Oxide.Ext.Discord.Libraries.WebSockets
 {
-    public static class RESTHandler
+    public class RESTHandler
     {
-        private static readonly Dictionary<string, string> Headers = new Dictionary<string, string>()
-        {
-            { "Authorization", $"Bot {Discord.Settings.ApiToken}" },
-            { "Content-Type", "application/json" }
-        };
+        private DiscordClient Client;
+
+        private Dictionary<string, string> Headers;
         private const string URLBase = "https://discordapp.com/api";
 
-        public static void DoRequest(string URL, string method, object data = null)
+        public RESTHandler(DiscordClient client)
+        {
+            Client = client;
+
+            Headers = new Dictionary<string, string>()
+            {
+                { "Authorization", $"Bot {Client.Settings.ApiToken}" },
+                { "Content-Type", "application/json" }
+            };
+        }
+
+        public void DoRequest(string URL, string method, object data = null)
         {
             var req = WebRequest.Create($"{URLBase}{URL}");
             req.SetRawHeaders(Headers);
@@ -38,7 +47,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
             req.GetResponse();
         }
 
-        public static T DoRequest<T>(string URL, string method, object data = null)
+        public T DoRequest<T>(string URL, string method, object data = null)
         {
             var req = WebRequest.Create($"{URLBase}{URL}");
             req.SetRawHeaders(Headers);

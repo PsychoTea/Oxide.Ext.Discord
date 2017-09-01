@@ -26,21 +26,5 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
         public string channel_id { get; set; }
         public Author author { get; set; }
         public List<object> attachments { get; set; }
-        public void Reply(Message message, Action<Message> callback = null)
-        {
-            Channel.GetChannel(channel_id, (call) =>
-            {
-                User.GetUser(author.id, (e) => {
-                    var test = message.content;
-                    message.content = $"<@{e.id}> " + test;
-                    Interface.Oxide.LogWarning(message.content);
-                    call.CreateMessage(message);
-                });
-            });
-        }
-        public void Delete()
-        {
-            RESTHandler.DoRequest($"/channels/{channel_id}/messages/{id}", "DELETE");
-        }
     }
 }
