@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -36,13 +36,13 @@
   <ItemGroup>
     <Compile Include="DiscordExtension.cs" />
     <Compile Include="Libraries\Discord.cs" />
-    <Compile Include="Libraries\DiscordObjects\GuildAdd.cs" />
-    <Compile Include="Libraries\DiscordObjects\GuildRemove.cs" />
-    <Compile Include="Libraries\DiscordObjects\Handshake.cs" />
+    <Compile Include="Libraries\DiscordObjects\User.cs" />
+    <Compile Include="Libraries\SocketObjects\DiscordPayload.cs" />
+    <Compile Include="Libraries\SocketObjects\Handshake.cs" />
     <Compile Include="Libraries\DiscordObjects\Message.cs" />
-    <Compile Include="Libraries\DiscordObjects\Packet.cs" />
-    <Compile Include="Libraries\DiscordObjects\Payload.cs" />
-    <Compile Include="Libraries\DiscordObjects\Payload_Property.cs" />
+    <Compile Include="Libraries\SocketObjects\Packet.cs" />
+    <Compile Include="Libraries\SocketObjects\Payload.cs" />
+    <Compile Include="Libraries\SocketObjects\Payload_Property.cs" />
     <Compile Include="Libraries\DiscordObjects\Server.cs" />
     <Compile Include="Libraries\DiscordObjects\VoiceUpdate.cs" />
     <Compile Include="Libraries\DiscordSettings.cs" />
