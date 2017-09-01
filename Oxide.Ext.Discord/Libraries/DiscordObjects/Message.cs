@@ -51,6 +51,7 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
         public bool mention_everyone { get; set; }
         public string id { get; set; }
         public List<Embed> embeds { get; set; }
+        public Embed embed { get; set; }
         public object edited_timestamp { get; set; }
         public string content { get; set; }
         public string channel_id { get; set; }

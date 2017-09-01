@@ -52,20 +52,18 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
 
         public class Channel
         {
+            public string id { get; set; }
             public string type { get; set; }
-            public object topic { get; set; }
-            public int position { get; set; }
+            public int? position { get; set; }
             public List<object> permission_overwrites { get; set; }
             public string name { get; set; }
-            public string last_pin_timestamp { get; set; }
-            public string last_message_id { get; set; }
-            public bool is_private { get; set; }
-            public string id { get; set; }
-            public int? user_limit { get; set; }
-            public object parent_id { get; set; }
-            public bool? nsfw { get; set; }
+            public string topic { get; set; }
             public int? bitrate { get; set; }
+            public int? user_limit { get; set; }
+            public List<User> recipients { get; set; }
+            public string icon { get; set; }
         }
+
         public Member FindMember(string id) => members.Find(x => x.user.id == id);
         public Channel FindChannel(string id) => channels.Find(x => x.id == id);
         public Emoji FindEmoji(string id) => emojis.Find(x => x.id == id);

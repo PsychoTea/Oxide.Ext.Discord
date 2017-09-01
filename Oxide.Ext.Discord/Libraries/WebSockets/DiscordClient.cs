@@ -1,9 +1,7 @@
-using System.Collections.Generic;
 using System.Net;
 using Oxide.Core;
 using Oxide.Core.Libraries;
 using Oxide.Ext.Discord.Libraries.DiscordObjects;
-using Oxide.Ext.Discord.Libraries.SocketObjects;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WebSocketSharp;
@@ -14,6 +12,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
     {
         public Server DiscordServer;
         public string WSSURL { get; private set; }
+        public RESTHandler Actions { get; private set; } = new RESTHandler();
         private WebSocket Socket;
         private SocketHandler Handler;
         private Timer TimerLib = Interface.Oxide.GetLibrary<Timer>("Timer");
@@ -122,26 +121,6 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                 Interface.Oxide.LogWarning("There was an error asking discord for the wss connection string: " + ex.StackTrace);
                 return false;
             }
-        }
-
-        //this needs moving
-        public void SendMessage(string id, string text)
-        {
-            string payloadJson = JsonConvert.SerializeObject(new DiscordPayload()
-            {
-                MessageText = text
-            });
-
-            Dictionary<string, string> headers = new Dictionary<string, string>();
-            headers.Add("Authorization", string.Format("Bot {0}", Discord.Settings.ApiToken));
-            headers.Add("Content-Type", "application/json");
-
-            string url = BaseURLTemplate.Replace("{{ChannelID}}", id);
-            Interface.Oxide.GetLibrary<Oxide.Core.Libraries.WebRequests>().EnqueuePost(url, payloadJson, (code, response) =>
-            {
-                if (code != 200)
-                    Interface.Oxide.LogWarning($"[Discord Ext] There was an error with the discord API: {code} : {response}");
-            }, null, headers);
         }
     }
 }

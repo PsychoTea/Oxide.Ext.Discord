@@ -19,8 +19,6 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
 
         public void SocketOpened(object sender, EventArgs e)
         {
-            Interface.Oxide.LogInfo($"[Discord Ext] Connection started, authorizing to discord servers...");
-
             var payload = new Handshake()
             {
                 Op = 2,
@@ -42,20 +40,20 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
 
             var sp = JsonConvert.SerializeObject(payload);
             Client.SendData(sp);
-            Interface.Oxide.CallHook("DiscordSocket_WebsocketOpened");
+            Interface.Oxide.LogInfo($"[Discord Ext] Connected to Discord.");
+            Interface.Oxide.CallHook("DiscordSocket_WebSocketOpened");
         }
 
         public void SocketClosed(object sender, CloseEventArgs e)
         {
-            Client.Disconnect();
-            Interface.Oxide.LogWarning($"[Discord Ext] Discord connection closed: \nCode: {e.Code}\nResponse:{e.Reason}\nClean:{e.WasClean}");
-            Interface.Oxide.CallHook("DiscordSocket_WebsocketClosed", e.Reason, e.Code, e.WasClean);
+            Interface.Oxide.LogInfo($"[Discord Ext] Discord connection closed (code: {e.Code}) {(!e.WasClean ? $"\nReason: {e.Reason}" : "")}");
+            Interface.Oxide.CallHook("DiscordSocket_WebSocketClosed", e.Reason, e.Code, e.WasClean);
         }
 
         public void SocketErrored(object sender, WebSocketSharp.ErrorEventArgs e)
         {
             Interface.Oxide.LogWarning($"[Discord Ext] An error has occured: Response: {e.Message}");
-            Interface.Oxide.CallHook("DiscordSocket_WebsocketError", e.Exception);
+            Interface.Oxide.CallHook("DiscordSocket_WebSocketError", e.Exception);
         }
         
         public void SocketMessage(object sender, MessageEventArgs e)
@@ -74,8 +72,8 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
             {
                 case "10":
                     JObject info = JObject.Parse(e.Data);
-                    double time = (double)info["d"]["heartbeat_interval"] / 1000.0;
-                    Client.DoHeartbeat((float)time, lastHeartbeat);
+                    float time = (float)info["d"]["heartbeat_interval"] / 1000f;
+                    Client.DoHeartbeat(time, lastHeartbeat);
                     break;
 
                 case "7":
