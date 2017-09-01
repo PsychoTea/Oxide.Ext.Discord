@@ -1,7 +1,4 @@
-﻿
-using System.IO;
-
-
+﻿using System.IO;
 using Oxide.Core;
 using Oxide.Core.Libraries;
 
@@ -9,6 +6,7 @@ namespace Oxide.Ext.Discord.Libraries
 {
     public class Discord : Library
     {
+        public static bool IsConfigured = true;
         private readonly string _ConfigDirectory;
         private readonly string _DataDirectory;
         DiscordExtension extension;
@@ -37,21 +35,20 @@ namespace Oxide.Ext.Discord.Libraries
                     settings.Version = extension.Version.ToString();
                     SaveConfig();
                 }
+                return;
             }
-            else
-            {
-                Interface.Oxide.LogInfo("[Discord Ext] Creating Default Configuration");
-                settings = new DiscordSettings();
-                settings.ApiToken = "change-me-please";
-                settings.Version = extension.Version.ToString();
 
-                SaveConfig();
-            }
+            Interface.Oxide.LogInfo("[Discord Ext] Creating Default Configuration");
+            settings = new DiscordSettings();
+            settings.ApiToken = "change-me-please";
+            settings.Version = extension.Version.ToString();
+
+            SaveConfig();
         }
 
         private void SaveConfig()
         {
-            _DataFileSystem.WriteObject<DiscordSettings>(Path.Combine(_ConfigDirectory, "Discord"), settings);
+            _DataFileSystem.WriteObject(Path.Combine(_ConfigDirectory, "Discord"), settings);
         }
 
         internal void Load()
@@ -60,12 +57,9 @@ namespace Oxide.Ext.Discord.Libraries
             if (settings.ApiToken == "change-me-please")
             {
                 Interface.Oxide.LogWarning("[Discord Ext] Please enter in a APIKEY within the config to use this plugin! ");
-                //Unload extension here
+                IsConfigured = false;
                 return;
             }
-        }
-        internal void EndSocket()
-        {
         }
     }
 }
