@@ -1,24 +1,24 @@
-using Oxide.Core;
-using Newtonsoft.Json;
-using WebSocketSharp;
-using System.Net;
-using Newtonsoft.Json.Linq;
-using Oxide.Ext.Discord.Libraries.DiscordObjects;
 using System.Collections.Generic;
+using System.Net;
+using Oxide.Core;
+using Oxide.Core.Libraries;
+using Oxide.Ext.Discord.Libraries.DiscordObjects;
 using Oxide.Ext.Discord.Libraries.SocketObjects;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using WebSocketSharp;
 
 namespace Oxide.Ext.Discord.Libraries.WebSockets
 {
     public class DiscordClient
     {
-        public WebSocket socket;
-        private static string BaseURLTemplate = "https://discordapp.com/api/channels/{{ChannelID}}/messages";
-        public WebClient client = new WebClient();
-        public Server server;
-        public Core.Libraries.Timer timer = Interface.Oxide.GetLibrary<Core.Libraries.Timer>("Timer");
-        public string WSSURL = "starter_url";
-        public int lastS = 0;
-        public SocketHandler handler;
+        public Server DiscordServer;
+        public string WSSURL { get; private set; }
+        private WebSocket Socket;
+        private SocketHandler Handler;
+        private Timer TimerLib = Interface.Oxide.GetLibrary<Timer>("Timer");
+        private Timer.TimerInstance Timer;
+
         public DiscordClient(bool connectAuto = true)
         {
             if (!Discord.IsConfigured)
@@ -27,14 +27,14 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                 return;
             }
 
-            if (Discord.settings.ApiToken == "change-me-please")
+            if (Discord.Settings.ApiToken == "change-me-please")
             {
                 Interface.Oxide.LogWarning("[Discord Ext] Please change the API KEY before using this extension!");
                 Interface.Oxide.CallHook("DiscordSocket_APIKeyException");
                 return;
             }
 
-            if (!Connect())
+            if (!GetURL())
             {
                 Interface.Oxide.LogWarning("[Discord Ext] There was an error grabbing the connection url.");
                 Interface.Oxide.CallHook("DiscordSocket_SocketUrlError");
@@ -49,6 +49,82 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
 
             CreateSocket();
         }
+
+        public void CreateSocket()
+        {
+            if (Interface.Oxide.CallHook("DiscordSocket_SocketConnecting", WSSURL) != null) return;
+
+            if (string.IsNullOrEmpty(WSSURL))
+            {
+                Interface.Oxide.LogWarning("[Discord Ext] Error, no WSSURL was found.");
+                return;
+            }
+
+            Socket = new WebSocket(WSSURL + "?v=5&encoding=json");
+            Handler = new SocketHandler(this);
+            Socket.OnOpen += Handler.SocketOpened;
+            Socket.OnClose += Handler.SocketClosed;
+            Socket.OnError += Handler.SocketErrored;
+            Socket.OnMessage += Handler.SocketMessage;
+            Socket.ConnectAsync();
+        }
+
+        public void Disconnect()
+        {
+            if (Socket.IsAlive)
+            {
+                Socket.Close();
+            }
+
+            WSSURL = "";
+        }
+
+        public bool IsAlive() => Socket.IsAlive;
+
+        public void SendData(string contents) => Socket.Send(contents);
+
+        public void DoHeartbeat(float heartbeatInterval, int lastHeartbeat)
+        {
+            Timer = TimerLib.Repeat(heartbeatInterval, -1, () =>
+            {
+                if (!Socket.IsAlive)
+                {
+                    Timer.Destroy();
+                    return;
+                }
+
+                var packet = new Packet()
+                {
+                    op = 1,
+                    d = lastHeartbeat
+                };
+
+                string message = JsonConvert.SerializeObject(packet);
+                Socket.Send(message);
+                Interface.Oxide.CallHook("DiscordSocket_HeartbeatSent");
+            });
+        }
+
+        private bool GetURL()
+        {
+            JObject data = null;
+            try
+            {
+                using (var client = new WebClient())
+                {
+                    data = JObject.Parse(client.DownloadString("https://discordapp.com/api/gateway"));
+                }
+                WSSURL = data.GetValue("url").ToString();
+                return true;
+            }
+            catch (WebException ex)
+            {
+                Interface.Oxide.LogWarning("There was an error asking discord for the wss connection string: " + ex.StackTrace);
+                return false;
+            }
+        }
+
+        //this needs moving
         public void SendMessage(string id, string text)
         {
             string payloadJson = JsonConvert.SerializeObject(new DiscordPayload()
@@ -57,51 +133,15 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
             });
 
             Dictionary<string, string> headers = new Dictionary<string, string>();
-            headers.Add("Authorization", string.Format("Bot {0}", Discord.settings.ApiToken));
+            headers.Add("Authorization", string.Format("Bot {0}", Discord.Settings.ApiToken));
             headers.Add("Content-Type", "application/json");
 
             string url = BaseURLTemplate.Replace("{{ChannelID}}", id);
             Interface.Oxide.GetLibrary<Oxide.Core.Libraries.WebRequests>().EnqueuePost(url, payloadJson, (code, response) =>
             {
-                if(code != 200)
+                if (code != 200)
                     Interface.Oxide.LogWarning($"[Discord Ext] There was an error with the discord API: {code} : {response}");
             }, null, headers);
-        }
-        public bool IsAlive() => socket.IsAlive;
-        public void Disconnect()
-        {
-            if(socket.IsAlive) socket.Close();
-            WSSURL = "starter_url";
-            lastS = 0;
-        }
-        public bool Connect() => GetURL();
-        private bool GetURL()
-        {
-            JObject data = null;
-            try
-            {
-                data = JObject.Parse(client.DownloadString("https://discordapp.com/api/gateway"));
-                WSSURL = data.GetValue("url").ToString();
-                return true;
-            } catch (WebException ex)
-            {
-                Interface.Oxide.LogWarning("There was an error asking discord for the wss connection string: "+ex.StackTrace);
-                return false;
-            }
-        }
-        public void CreateSocket()
-        {
-            if (Interface.Oxide.CallHook("DiscordSocket_SocketConnecting", WSSURL) != null) return;
-
-            if (WSSURL == "starter_url") return;
-            
-            socket = new WebSocket(WSSURL + "?v=5&encoding=json");
-            handler = new SocketHandler(this);
-            socket.OnOpen += handler.SocketOpened;
-            socket.OnClose += handler.SocketClosed;
-            socket.OnError += handler.SocketErrored;
-            socket.OnMessage += handler.SocketMessage;
-            socket.Connect();
         }
     }
 }

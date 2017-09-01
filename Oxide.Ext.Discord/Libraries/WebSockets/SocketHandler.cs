@@ -1,30 +1,33 @@
+using System;
+using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Oxide.Core;
 using Oxide.Ext.Discord.Libraries.DiscordObjects;
-using System;
-using System.IO;
 using WebSocketSharp;
 
 namespace Oxide.Ext.Discord.Libraries.WebSockets
 {
     public class SocketHandler
     {
-        private DiscordClient client;
+        private DiscordClient Client;
+
         public SocketHandler(DiscordClient client)
         {
-            this.client = client;
+            Client = client;
         }
+
         public void SocketOpened(object sender, EventArgs e)
         {
-            Interface.Oxide.LogWarning($"[Discord Ext] Connection started, authorizing to discord servers.");
-            var payload = new DiscordObjects.Handshake()
+            Interface.Oxide.LogInfo($"[Discord Ext] Connection started, authorizing to discord servers...");
+
+            var payload = new Handshake()
             {
                 Op = 2,
-                payload = new DiscordObjects.Payload()
+                payload = new Payload()
                 {
-                    Token = Discord.settings.ApiToken,
-                    Property = new DiscordObjects.Payload_Property()
+                    Token = Discord.Settings.ApiToken,
+                    Property = new Payload_Property()
                     {
                         os = Environment.OSVersion.ToString(),
                         browser = "orfbotpp",
@@ -36,80 +39,76 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                     Large_Threshold = 250,
                 }
             };
+
             var sp = JsonConvert.SerializeObject(payload);
-            client.socket.Send(sp);
+            Client.SendData(sp);
             Interface.Oxide.CallHook("DiscordSocket_WebsocketOpened");
         }
+
         public void SocketClosed(object sender, CloseEventArgs e)
         {
-            client.Disconnect();
+            Client.Disconnect();
             Interface.Oxide.LogWarning($"[Discord Ext] Discord connection closed: \nCode: {e.Code}\nResponse:{e.Reason}\nClean:{e.WasClean}");
             Interface.Oxide.CallHook("DiscordSocket_WebsocketClosed", e.Reason, e.Code, e.WasClean);
         }
+
         public void SocketErrored(object sender, WebSocketSharp.ErrorEventArgs e)
         {
-            if (client.socket.IsAlive) client.Disconnect();
             Interface.Oxide.LogWarning($"[Discord Ext] An error has occured: Response: {e.Message}");
             Interface.Oxide.CallHook("DiscordSocket_WebsocketError", e.Exception);
         }
-        Core.Libraries.Timer.TimerInstance timer;
+        
         public void SocketMessage(object sender, MessageEventArgs e)
         {
-            JsonReader reader = new JsonTextReader(new StringReader(e.Data));
-            reader.DateParseHandling = DateParseHandling.None;
-            JObject obj = JObject.Load(reader);
-            JToken token;
-            int tempS;
-            if (obj.TryGetValue("s", out token) && int.TryParse(token.ToString(), out tempS)) client.lastS = tempS;
-            switch (obj.GetValue("op").ToString())
+            JsonReader reader = new JsonTextReader(new StringReader(e.Data))
+            {
+                DateParseHandling = DateParseHandling.None
+            };
+            JObject messageObj = JObject.Load(reader);
+
+            JToken heartbeatToken;
+            int lastHeartbeat = 0;
+            if (!(messageObj.TryGetValue("s", out heartbeatToken) && int.TryParse(heartbeatToken.ToString(), out lastHeartbeat))) return;
+
+            switch (messageObj.GetValue("op").ToString())
             {
                 case "10":
                     JObject info = JObject.Parse(e.Data);
                     double time = (double)info["d"]["heartbeat_interval"] / 1000.0;
-                    Interface.Oxide.LogWarning($"[Discord Ext] DEBUG: SENDING PACKETS EVERY {time}ms");
-                    timer = client.timer.Repeat(Convert.ToSingle(time), -1, () =>
-                    {
-                        if (!client.socket.IsAlive)
-                        {
-                            timer.Destroy();
-                            return;
-                        }
-                        var packet = new Packet()
-                        {
-                            op = 1,
-                            d = client.lastS
-                        };
-                        string spacket = JsonConvert.SerializeObject(packet);
-                        client.socket.Send(spacket);
-                        Interface.Oxide.CallHook("DiscordSocket_HeartbeatSent");
-                    });
+                    Client.DoHeartbeat((float)time, lastHeartbeat);
                     break;
+
                 case "7":
                     Interface.Oxide.LogWarning($"[Discord Ext] Reconnecting to discord servers.");
                     Interface.Oxide.CallHook("DiscordSocket_ReconnectingStarted");
-                    client.Disconnect();
-                    client.Connect();
+                    Client.Disconnect();
+                    Client.CreateSocket();
                     break;
+
                 case "0":
-                    switch (obj["t"].ToString())
+                    switch (messageObj["t"].ToString())
                     {
                         case "MESSAGE_CREATE":
-                            Message message = JsonConvert.DeserializeObject<Message>(obj["d"].ToString());
+                            Message message = JsonConvert.DeserializeObject<Message>(messageObj["d"].ToString());
                             Interface.Oxide.CallHook("Discord_TextMessage", message);
                             break;
+
                         case "GUILD_CREATE":
-                            client.server = JsonConvert.DeserializeObject<Server>(obj["d"].ToString());
+                            Client.DiscordServer = JsonConvert.DeserializeObject<Server>(messageObj["d"].ToString());
                             break;
+
                         case "GUILD_MEMBER_ADD":
-                            User add = JsonConvert.DeserializeObject<User>(obj["d"].ToString());
+                            User add = JsonConvert.DeserializeObject<User>(messageObj["d"].ToString());
                             Interface.Oxide.CallHook("Discord_MemberAdded", add);
                             break;
+
                         case "GUILD_MEMBER_REMOVE":
-                            User remove = JsonConvert.DeserializeObject<User>(obj["d"].ToString());
+                            User remove = JsonConvert.DeserializeObject<User>(messageObj["d"].ToString());
                             Interface.Oxide.CallHook("Discord_MemberRemoved", remove);
                             break;
+
                         default:
-                            Interface.Oxide.CallHook("Discord_RawMessage", obj);
+                            Interface.Oxide.CallHook("Discord_RawMessage", messageObj);
                             break;
                     }
                     break;

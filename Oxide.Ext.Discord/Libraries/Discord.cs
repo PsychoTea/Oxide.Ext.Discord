@@ -11,7 +11,7 @@ namespace Oxide.Ext.Discord.Libraries
         private readonly string _DataDirectory;
         DiscordExtension extension;
         private readonly string _PluginDirectory;
-        public static DiscordSettings settings;
+        public static DiscordSettings Settings;
         private readonly DataFileSystem _DataFileSystem;
 
         public Discord(DiscordExtension ext)
@@ -29,29 +29,29 @@ namespace Oxide.Ext.Discord.Libraries
             string path = Path.Combine(_ConfigDirectory, "Discord");
             if (_DataFileSystem.ExistsDatafile(path))
             {
-                settings = _DataFileSystem.ReadObject<DiscordSettings>(path);
-                if (settings.Version != extension.Version.ToString())
+                Settings = _DataFileSystem.ReadObject<DiscordSettings>(path);
+                if (Settings.Version != extension.Version.ToString())
                 {
-                    settings.Version = extension.Version.ToString();
+                    Settings.Version = extension.Version.ToString();
                     SaveConfig();
                 }
                 return;
             }
 
             Interface.Oxide.LogInfo("[Discord Ext] Creating Default Configuration");
-            settings = new DiscordSettings();
-            settings.ApiToken = "change-me-please";
-            settings.Version = extension.Version.ToString();
+            Settings = new DiscordSettings();
+            Settings.ApiToken = "change-me-please";
+            Settings.Version = extension.Version.ToString();
 
             SaveConfig();
         }
 
-        private void SaveConfig() => _DataFileSystem.WriteObject(Path.Combine(_ConfigDirectory, "Discord"), settings);
+        private void SaveConfig() => _DataFileSystem.WriteObject(Path.Combine(_ConfigDirectory, "Discord"), Settings);
 
         internal void Load()
         {
             CheckConfig();
-            if (settings.ApiToken == "change-me-please")
+            if (Settings.ApiToken == "change-me-please")
             {
                 Interface.Oxide.LogWarning("[Discord Ext] Please enter in a APIKEY within the config to use this plugin! ");
                 IsConfigured = false;
