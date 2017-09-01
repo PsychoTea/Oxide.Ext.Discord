@@ -12,7 +12,6 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
     {
         public Server DiscordServer;
         public string WSSURL { get; private set; }
-        public RESTHandler Actions { get; private set; } = new RESTHandler();
         private WebSocket Socket;
         private SocketHandler Handler;
         private Timer TimerLib = Interface.Oxide.GetLibrary<Timer>("Timer");

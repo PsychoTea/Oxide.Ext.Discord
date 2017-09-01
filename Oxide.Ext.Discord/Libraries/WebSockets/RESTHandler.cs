@@ -2,46 +2,45 @@
 using System.Collections.Generic;
 using Oxide.Core;
 using Oxide.Core.Libraries;
-using Oxide.Ext.Discord.Libraries.DiscordObjects;
 using Newtonsoft.Json;
 
 namespace Oxide.Ext.Discord.Libraries.WebSockets
 {
-    public class RESTHandler
+    public static class RESTHandler
     {
-        private readonly Dictionary<string, string> headers = new Dictionary<string, string>()
+        private static readonly Dictionary<string, string> Headers = new Dictionary<string, string>()
         {
             { "Authorization", $"Bot {Discord.Settings.ApiToken}" },
             { "Content-Type", "application/json" }
         };
         private const string URLBase = "https://discordapp.com/api";
-        private WebRequests WebRequest = Interface.Oxide.GetLibrary<WebRequests>();
+        private static WebRequests WebRequest = Interface.Oxide.GetLibrary<WebRequests>();
 
         #region Channel
 
         // https://discordapp.com/developers/docs/resources/channel
 
-        public void GetChannel(string channelID, Action<Server.Channel> callback)
-        {
-            string URL = $"{URLBase}/channels/{channelID}";
-            DoGet(URL, typeof(Server.Channel), (obj) => callback.Invoke(obj as Server.Channel));
-        }
+        //public void GetChannel(string channelID, Action<Server.Channel> callback)
+        //{
+        //    string URL = $"{URLBase}/channels/{channelID}";
+        //    DoGet(URL, typeof(Server.Channel), (obj) => callback.Invoke(obj as Server.Channel));
+        //}
 
-        public void ModifyChannel(string channelID, Server.Channel channel, Action<Server.Channel> callback = null)
-        {
-            string URL = $"{URLBase}/channels/{channelID}";
-            DoPut(URL, channel, (obj) => callback?.Invoke(obj as Server.Channel));
-        }
+        //public void ModifyChannel(string channelID, Server.Channel channel, Action<Server.Channel> callback = null)
+        //{
+        //    string URL = $"{URLBase}/channels/{channelID}";
+        //    DoPut(URL, channel, (obj) => callback?.Invoke(obj as Server.Channel));
+        //}
 
-        public void CreateMessage(string channelID, Message message, Action<Message> callback = null)
-        {
-            string URL = $"{URLBase}/channels/{channelID}/messages";
-            DoPost(URL, message, (obj) => callback?.Invoke(obj as Message));
-        }
+        //public void CreateMessage(string channelID, Message message, Action<Message> callback = null)
+        //{
+        //    string URL = $"{URLBase}/channels/{channelID}/messages";
+        //    DoPost(URL, message, (obj) => callback?.Invoke(obj as Message));
+        //}
 
         #endregion
 
-        private void DoGet(string URL, Type returnType = null, Action<object> callback = null)
+        public static void DoGet(string URL, Type returnType = null, Action<object> callback = null)
         {
             WebRequest.EnqueueGet(URL, (code, response) =>
             {
@@ -50,10 +49,10 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                 if (returnType == null) return;
                 var responseObj = JsonConvert.DeserializeObject(response, returnType);
                 callback?.Invoke(responseObj);
-            }, null, headers);
+            }, null, Headers);
         }
 
-        private void DoPut(string URL, object data, Action<object> callback = null)
+        public static void DoPut(string URL, object data, Action<object> callback = null)
         {
             string contents = JsonConvert.SerializeObject(data);
             WebRequest.EnqueuePut(URL, contents, (code, response) =>
@@ -62,10 +61,10 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                 
                 var responseObj = JsonConvert.DeserializeObject(response, data.GetType());
                 callback?.Invoke(responseObj);
-            }, null, headers);
+            }, null, Headers);
         }
 
-        private void DoPost(string URL, object data, Action<object> callback = null)
+        public static void DoPost(string URL, object data, Action<object> callback = null)
         {
             string contents = JsonConvert.SerializeObject(data);
             WebRequest.EnqueuePost(URL, contents, (code, response) =>
@@ -74,10 +73,33 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                 
                 var responseObj = JsonConvert.DeserializeObject(response, data.GetType());
                 callback?.Invoke(responseObj);
-            }, null, headers);
+            }, null, Headers);
         }
 
-        private bool VerifyRequest(int code, string response)
+        public static void DoPatch(string URL, object data, Action<object> callback = null)
+        {
+            string contents = JsonConvert.SerializeObject(data);
+            WebRequest.EnqueuePatch(URL, contents, (code, response) =>
+            {
+                if (!VerifyRequest(code, response)) return;
+
+                var responseObj = JsonConvert.DeserializeObject(response, data.GetType());
+                callback?.Invoke(responseObj);
+            }, null, Headers);
+        }
+
+        public static void DoDelete(string URL, Action<object> callback = null)
+        {
+            WebRequest.EnqueueDelete(URL, (code, response) =>
+            {
+                if (!VerifyRequest(code, response)) return;
+
+                var responseObj = JsonConvert.DeserializeObject(response, data.GetType());
+                callback?.Invoke(responseObj);
+            }, null, Headers);
+        }
+
+        private static bool VerifyRequest(int code, string response)
         {
             if (code != 200)
             {
