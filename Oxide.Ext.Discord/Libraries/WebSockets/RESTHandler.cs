@@ -16,6 +16,25 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
         };
         private const string URLBase = "https://discordapp.com/api";
 
+        public static void DoRequest(string URL, string method, object data = null)
+        {
+            var req = WebRequest.Create($"{URLBase}{URL}");
+            req.SetRawHeaders(Headers);
+            req.Method = method;
+
+            if (data != null)
+            {
+                string contents = JsonConvert.SerializeObject(data);
+                byte[] bytes = Encoding.ASCII.GetBytes(contents);
+                req.ContentLength = bytes.Length;
+
+                using (var stream = req.GetRequestStream())
+                {
+                    stream.Write(bytes, 0, bytes.Length);
+                }
+            }
+        }
+
         public static T DoRequest<T>(string URL, string method, object data = null)
         {
             var req = WebRequest.Create($"{URLBase}{URL}");
