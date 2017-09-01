@@ -12,8 +12,8 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
 {
     public class SocketHandler
     {
-        private WebSocketClient client;
-        public SocketHandler(WebSocketClient client)
+        private DiscordClient client;
+        public SocketHandler(DiscordClient client)
         {
             this.client = client;
         }

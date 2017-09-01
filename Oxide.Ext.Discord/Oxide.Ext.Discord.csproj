@@ -47,7 +47,7 @@
     <Compile Include="Libraries\DiscordObjects\VoiceUpdate.cs" />
     <Compile Include="Libraries\DiscordSettings.cs" />
     <Compile Include="Libraries\WebSockets\SocketHandler.cs" />
-    <Compile Include="Libraries\WebSockets\WebSocketClient.cs" />
+    <Compile Include="Libraries\WebSockets\DiscordClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -71,13 +71,16 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-UnityScript-firstpass">
+    <Reference Include="Assembly-UnityScript-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Assembly-UnityScript-firstpass.dll</HintPath>
     </Reference>
-    <Reference Include="ConvexHull">
+    <Reference Include="ConvexHull, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\ConvexHull.dll</HintPath>
     </Reference>
-    <Reference Include="EasyAntiCheat.Client">
+    <Reference Include="EasyAntiCheat.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\EasyAntiCheat.Client.dll</HintPath>
     </Reference>
     <Reference Include="EasyAntiCheat.Server, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -120,22 +123,28 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Facepunch.UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="I18N">
+    <Reference Include="I18N, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\I18N.dll</HintPath>
     </Reference>
-    <Reference Include="I18N.CJK">
+    <Reference Include="I18N.CJK, Version=2.0.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\I18N.CJK.dll</HintPath>
     </Reference>
-    <Reference Include="I18N.MidEast">
+    <Reference Include="I18N.MidEast, Version=2.0.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\I18N.MidEast.dll</HintPath>
     </Reference>
-    <Reference Include="I18N.Other">
+    <Reference Include="I18N.Other, Version=2.0.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\I18N.Other.dll</HintPath>
     </Reference>
-    <Reference Include="I18N.Rare">
+    <Reference Include="I18N.Rare, Version=2.0.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\I18N.Rare.dll</HintPath>
     </Reference>
-    <Reference Include="I18N.West">
+    <Reference Include="I18N.West, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\I18N.West.dll</HintPath>
     </Reference>
     <Reference Include="Ionic.Zip.Reduced, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
@@ -150,62 +159,88 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Mono.Cecil.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil.Mdb">
+    <Reference Include="Mono.Cecil.Mdb, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Mono.Cecil.Mdb.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil.Pdb">
+    <Reference Include="Mono.Cecil.Pdb, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Mono.Cecil.Pdb.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil.Rocks, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Mono.Cecil.Rocks.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Data.Tds">
+    <Reference Include="Mono.Data.Tds, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Mono.Data.Tds.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Mono.Posix.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Security">
+    <Reference Include="Mono.Security, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Mono.Security.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=6.9.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Oxide.Core, Version=2.0.3376.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Oxide.Core, Version=2.0.3440.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Oxide.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Oxide.Core.CSharp, Version=2.0.3376.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Oxide.Core.CSharp, Version=2.0.3440.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Oxide.Core.CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Oxide.Core.MySql, Version=2.0.3376.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Oxide.Core.MySql, Version=2.0.3440.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Oxide.Core.MySql.dll</HintPath>
     </Reference>
-    <Reference Include="Oxide.Core.Unity, Version=2.0.3376.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Oxide.Core.SQLite">
+      <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Oxide.Core.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Core.Unity, Version=2.0.3440.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Oxide.Core.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="Oxide.Game.Rust, Version=2.0.3376.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Oxide.Game.Rust">
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Oxide.Game.Rust.dll</HintPath>
+    </Reference>
+    <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="Rust.Data, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Rust.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Rust.Global, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Rust.Global.dll</HintPath>
+    </Reference>
+    <Reference Include="Rust.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Rust.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Rust.Workshop, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Rust.Workshop.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Data.SQLite, Version=1.0.97.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite">
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
-    <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Transactions" />
@@ -230,7 +265,6 @@
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\websocket-sharp.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

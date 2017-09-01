@@ -5,14 +5,12 @@ C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Oxide.Core.CSharp.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Oxide.Core.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Oxide.Core.MySql.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Oxide.Core.Unity.dll
-C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Oxide.Game.Rust.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\websocket-sharp.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\protobuf-net.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Mono.Cecil.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Mono.Cecil.Rocks.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Mono.Posix.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\MySql.Data.dll
-C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\System.Data.SQLite.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\UnityEngine.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Assembly-CSharp.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Facepunch.Console.dll
@@ -52,5 +50,8 @@ C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Mono.Cecil.Mdb.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Mono.Cecil.Pdb.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Mono.Data.Tds.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Mono.Security.dll
+C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Oxide.Core.SQLite.dll
+C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Oxide.Game.Rust.dll
+C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\System.Data.SQLite.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\UnityEngine.Analytics.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\UnityEngine.Networking.dll
