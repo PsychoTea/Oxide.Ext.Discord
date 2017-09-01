@@ -14,6 +14,7 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
             [JsonProperty("content")]
             public string MessageText { get; set; }
         }
+
         public string id { get; set; }
         public string type { get; set; }
         public int? position { get; set; }
@@ -24,35 +25,83 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
         public int? user_limit { get; set; }
         public List<User> recipients { get; set; }
         public string icon { get; set; }
-        public static void GetChannel(string channelID, Action<Channel> Channel)
+
+        public static void GetChannel(string channelID, Action<Channel> callback = null)
         {
-            RESTHandler.DoGet($"/channels/{channelID}", typeof(Channel), (obj) =>
-            {
-                Channel?.Invoke(obj as Channel);
-            });
+            var channel = RESTHandler.DoRequest<Channel>($"/channels/{channelID}", "GET");
+            callback?.Invoke(channel);
         }
-        public void DeleteChannel()
+
+        public void ModifyChannel(Channel newChannel, Action<Channel> callback = null)
         {
-            RESTHandler.DoDelete($"/channels/{id}", typeof(object));
+            var channel = RESTHandler.DoRequest<Channel>($"/channels/{id}", "PATCH");
+            callback?.Invoke(channel);
         }
-        public void SendMessage(string text, Action<Message> message, bool tts = false)
+
+        public void DeleteChannel(Action<Channel> callback = null)
         {
-            string payloadJson = JsonConvert.SerializeObject(new DiscordPayload()
-            {
-                MessageText = text
-            });
-            RESTHandler.DoPost($"/channels/{id}/messages", payloadJson, (m) => {;
-                Message msg = m as Message;
-                message?.Invoke(msg);
-            });
+            var channel = RESTHandler.DoRequest<Channel>($"/channels/{id}", "DELETE");
+            callback?.Invoke(channel);
         }
-        public void GetMessages(Action<List<Message>> Message)
+
+        public void GetChannelMessages(Action<List<Message>> callback = null)
         {
-            RESTHandler.DoGet($"/channels/{id}/messages", typeof(List<Message>), (msg) =>
-            {
-                List<Message> Messages = msg as List<Message>;
-                Message?.Invoke(Messages);
-            });
+            var messages = RESTHandler.DoRequest<List<Message>>($"/channels/{id}/messages", "GET");
+            callback?.Invoke(messages);
+        }
+
+        public void GetChannelMessage(string messageID, Action<Message> callback = null)
+        {
+            var message = RESTHandler.DoRequest<Message>($"/channels/{id}/messages/{messageID}", "GET");
+            callback?.Invoke(message);
+        }
+
+        public void CreateMessage(Message message, Action<Message> callback = null)
+        {
+            var resMessage = RESTHandler.DoRequest<Message>($"/channels/{id}/messages", "POST", message);
+            callback?.Invoke(resMessage);
+        }
+
+        public void CreateReaction(string messageID, string emoji)
+        {
+            RESTHandler.DoRequest($"/channels/{id}/messages/{messageID}/reactions/{emoji}/@me", "PUT");
+        }
+
+        public void DeleteOwnReaction(string messageID, string emoji)
+        {
+            RESTHandler.DoRequest($"/channels/{id}/messages/{messageID}/reactions/{emoji}/@me", "DELETE");
+        }
+
+        public void DeleteOwnReaction(string messageID, string emoji, string userID)
+        {
+            RESTHandler.DoRequest($"/channels/{id}/messages/{messageID}/reactions/{emoji}/{userID}", "DELETE");
+        }
+
+        public void GetReactions(string messageID, string emoji, Action<List<User>> callback = null)
+        {
+            var users = RESTHandler.DoRequest<List<User>>($"/channels/{id}/messages/{messageID}/reactions/{emoji}", "GET");
+            callback?.Invoke(users);
+        }
+
+        public void DeleteAllReactions(string messageID)
+        {
+            RESTHandler.DoRequest($"/channels/{id}/messages/{messageID}/reactions", "DELETE");
+        }
+
+        public void EditMessage(Message message, Action<Message> callback = null)
+        {
+            var newMessage = RESTHandler.DoRequest<Message>($"/channels/{id}/messages/{message.id}", "PATCH", message);
+            callback?.Invoke(newMessage);
+        }
+
+        public void DeleteMessage(Message message, Action<Message> callback = null)
+        {
+            RESTHandler.DoRequest($"/channels/{id}/messages/{message.id}", "DELETE");
+        }
+
+        public void BulkDeleteMessages(List<string> messageIds)
+        {
+            RESTHandler.DoRequest($"/channels/{id}/messages/bulk-delete", "POST", messageIds);
         }
     }
 }
