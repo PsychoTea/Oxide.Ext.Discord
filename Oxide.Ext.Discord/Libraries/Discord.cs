@@ -1,7 +1,4 @@
-﻿
 using System.IO;
-
-
 using Oxide.Core;
 using Oxide.Core.Libraries;
 
@@ -49,10 +46,7 @@ namespace Oxide.Ext.Discord.Libraries
             }
         }
 
-        private void SaveConfig()
-        {
-            _DataFileSystem.WriteObject<DiscordSettings>(Path.Combine(_ConfigDirectory, "Discord"), settings);
-        }
+        private void SaveConfig() => _DataFileSystem.WriteObject<DiscordSettings>(Path.Combine(_ConfigDirectory, "Discord"), settings);
 
         internal void Load()
         {
@@ -60,12 +54,8 @@ namespace Oxide.Ext.Discord.Libraries
             if (settings.ApiToken == "change-me-please")
             {
                 Interface.Oxide.LogWarning("[Discord Ext] Please enter in a APIKEY within the config to use this plugin! ");
-                //Unload extension here
                 return;
             }
-        }
-        internal void EndSocket()
-        {
         }
     }
 }
