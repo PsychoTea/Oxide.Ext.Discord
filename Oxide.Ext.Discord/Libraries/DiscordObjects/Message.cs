@@ -21,12 +21,6 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
             public string name { get; set; }
         }
 
-        public class Author
-        {
-            public string url { get; set; }
-            public string name { get; set; }
-        }
-
         public class Embed
         {
             public string url { get; set; }
@@ -38,7 +32,7 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
             public Author author { get; set; }
         }
 
-        public class Author2
+        public class Author
         {
             public string username { get; set; }
             public string id { get; set; }
@@ -60,7 +54,7 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
         public object edited_timestamp { get; set; }
         public string content { get; set; }
         public string channel_id { get; set; }
-        public Author2 author { get; set; }
+        public Author author { get; set; }
         public List<object> attachments { get; set; }
     }
 }

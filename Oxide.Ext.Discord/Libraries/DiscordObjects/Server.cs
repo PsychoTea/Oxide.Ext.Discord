@@ -18,12 +18,6 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
             public bool hoist { get; set; }
             public int color { get; set; }
         }
-
-        public class User
-        {
-            public string id { get; set; }
-        }
-
         public class Game
         {
             public int type { get; set; }
@@ -37,18 +31,9 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
             public Game game { get; set; }
         }
 
-        public class User2
-        {
-            public string username { get; set; }
-            public string id { get; set; }
-            public string discriminator { get; set; }
-            public string avatar { get; set; }
-            public bool? bot { get; set; }
-        }
-
         public class Member
         {
-            public User2 user { get; set; }
+            public User user { get; set; }
             public List<string> roles { get; set; }
             public string nick { get; set; }
             public bool mute { get; set; }
