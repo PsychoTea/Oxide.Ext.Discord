@@ -64,9 +64,6 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
             {
                 content = "this is a message"
             };
-
-            var response = RESTHandler.DoRequest<Message>("/channels/347386632736866318/messages", "POST", message);
-            Interface.Oxide.LogInfo($"received: {response.content}");
         }
 
         public void Disconnect()
