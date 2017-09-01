@@ -42,7 +42,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
 
         public static void DoGet(string URL, Type returnType = null, Action<object> callback = null)
         {
-            WebRequest.EnqueueGet(URL, (code, response) =>
+            WebRequest.EnqueueGet($"{URLBase}{URL}", (code, response) =>
             {
                 if (!VerifyRequest(code, response)) return;
 
@@ -55,7 +55,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
         public static void DoPut(string URL, object data, Action<object> callback = null)
         {
             string contents = JsonConvert.SerializeObject(data);
-            WebRequest.EnqueuePut(URL, contents, (code, response) =>
+            WebRequest.EnqueuePut($"{URLBase}{URL}", contents, (code, response) =>
             {
                 if (!VerifyRequest(code, response)) return;
                 
@@ -67,7 +67,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
         public static void DoPost(string URL, object data, Action<object> callback = null)
         {
             string contents = JsonConvert.SerializeObject(data);
-            WebRequest.EnqueuePost(URL, contents, (code, response) =>
+            WebRequest.EnqueuePost($"{URLBase}{URL}", contents, (code, response) =>
             {
                 if (!VerifyRequest(code, response)) return;
                 
@@ -79,7 +79,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
         public static void DoPatch(string URL, object data, Action<object> callback = null)
         {
             string contents = JsonConvert.SerializeObject(data);
-            WebRequest.EnqueuePatch(URL, contents, (code, response) =>
+            WebRequest.EnqueuePatch($"{URLBase}{URL}", contents, (code, response) =>
             {
                 if (!VerifyRequest(code, response)) return;
 
@@ -88,13 +88,14 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
             }, null, Headers);
         }
 
-        public static void DoDelete(string URL, Action<object> callback = null)
+        public static void DoDelete(string URL, Type returnType = null, Action<object> callback = null)
         {
-            WebRequest.EnqueueDelete(URL, (code, response) =>
+            WebRequest.EnqueueDelete($"{URLBase}{URL}", null, (code, response) =>
             {
                 if (!VerifyRequest(code, response)) return;
 
-                var responseObj = JsonConvert.DeserializeObject(response, data.GetType());
+                if (returnType == null) return;
+                var responseObj = JsonConvert.DeserializeObject(response, returnType);
                 callback?.Invoke(responseObj);
             }, null, Headers);
         }

@@ -81,13 +81,16 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
 
         public void SendData(string contents) => Socket.Send(contents);
 
-        public void DoHeartbeat(float heartbeatInterval, int lastHeartbeat)
+        public void CreateHeartbeat(float heartbeatInterval, int lastHeartbeat)
         {
+            if (Timer != null) return;
+
             Timer = TimerLib.Repeat(heartbeatInterval, -1, () =>
             {
                 if (!Socket.IsAlive)
                 {
                     Timer.Destroy();
+                    Timer = null;
                     return;
                 }
 
