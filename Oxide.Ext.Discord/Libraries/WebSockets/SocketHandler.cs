@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using Oxide.Core;
 using Oxide.Ext.Discord.Libraries.DiscordObjects;
 using WebSocketSharp;
+using System.Collections.Generic;
 
 namespace Oxide.Ext.Discord.Libraries.WebSockets
 {
@@ -63,7 +64,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
 
             JToken heartbeatToken;
             int lastHeartbeat = 0;
-            if (!(messageObj.TryGetValue("s", out heartbeatToken) && int.TryParse(heartbeatToken.ToString(), out lastHeartbeat))) return;
+            if (!(messageObj.TryGetValue("s", out heartbeatToken) && int.TryParse(heartbeatToken.ToString(), out lastHeartbeat))) lastHeartbeat = 0;
 
             switch (messageObj.GetValue("op").ToString())
             {

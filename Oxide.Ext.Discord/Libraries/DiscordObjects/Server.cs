@@ -49,10 +49,6 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
             public bool managed { get; set; }
             public string id { get; set; }
         }
-
-        public Member FindMember(string id) => members.Find(x => x.user.id == id);
-        public Channel FindChannel(string id) => channels.Find(x => x.id == id);
-        public Emoji FindEmoji(string id) => emojis.Find(x => x.id == id);
         public List<object> voice_states { get; set; }
         public int verification_level { get; set; }
         public bool unavailable { get; set; }

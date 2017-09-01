@@ -27,7 +27,6 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
             if (Discord.Settings.ApiToken == "change-me-please")
             {
                 Interface.Oxide.LogWarning("[Discord Ext] Please change the API KEY before using this extension!");
-                Interface.Oxide.CallHook("DiscordSocket_APIKeyException");
                 return;
             }
 
@@ -51,27 +50,19 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                 Interface.Oxide.LogWarning("[Discord Ext] Error, no WSSURL was found.");
                 return;
             }
-
-            Socket = new WebSocket(WSSURL + "?v=5&encoding=json");
+            Socket = new WebSocket(WSSURL + "/?v=6&encoding=json");
             Handler = new SocketHandler(this);
             Socket.OnOpen += Handler.SocketOpened;
             Socket.OnClose += Handler.SocketClosed;
             Socket.OnError += Handler.SocketErrored;
             Socket.OnMessage += Handler.SocketMessage;
-            Socket.ConnectAsync();
-
-            Message message = new Message()
-            {
-                content = "this is a message"
-            };
+            Socket.Connect();
         }
 
         public void Disconnect()
         {
             if (Socket.IsAlive)
-            {
                 Socket.Close();
-            }
 
             WSSURL = "";
         }
