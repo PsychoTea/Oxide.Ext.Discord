@@ -8,6 +8,48 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
 {
     public class Server
     {
+        public class Role
+        {
+            public int position { get; set; }
+            public int permissions { get; set; }
+            public string name { get; set; }
+            public bool mentionable { get; set; }
+            public bool managed { get; set; }
+            public string id { get; set; }
+            public bool hoist { get; set; }
+            public int color { get; set; }
+        }
+        public class Game
+        {
+            public int type { get; set; }
+            public string name { get; set; }
+        }
+
+        public class Presence
+        {
+            public User user { get; set; }
+            public string status { get; set; }
+            public Game game { get; set; }
+        }
+
+        public class Member
+        {
+            public User user { get; set; }
+            public List<string> roles { get; set; }
+            public string nick { get; set; }
+            public bool mute { get; set; }
+            public string joined_at { get; set; }
+            public bool deaf { get; set; }
+        }
+
+        public class Emoji
+        {
+            public List<object> roles { get; set; }
+            public bool require_colons { get; set; }
+            public string name { get; set; }
+            public bool managed { get; set; }
+            public string id { get; set; }
+        }
         public List<object> voice_states { get; set; }
         public int verification_level { get; set; }
         public bool unavailable { get; set; }

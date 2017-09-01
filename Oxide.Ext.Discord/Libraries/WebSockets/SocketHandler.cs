@@ -51,7 +51,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
         public void SocketErrored(object sender, WebSocketSharp.ErrorEventArgs e)
         {
             Interface.Oxide.LogWarning($"[Discord Ext] An error has occured: Response: {e.Message}");
-            Interface.Oxide.CallHook("DiscordSocket_WebSocketError", e.Exception);
+            Interface.Oxide.CallHook("DiscordSocket_WebSocketErrored", e.Exception, e.Message);
         }
         
         public void SocketMessage(object sender, MessageEventArgs e)
