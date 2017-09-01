@@ -50,20 +50,6 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
             public string id { get; set; }
         }
 
-        public class Channel
-        {
-            public string id { get; set; }
-            public string type { get; set; }
-            public int? position { get; set; }
-            public List<object> permission_overwrites { get; set; }
-            public string name { get; set; }
-            public string topic { get; set; }
-            public int? bitrate { get; set; }
-            public int? user_limit { get; set; }
-            public List<User> recipients { get; set; }
-            public string icon { get; set; }
-        }
-
         public Member FindMember(string id) => members.Find(x => x.user.id == id);
         public Channel FindChannel(string id) => channels.Find(x => x.id == id);
         public Emoji FindEmoji(string id) => emojis.Find(x => x.id == id);
