@@ -25,7 +25,6 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
             if (data != null)
             {
                 string contents = JsonConvert.SerializeObject(data);
-                Core.Interface.Oxide.LogInfo(contents);
                 byte[] bytes = Encoding.ASCII.GetBytes(contents);
                 req.ContentLength = bytes.Length;
 
@@ -34,8 +33,6 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                     stream.Write(bytes, 0, bytes.Length);
                 }
             }
-
-            req.GetResponse();
         }
 
         public static T DoRequest<T>(string URL, string method, object data = null)
