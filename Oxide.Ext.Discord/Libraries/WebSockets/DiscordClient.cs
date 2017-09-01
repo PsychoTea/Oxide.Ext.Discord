@@ -59,7 +59,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
             socket.OnClose += handler.SocketClosed;
             socket.OnError += handler.SocketErrored;
             socket.OnMessage += handler.SocketMessage;
-            socket.Connect();
+            //socket.Connect();
         }
 
         public void Disconnect()

@@ -55,3 +55,8 @@ C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Oxide.Game.Rust.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\System.Data.SQLite.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\UnityEngine.Analytics.dll
 C:\Projects\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\UnityEngine.Networking.dll
+S:\Libraries\Documents\GitHub\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Oxide.Ext.Discord.dll
+S:\Libraries\Documents\GitHub\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Oxide.Ext.Discord.pdb
+S:\Libraries\Documents\GitHub\Oxide.Ext.Discord\Oxide.Ext.Discord\obj\Debug\Oxide.Ext.Discord.csprojResolveAssemblyReference.cache
+S:\Libraries\Documents\GitHub\Oxide.Ext.Discord\Oxide.Ext.Discord\obj\Debug\Oxide.Ext.Discord.dll
+S:\Libraries\Documents\GitHub\Oxide.Ext.Discord\Oxide.Ext.Discord\obj\Debug\Oxide.Ext.Discord.pdb
