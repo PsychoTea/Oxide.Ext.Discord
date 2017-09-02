@@ -1,37 +1,41 @@
-﻿using Oxide.Ext.Discord.Exceptions;
-using System;
+﻿using System;
 using System.Timers;
 
 namespace Oxide.Ext.Discord.WebSockets
 {
     public class UpkeepHandler
     {
-        private DiscordClient client;
-        private Timer timer;
-        private DateTime lastUpdated;
+        private DiscordClient Client;
+        private Timer Timer;
+        private DateTime LastUpdate;
+
         public UpkeepHandler(DiscordClient client)
         {
             if (client == null) return;
-            lastUpdated = DateTime.UtcNow;
-            this.client = client;
-            timer = new Timer();
-            timer.Elapsed += CheckForBeat;
-            timer.AutoReset = true;
-            timer.Interval = 60000;
-            timer.Start();
+
+            LastUpdate = DateTime.UtcNow;
+            this.Client = client;
+
+            Timer = new Timer();
+            Timer.Elapsed += CheckForBeat;
+            Timer.AutoReset = true;
+            Timer.Interval = 5000;
+            Timer.Start();
         }
-        public void SendBeat() => this.lastUpdated = DateTime.UtcNow;
+
+        public void SendBeat() => this.LastUpdate = DateTime.UtcNow;
+
         public void Shutdown()
         {
-            timer.Dispose();
-            timer = null;
+            Timer.Dispose();
+            Timer = null;
         }
+
         private void CheckForBeat(object sender, ElapsedEventArgs args)
         {
-            if (Math.Floor((DateTime.UtcNow - lastUpdated).TotalSeconds) > 55)
+            if (Math.Floor((DateTime.UtcNow - LastUpdate).TotalSeconds) > 5)
             {
-                Discord.CloseClient(client);
-                throw new UpkeepFailedException(client.Settings.ApiToken);
+                Discord.CloseClient(Client);
             }
         }
     }

@@ -16,7 +16,7 @@ namespace Oxide.Ext.Discord.WebSockets
         public Guild DiscordServer { get; set; }
         public RESTHandler REST { get; private set; }
         public string WSSURL { get; private set; }
-        public UpkeepHandler UpHandler { get; set; }
+        public UpkeepHandler UpHandler { get; private set; }
         private WebSocket Socket = null;
         private SocketHandler Handler;
         private Timer TimerLib = Interface.Oxide.GetLibrary<Timer>("Timer");
@@ -68,20 +68,20 @@ namespace Oxide.Ext.Discord.WebSockets
 
             Socket = new WebSocket(WSSURL + "/?v=6&encoding=json");
             Handler = new SocketHandler(this);
+            UpHandler = new UpkeepHandler(this);
             Socket.OnOpen += Handler.SocketOpened;
             Socket.OnClose += Handler.SocketClosed;
             Socket.OnError += Handler.SocketErrored;
             Socket.OnMessage += Handler.SocketMessage;
-            UpHandler = new UpkeepHandler(this);
             Socket.ConnectAsync();
         }
 
         public void Disconnect()
         {
-            //if (Socket.IsAlive)
-            //{
-            //    Socket.CloseAsync();
-            //}
+            if (Socket.IsAlive)
+            {
+                Socket.CloseAsync();
+            }
 
             WSSURL = "";
 

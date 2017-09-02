@@ -312,8 +312,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
             });
         }
 
-        public void CreateGuildIntegration(DiscordClient client, Integration integration, Action callback = null) => CreateGuildIntegration(client, integration.type, inte
-            .id, callback);
+        public void CreateGuildIntegration(DiscordClient client, Integration integration, Action callback = null) => CreateGuildIntegration(client, integration.type, integration.id, callback);
         public void CreateGuildIntegration(DiscordClient client, string type, string id, Action callback = null)
         {
             var jsonObj = new Dictionary<string, object>()
