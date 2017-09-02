@@ -77,7 +77,6 @@ namespace Oxide.Ext.Discord.WebSockets
                     break;
                     
                 case "0":
-                    Interface.Oxide.LogInfo($"got message type 0: {messageObj["t"]}");
                     switch (messageObj["t"].ToString())
                     {
                         case "READY":
