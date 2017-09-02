@@ -1,11 +1,11 @@
 using System;
+using System.Timers;
 using System.Linq;
-using Oxide.Core;
-using Oxide.Core.Libraries;
-using Oxide.Ext.Discord.DiscordObjects;
-using Oxide.Ext.Discord.Exceptions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Oxide.Core;
+using Oxide.Ext.Discord.DiscordObjects;
+using Oxide.Ext.Discord.Exceptions;
 using WebSocketSharp;
 
 namespace Oxide.Ext.Discord.WebSockets
@@ -19,8 +19,8 @@ namespace Oxide.Ext.Discord.WebSockets
         public UpkeepHandler UpHandler { get; private set; }
         private WebSocket Socket = null;
         private SocketHandler Handler;
-        private Timer TimerLib = Interface.Oxide.GetLibrary<Timer>("Timer");
-        private Timer.TimerInstance Timer;
+        private System.Timers.Timer Timer;
+        private int LastHeartbeat;
 
         /// <exception cref="APIKeyException">Throws when a user does not provide a API key.</exception>
         /// <exception cref="NoURLException">Throws when CreateSocket is called, but no url is stored.</exception>
@@ -96,28 +96,34 @@ namespace Oxide.Ext.Discord.WebSockets
         
         public void CreateHeartbeat(float heartbeatInterval, int lastHeartbeat)
         {
-            if (Timer != null)
-                return;
+            LastHeartbeat = lastHeartbeat;
+            
+            if (Timer != null) return;
 
-            Timer = TimerLib.Repeat(heartbeatInterval, -1, () =>
+            Timer = new System.Timers.Timer();
+            Timer.Interval = heartbeatInterval;
+            Timer.Elapsed += HeartbeatElapsed;
+            Timer.Start();
+        }
+
+        private void HeartbeatElapsed(object sender, ElapsedEventArgs e)
+        {
+            if (!Socket.IsAlive)
             {
-                if (!Socket.IsAlive)
-                {
-                    Timer.Destroy();
-                    Timer = null;
-                    return;
-                }
+                Timer.Dispose();
+                Timer = null;
+                return;
+            }
 
-                var packet = new Packet()
-                {
-                    op = 1,
-                    d = lastHeartbeat
-                };
+            var packet = new Packet()
+            {
+                op = 1,
+                d = LastHeartbeat
+            };
 
-                string message = JsonConvert.SerializeObject(packet);
-                Socket.Send(message);
-                Interface.Oxide.CallHook("DiscordSocket_HeartbeatSent");
-            });
+            string message = JsonConvert.SerializeObject(packet);
+            Socket.Send(message);
+            Interface.Oxide.CallHook("DiscordSocket_HeartbeatSent");
         }
 
         private void GetURL(Action callback)
