@@ -4,8 +4,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Oxide.Core;
 using Oxide.Ext.Discord.Libraries.DiscordObjects;
+using Oxide.Ext.Discord.Libraries.Exceptions;
 using WebSocketSharp;
-using System.Collections.Generic;
 
 namespace Oxide.Ext.Discord.Libraries.WebSockets
 {
@@ -41,9 +41,9 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
             Interface.Oxide.LogInfo($"[Discord Ext] Connected to Discord.");
             Interface.Oxide.CallHook("DiscordSocket_WebSocketOpened");
         }
-
         public void SocketClosed(object sender, CloseEventArgs e)
         {
+            if (e.Code == 4004) throw new APIKeyException();
             Interface.Oxide.LogInfo($"[Discord Ext] Discord connection closed (code: {e.Code}) {(!e.WasClean ? $"\nReason: {e.Reason}" : "")}");
             Interface.Oxide.CallHook("DiscordSocket_WebSocketClosed", e.Reason, e.Code, e.WasClean);
         }
@@ -75,10 +75,6 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                     break;
 
                 case "7":
-                    Interface.Oxide.LogWarning($"[Discord Ext] Reconnecting to discord servers.");
-                    Interface.Oxide.CallHook("DiscordSocket_ReconnectingStarted");
-                    Client.Disconnect();
-                    Client.CreateSocket();
                     break;
 
                 case "0":

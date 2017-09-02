@@ -55,6 +55,10 @@
     <Compile Include="Libraries\DiscordObjects\VoiceRegion.cs" />
     <Compile Include="Libraries\DiscordObjects\VoiceState.cs" />
     <Compile Include="Libraries\DiscordObjects\Webhook.cs" />
+    <Compile Include="Libraries\Exceptions\APIKeyException.cs" />
+    <Compile Include="Libraries\Exceptions\InvalidCreationException.cs" />
+    <Compile Include="Libraries\Exceptions\NoURLException.cs" />
+    <Compile Include="Libraries\Exceptions\SocketRunningException.cs" />
     <Compile Include="Libraries\SocketObjects\DiscordPayload.cs" />
     <Compile Include="Libraries\SocketObjects\Handshake.cs" />
     <Compile Include="Libraries\DiscordObjects\Message.cs" />
@@ -283,6 +287,7 @@
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\websocket-sharp.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "S:\Libraries\Documents\GitHub\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Oxide.Ext.Discord.dll" "C:\RustServer\rust_legacy_server\rust_server_Data\Managed\Oxide.Ext.Discord.dll"</PostBuildEvent>

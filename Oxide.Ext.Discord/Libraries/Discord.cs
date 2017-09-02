@@ -8,9 +8,11 @@ namespace Oxide.Ext.Discord.Libraries
     public class Discord
     {
         private static List<DiscordClient> Clients = new List<DiscordClient>();
+        public static List<string> ToClients = new List<string>();
 
-        public static DiscordClient GetClient(string apiKey)
+        public static DiscordClient GetClient(string apiKey, bool autoConnect = true, bool check = false)
         {
+
             var search = Clients.Where(x => x.Settings.ApiToken == apiKey);
             if (search.Count() > 1)
             {
@@ -23,19 +25,23 @@ namespace Oxide.Ext.Discord.Libraries
             }
 
             if (search.Count() == 1)
-            {
                 return search.First();
-            }
+            if (check)
+                return null;
 
-            var newClient = new DiscordClient(apiKey);
+            ToClients.Add(apiKey);
+            var newClient = new DiscordClient(apiKey, autoConnect);
             Clients.Add(newClient);
             return newClient;
         }
 
-        public static void CloseClient(DiscordClient client)
+        public static bool CloseClient(DiscordClient client)
         {
+            if (client == null) return false;
             client.Disconnect();
             Clients.Remove(client);
+            if (!client.IsAlive()) return true;
+            else return false;
         }
     }
 }

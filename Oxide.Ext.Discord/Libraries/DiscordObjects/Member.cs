@@ -1,4 +1,6 @@
-﻿namespace Oxide.Ext.Discord.Libraries.DiscordObjects
+﻿using System.Collections.Generic;
+
+namespace Oxide.Ext.Discord.Libraries.DiscordObjects
 {
     public class Member
     {

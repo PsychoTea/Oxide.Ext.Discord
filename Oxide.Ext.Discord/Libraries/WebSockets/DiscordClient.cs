@@ -4,6 +4,7 @@ using Oxide.Ext.Discord.Libraries.DiscordObjects;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WebSocketSharp;
+using Oxide.Ext.Discord.Libraries.Exceptions;
 
 namespace Oxide.Ext.Discord.Libraries.WebSockets
 {
@@ -18,43 +19,36 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
         private Timer TimerLib = Interface.Oxide.GetLibrary<Timer>("Timer");
         private Timer.TimerInstance Timer;
 
-        public DiscordClient(string apiKey, bool connectAuto = true)
+        /// <exception cref="APIKeyException">Throws when a user does not provide a API key.</exception>
+        /// <exception cref="NoURLException">Throws when CreateSocket is called, but no url is stored.</exception>
+        /// <exception cref="SocketRunningException">Throws when CreateSocket is called, but a socket is already running.</exception>
+        /// <exception cref="InvalidCreationException">Throws when a user tries to use this method to create a discord client. Should use the static method in the Discord class.</exception>
+        public DiscordClient(string apiKey, bool connectAuto = true) 
         {
             if (string.IsNullOrEmpty(apiKey))
-            {
-                Interface.Oxide.LogError("[Discord Ext] Error! Please supply a valid API key!");
-                return;
-            }
+                throw new APIKeyException();
+            if (Discord.GetClient(apiKey, false, true) == null && !Discord.ToClients.Contains(apiKey))
+                throw new InvalidCreationException();
 
+            Discord.ToClients.Remove(apiKey);
             Settings.ApiToken = apiKey;
             REST = new RESTHandler(Settings.ApiToken);
 
             this.GetURL();
 
             if (!connectAuto)
-            {
                 Interface.Oxide.CallHook("DiscordSocket_SocketReady", WSSURL, this);
-                return;
-            }
-
-            this.CreateSocket();
+            else this.CreateSocket();
         }
 
         public void CreateSocket()
         {
             if (string.IsNullOrEmpty(WSSURL))
-            {
-                Interface.Oxide.LogWarning("[Discord Ext] Error, no WSSURL was found.");
-                return;
-            }
-
+                throw new NoURLException();
             if (Socket != null && Socket.ReadyState != WebSocketState.Closed)
-            {
-                Interface.Oxide.LogWarning("[Discord Ext] Error, tried to create a socket when one is already running.");
+                throw new SocketRunningException();
+            if (Interface.Oxide.CallHook("DiscordSocket_SocketConnecting", WSSURL) != null)
                 return;
-            }
-
-            if (Interface.Oxide.CallHook("DiscordSocket_SocketConnecting", WSSURL) != null) return;
 
             Socket = new WebSocket(WSSURL + "/?v=6&encoding=json");
             Handler = new SocketHandler(this);
@@ -63,6 +57,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
             Socket.OnError += Handler.SocketErrored;
             Socket.OnMessage += Handler.SocketMessage;
             Socket.ConnectAsync();
+            return;
         }
 
         public void Disconnect()
@@ -81,7 +76,8 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
 
         public void CreateHeartbeat(float heartbeatInterval, int lastHeartbeat)
         {
-            if (Timer != null) return;
+            if (Timer != null)
+                return;
 
             Timer = TimerLib.Repeat(heartbeatInterval, -1, () =>
             {
