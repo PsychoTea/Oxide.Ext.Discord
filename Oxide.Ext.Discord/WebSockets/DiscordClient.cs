@@ -16,6 +16,7 @@ namespace Oxide.Ext.Discord.WebSockets
         public Guild DiscordServer { get; set; }
         public RESTHandler REST { get; private set; }
         public string WSSURL { get; private set; }
+        public UpkeepHandler UpHandler { get; set; }
         private WebSocket Socket = null;
         private SocketHandler Handler;
         private Timer TimerLib = Interface.Oxide.GetLibrary<Timer>("Timer");
@@ -71,6 +72,7 @@ namespace Oxide.Ext.Discord.WebSockets
             Socket.OnClose += Handler.SocketClosed;
             Socket.OnError += Handler.SocketErrored;
             Socket.OnMessage += Handler.SocketMessage;
+            UpHandler = new UpkeepHandler(this);
             Socket.ConnectAsync();
         }
 
@@ -84,8 +86,10 @@ namespace Oxide.Ext.Discord.WebSockets
             WSSURL = "";
 
             REST?.Shutdown();
+            UpHandler?.Shutdown();
         }
 
+        public bool IsClosed() => Socket.ReadyState == WebSocketState.Closed;
         public bool IsAlive() => Socket.IsAlive;
 
         public void SendData(string contents) => Socket.Send(contents);
