@@ -20,7 +20,7 @@ namespace Oxide.Plugins
         DiscordClient client;
         void Loaded()
         {
-            client = Discord.GetClient("MzM2NjcwMTYzNTMxNDY0NzA0.DIx4NA.H_5XvIKJ-w2dNn0g1R_Oo6of1Es", true);
+            client = Discord.GetClient("My_Api_Key_Here", true);
         }
         void Unload()
         {
