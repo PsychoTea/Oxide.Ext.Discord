@@ -1,21 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
-using Newtonsoft.Json;
-using Oxide.Core.Libraries;
-using Oxide.Core;
 using System.Threading;
-using System;
-using System.Linq;
+using Newtonsoft.Json;
+using Oxide.Core;
+using Oxide.Core.Libraries;
 
 namespace Oxide.Ext.Discord.Libraries.WebSockets
 {
     public class RESTHandler
     {
-        class RequestObject
+        public class RequestObject
         {
-            string URL;
+            public string URL;
             string Method;
             object Data = null;
             Action<object> Callback = null;
@@ -30,7 +30,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                 ReturnType = (returnType == null) ? typeof(void) : returnType;
             }
 
-            public void DoRequest()
+            public object DoRequest()
             {
                 var req = WebRequest.Create($"{URLBase}{URL}");
                 req.SetRawHeaders(Headers);
@@ -55,18 +55,19 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                 if (response.StatusCode != HttpStatusCode.OK && response.StatusCode != HttpStatusCode.NoContent)
                 {
                     Interface.Oxide.LogWarning($"An error occured whilst submitting a request to {req.RequestUri} (code {response.StatusCode}): {output}");
-                    return;
+                    return null;
                 }
 
-                if (ReturnType == typeof(void) || Callback == null) 
-                    return;
+                if (ReturnType == typeof(void)) 
+                    return null;
 
                 var retObj = JsonConvert.DeserializeObject(output, ReturnType);
-                Callback.Invoke(retObj);
+                Callback?.Invoke(retObj);
+                return retObj;
             }
         }
 
-        static class ThreadManager
+        public static class ThreadManager
         {
             static Thread thread = null;
             static List<RequestObject> PendingRequests = new List<RequestObject>();
@@ -76,10 +77,18 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                 if (thread != null) return;
 
                 thread = new Thread(() => RunThread());
+                thread.Start();
+            }
+
+            public static void Stop()
+            {
+                thread?.Abort();
+                thread = null;
             }
 
             public static void AddRequest(RequestObject newRequest)
             {
+                if (thread == null) ThreadManager.Start();
                 PendingRequests.Add(newRequest);
             }
 
@@ -87,7 +96,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
             {
                 while (thread.ThreadState != ThreadState.AbortRequested)
                 {
-                    while (PendingRequests.Count > 0)
+                    if (PendingRequests.Count > 0)
                     {
                         var currentRequest = PendingRequests.First();
                         currentRequest.DoRequest();
@@ -121,6 +130,12 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
         {
             var reqObj = new RequestObject(URL, method, data, callback, typeof(T));
             ThreadManager.AddRequest(reqObj);
+        }
+
+        public T DoRequestNow<T>(string URL, string method)
+        {
+            var reqObj = new RequestObject(URL, method, null, null, typeof(T));
+            return (T)reqObj.DoRequest();
         }
     }
 }

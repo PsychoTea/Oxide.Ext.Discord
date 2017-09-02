@@ -71,6 +71,8 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                 Socket.Close();
 
             WSSURL = "";
+
+            RESTHandler.ThreadManager.Stop();
         }
 
         public bool IsAlive() => Socket.IsAlive;
@@ -104,7 +106,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
 
         private void GetURL()
         {
-            var data = REST.DoRequest<JObject>("/gateway", "GET");
+            var data = REST.DoRequestNow<JObject>("/gateway", "GET");
             WSSURL = data.GetValue("url").ToString();
         }
     }

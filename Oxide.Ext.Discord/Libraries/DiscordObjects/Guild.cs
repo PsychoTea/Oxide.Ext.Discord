@@ -42,8 +42,10 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
         
         public static void GetGuild(DiscordClient client, string guildID, Action<Guild> callback = null)
         {
-            var guild = client.REST.DoRequest<Guild>($"/guilds/{guildID}", "GET");
-            callback?.Invoke(guild);
+            client.REST.DoRequest<Guild>($"/guilds/{guildID}", "GET", null, (returnValue) =>
+            {
+                callback?.Invoke(returnValue as Guild);
+            });
         }
 
         [Obsolete("TODO: Add this.")]
@@ -54,8 +56,10 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
 
         public void GetGuildChannels(DiscordClient client, Action<List<Channel>> callback = null)
         {
-            var channels = client.REST.DoRequest<List<Channel>>($"/guilds/{id}/channels", "GET");
-            callback?.Invoke(channels);
+            client.REST.DoRequest<List<Channel>>($"/guilds/{id}/channels", "GET", null, (returnValue) =>
+            {
+                callback?.Invoke(returnValue as List<Channel>);
+            });
         }
     }
 }

@@ -14,10 +14,12 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
         public string avatar { get; set; }
         public bool? bot { get; set; }
 
-        public static void GetUser(DiscordClient client, string userID, Action<User> User = null)
+        public static void GetUser(DiscordClient client, string userID, Action<User> callback = null)
         {
-            var user = client.REST.DoRequest<User>($"/users/{userID}", "GET");
-            User?.Invoke(user);
+            client.REST.DoRequest<User>($"/users/{userID}", "GET", null, (returnValue) =>
+            {
+                callback?.Invoke(returnValue as User);
+            });
         }
     }
 }
