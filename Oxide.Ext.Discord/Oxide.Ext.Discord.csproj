@@ -90,6 +90,7 @@
     <Compile Include="Exceptions\NoURLException.cs" />
     <Compile Include="Exceptions\SocketRunningException.cs" />
     <Compile Include="RESTObjects\ObjectPosition.cs" />
+    <Compile Include="RESTObjects\WebhookPayload.cs" />
     <Compile Include="SocketObjects\DiscordPayload.cs" />
     <Compile Include="SocketObjects\Handshake.cs" />
     <Compile Include="DiscordObjects\Message.cs" />

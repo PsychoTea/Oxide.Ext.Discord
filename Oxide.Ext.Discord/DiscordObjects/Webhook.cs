@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Oxide.Ext.Discord.RESTObjects;
 using Oxide.Ext.Discord.WebSockets;
 
 namespace Oxide.Ext.Discord.DiscordObjects
@@ -48,6 +49,80 @@ namespace Oxide.Ext.Discord.DiscordObjects
             client.REST.DoRequest<Webhook>($"/webhooks/{webhookID}", "GET", null, (returnValue) =>
             {
                 callback?.Invoke(returnValue as Webhook);
+            });
+        }
+
+        public static void GetWebhookWithToken(DiscordClient client, string webhookID, string webhookToken, Action<Webhook> callback = null)
+        {
+            client.REST.DoRequest<Webhook>($"/webhooks/{webhookID}/{webhookToken}", "GET", null, (returnValue) =>
+            {
+                callback?.Invoke(returnValue as Webhook);
+            });
+        }
+
+        public void ModifyWebhook(DiscordClient client, string name, string avatar, Action<Webhook> callback = null)
+        {
+            var jsonObj = new Dictionary<string, object>()
+            {
+                { "name", name },
+                { "avatar", avatar }
+            };
+            client.REST.DoRequest<Webhook>($"/webhooks/{id}", "PATCH", jsonObj, (returnValue) =>
+            {
+                callback?.Invoke(returnValue as Webhook);
+            });
+        }
+
+        public void ModifyWebhookWithToken(DiscordClient client, string name, string avatar, Action<Webhook> callback = null)
+        {
+            var jsonObj = new Dictionary<string, object>()
+            {
+                { "name", name },
+                { "avatar", avatar }
+            };
+            client.REST.DoRequest<Webhook>($"/webhooks/{id}/{token}", "PATCH", jsonObj, (returnValue) =>
+            {
+                callback?.Invoke(returnValue as Webhook);
+            });
+        }
+
+        public void DeleteWebhook(DiscordClient client, Action callback = null)
+        {
+            client.REST.DoRequest($"/webhooks/{id}", "DELETE", null, () =>
+            {
+                callback?.Invoke();
+            });
+        }
+
+        public void DeleteWebhookWithToken(DiscordClient client, Action callback = null)
+        {
+            client.REST.DoRequest($"/webhooks/{id}/{token}", "DELETE", null, () =>
+            {
+                callback?.Invoke();
+            });
+        }
+
+        public void ExecuteWebhook(DiscordClient client, bool wait, WebhookPayload payload, Action callback = null)
+        {
+            client.REST.DoRequest($"/webhooks/{id}/{token}?wait={wait}", "POST", payload, () =>
+            {
+                callback?.Invoke();
+            });
+        }
+
+        public void ExecuteWebhookSlack(DiscordClient client, bool wait, WebhookPayload payload, Action callback = null)
+        {
+            client.REST.DoRequest($"/webhooks/{id}/{token}/slack?wait={wait}", "POST", payload, () =>
+            {
+                callback?.Invoke();
+            });
+        }
+
+        public void ExecuteWebhookGitHub(DiscordClient client, bool wait, WebhookPayload payload, Action callback = null)
+        {
+            client.REST.DoRequest($"/webhooks/{id}/{token}/github?wait={wait}", "POST", payload, () =>
+            {
+                callback?.Invoke();
             });
         }
     }
