@@ -36,12 +36,15 @@
   <ItemGroup>
     <Compile Include="Libraries\Discord.cs" />
     <Compile Include="DiscordExtension.cs" />
+    <Compile Include="Libraries\DiscordObjects\Account.cs" />
     <Compile Include="Libraries\DiscordObjects\Author.cs" />
     <Compile Include="Libraries\DiscordObjects\Channel.cs" />
+    <Compile Include="Libraries\DiscordObjects\Connection.cs" />
     <Compile Include="Libraries\DiscordObjects\Embed.cs" />
     <Compile Include="Libraries\DiscordObjects\Emoji.cs" />
     <Compile Include="Libraries\DiscordObjects\Game.cs" />
     <Compile Include="Libraries\DiscordObjects\Guild.cs" />
+    <Compile Include="Libraries\DiscordObjects\Integration.cs" />
     <Compile Include="Libraries\DiscordObjects\Invite.cs" />
     <Compile Include="Libraries\DiscordObjects\Member.cs" />
     <Compile Include="Libraries\DiscordObjects\Presence.cs" />
@@ -49,7 +52,9 @@
     <Compile Include="Libraries\DiscordObjects\Role.cs" />
     <Compile Include="Libraries\DiscordObjects\Thumbnail.cs" />
     <Compile Include="Libraries\DiscordObjects\User.cs" />
+    <Compile Include="Libraries\DiscordObjects\VoiceRegion.cs" />
     <Compile Include="Libraries\DiscordObjects\VoiceState.cs" />
+    <Compile Include="Libraries\DiscordObjects\Webhook.cs" />
     <Compile Include="Libraries\SocketObjects\DiscordPayload.cs" />
     <Compile Include="Libraries\SocketObjects\Handshake.cs" />
     <Compile Include="Libraries\DiscordObjects\Message.cs" />
@@ -57,7 +62,6 @@
     <Compile Include="Libraries\SocketObjects\Payload.cs" />
     <Compile Include="Libraries\SocketObjects\Payload_Property.cs" />
     <Compile Include="Libraries\DiscordObjects\Server.cs" />
-    <Compile Include="Libraries\DiscordObjects\VoiceUpdate.cs" />
     <Compile Include="Libraries\DiscordSettings.cs" />
     <Compile Include="Libraries\WebSockets\RESTHandler.cs" />
     <Compile Include="Libraries\WebSockets\SocketHandler.cs" />

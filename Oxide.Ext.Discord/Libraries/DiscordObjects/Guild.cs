@@ -1,8 +1,6 @@
-﻿using Oxide.Ext.Discord.Libraries.WebSockets;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Oxide.Ext.Discord.Libraries.WebSockets;
 
 namespace Oxide.Ext.Discord.Libraries.DiscordObjects
 {

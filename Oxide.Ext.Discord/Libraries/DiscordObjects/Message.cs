@@ -1,9 +1,6 @@
-﻿using Oxide.Core;
-using Oxide.Ext.Discord.Libraries.WebSockets;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Oxide.Ext.Discord.Libraries.WebSockets;
 
 namespace Oxide.Ext.Discord.Libraries.DiscordObjects
 {
@@ -31,32 +28,43 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
         {
             client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions/{emoji}/@me", "PUT");
         }
+
         public void DeleteOwnReaction(DiscordClient client, string emoji)
         {
             client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions/{emoji}/@me", "DELETE");
         }
-        public void DeleteUsersReaction(DiscordClient client, string emoji, string userID)
+
+        public void DeleteOwnReaction(DiscordClient client, string emoji, string userID)
         {
             client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions/{emoji}/{userID}", "DELETE");
         }
+
         public void GetReactions(DiscordClient client, string emoji, Action<List<User>> callback = null)
         {
-            var users = client.REST.DoRequest<List<User>>($"/channels/{channel_id}/messages/{id}/reactions/{emoji}", "GET");
-            callback?.Invoke(users);
+            client.REST.DoRequest<List<User>>($"/channels/{channel_id}/messages/{id}/reactions/{emoji}", "GET", null, (returnValue) =>
+            {
+                callback?.Invoke(returnValue as List<User>);
+            });
         }
+
         public void DeleteAllReactions(DiscordClient client)
         {
             client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions", "DELETE");
         }
-        public void Edit(DiscordClient client, Message message, Action<Message> callback = null)
+
+        public void EditMessage(DiscordClient client, Action<Message> callback = null)
         {
-            var newMessage = client.REST.DoRequest<Message>($"/channels/{channel_id}/messages/{id}", "PATCH", message);
-            callback?.Invoke(newMessage);
+            client.REST.DoRequest<Message>($"/channels/{channel_id}/messages/{id}", "PATCH", this, (returnValue) =>
+            {
+                callback?.Invoke(returnValue as Message);
+            });
         }
-        public void Delete(DiscordClient client)
+
+        public void DeleteMessage(DiscordClient client, Action<Message> callback = null)
         {
             client.REST.DoRequest($"/channels/{channel_id}/messages/{id}", "DELETE");
         }
+
         public void AddPinnedChannelMessage(DiscordClient client)
         {
             client.REST.DoRequest($"/channels/{channel_id}/pins/{id}", "PUT");
