@@ -2,7 +2,8 @@
 {
     public class Game
     {
-        public int type { get; set; }
         public string name { get; set; }
+        public int type { get; set; }
+        public string url { get; set; }
     }
 }

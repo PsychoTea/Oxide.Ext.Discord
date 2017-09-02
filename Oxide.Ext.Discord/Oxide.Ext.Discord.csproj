@@ -35,6 +35,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Discord.cs" />
+    <Compile Include="DiscordEvents\GuildBan.cs" />
+    <Compile Include="DiscordEvents\GuildMemberAdd.cs" />
+    <Compile Include="DiscordEvents\GuildMemberRemove.cs" />
+    <Compile Include="DiscordEvents\TypingStart.cs" />
+    <Compile Include="DiscordEvents\VoiceServerUpdate.cs" />
+    <Compile Include="DiscordEvents\WebhooksUpdate.cs" />
+    <Compile Include="DiscordObjects\Game.cs" />
     <Compile Include="DiscordEvents\GuildIntergrationsUpdate.cs" />
     <Compile Include="DiscordEvents\GuildMembersChunk.cs" />
     <Compile Include="DiscordEvents\GuildMemberUpdate.cs" />
@@ -43,6 +50,9 @@
     <Compile Include="DiscordEvents\GuildRoleUpdate.cs" />
     <Compile Include="DiscordEvents\MessageDelete.cs" />
     <Compile Include="DiscordEvents\MessageDeleteBulk.cs" />
+    <Compile Include="DiscordEvents\MessageReactionRemoveAll.cs" />
+    <Compile Include="DiscordEvents\MessageReactionUpdate.cs" />
+    <Compile Include="DiscordEvents\PresenceUpdate.cs" />
     <Compile Include="DiscordExtension.cs" />
     <Compile Include="DiscordObjects\Account.cs" />
     <Compile Include="DiscordObjects\Author.cs" />
@@ -51,7 +61,6 @@
     <Compile Include="DiscordObjects\Connection.cs" />
     <Compile Include="DiscordObjects\Embed.cs" />
     <Compile Include="DiscordObjects\Emoji.cs" />
-    <Compile Include="DiscordObjects\Game.cs" />
     <Compile Include="DiscordObjects\Guild.cs" />
     <Compile Include="DiscordEvents\GuildEmojisUpdate.cs" />
     <Compile Include="DiscordObjects\GuildMember.cs" />
@@ -60,8 +69,8 @@
     <Compile Include="DiscordObjects\Member.cs" />
     <Compile Include="DiscordObjects\Presence.cs" />
     <Compile Include="DiscordObjects\Provider.cs" />
-    <Compile Include="DiscordObjects\Ready.cs" />
-    <Compile Include="DiscordObjects\Resumed.cs" />
+    <Compile Include="DiscordEvents\Ready.cs" />
+    <Compile Include="DiscordEvents\Resumed.cs" />
     <Compile Include="DiscordObjects\Role.cs" />
     <Compile Include="DiscordObjects\Thumbnail.cs" />
     <Compile Include="DiscordObjects\User.cs" />

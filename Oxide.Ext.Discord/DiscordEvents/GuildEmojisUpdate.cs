@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Oxide.Ext.Discord.DiscordObjects;
 
 namespace Oxide.Ext.Discord.DiscordEvents
 {

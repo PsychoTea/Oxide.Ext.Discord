@@ -108,7 +108,7 @@ namespace Oxide.Ext.Discord.WebSockets
                             ChannelPinsUpdate channelPinsUpdate = JsonConvert.DeserializeObject<ChannelPinsUpdate>(messageObj["d"].ToString());
                             Interface.Oxide.CallHook("Discord_ChannelPinsUpdate", channelPinsUpdate);
                             break;
-                            
+
                         // this isn't set up right
                         // https://discordapp.com/developers/docs/topics/gateway#guild-create
                         case "GUILD_CREATE":
@@ -126,33 +126,33 @@ namespace Oxide.Ext.Discord.WebSockets
                             break;
 
                         case "GUILD_BAN_ADD":
-                            Interface.Oxide.LogWarning($"[Discord Ext] [Debug] GUILD_BAN_ADD: {messageObj["d"].ToString()}");
+                            GuildBan guildBanAdd = JsonConvert.DeserializeObject<GuildBan>(messageObj["d"].ToString());
+                            Interface.Oxide.CallHook("Discord_GuildBanAdd", guildBanAdd);
                             break;
 
                         case "GUILD_BAN_REMOVE":
-                            Interface.Oxide.LogWarning($"[Discord Ext] [Debug] GUILD_BAN_REMOVE: {messageObj["d"].ToString()}");
+                            GuildBan guildBanRemove = JsonConvert.DeserializeObject<GuildBan>(messageObj["d"].ToString());
+                            Interface.Oxide.CallHook("Discord_GuildBanRemove", guildBanRemove);
                             break;
 
                         case "GUILD_EMOJIS_UPDATE":
-                            GuildEmojisUpdate emojisUpdate = JsonConvert.DeserializeObject<GuildEmojisUpdate>(messageObj["d"].ToString());
-                            Interface.Oxide.CallHook("Discord_GuildEmojisUpdate", emojisUpdate);
+                            GuildEmojisUpdate guildEmojisUpdate = JsonConvert.DeserializeObject<GuildEmojisUpdate>(messageObj["d"].ToString());
+                            Interface.Oxide.CallHook("Discord_GuildEmojisUpdate", guildEmojisUpdate);
                             break;
 
                         case "GUILD_INTEGRATIONS_UPDATE":
-                            GuildIntergrationsUpdate intergrationsUpdate = JsonConvert.DeserializeObject<GuildIntergrationsUpdate>(messageObj["d"].ToString());
-                            Interface.Oxide.CallHook("Discord_GuildIntergrationsUpdate", intergrationsUpdate);
+                            GuildIntergrationsUpdate guildIntergrationsUpdate = JsonConvert.DeserializeObject<GuildIntergrationsUpdate>(messageObj["d"].ToString());
+                            Interface.Oxide.CallHook("Discord_GuildIntergrationsUpdate", guildIntergrationsUpdate);
                             break;
 
                         case "GUILD_MEMBER_ADD":
-                            Interface.Oxide.LogWarning($"[Discord Ext] [Debug] GUILD_MEMBER_ADD: {messageObj["d"].ToString()}");
-                            //GuildMemeber add = JsonConvert.DeserializeObject<GuildMemeber>(messageObj["d"].ToString());
-                            //Interface.Oxide.CallHook("Discord_MemberAdded", add);
+                            GuildMemberAdd guildMemberAdd = JsonConvert.DeserializeObject<GuildMemberAdd>(messageObj["d"].ToString());
+                            Interface.Oxide.CallHook("Discord_MemberAdded", guildMemberAdd);
                             break;
 
                         case "GUILD_MEMBER_REMOVE":
-                            Interface.Oxide.LogWarning($"[Discord Ext] [Debug] GUILD_MEMBER_REMOVE: {messageObj["d"].ToString()}");
-                            //GuildMemeber remove = JsonConvert.DeserializeObject<GuildMemeber>(messageObj["d"].ToString());
-                            //Interface.Oxide.CallHook("Discord_MemberRemoved", remove);
+                            GuildMemberRemove guildMemberRemove = JsonConvert.DeserializeObject<GuildMemberRemove>(messageObj["d"].ToString());
+                            Interface.Oxide.CallHook("Discord_MemberRemoved", guildMemberRemove);
                             break;
 
                         case "GUILD_MEMBER_UPDATE":
@@ -200,7 +200,50 @@ namespace Oxide.Ext.Discord.WebSockets
                             Interface.Oxide.CallHook("Discord_MessageDeleteBulk", messageDeleteBulk);
                             break;
 
-                        
+                        case "MESSAGE_REACTION_ADD":
+                            MessageReactionUpdate messageReactionAdd = JsonConvert.DeserializeObject<MessageReactionUpdate>(messageObj["d"].ToString());
+                            Interface.Oxide.CallHook("Discord_MessageReactionAdd", messageReactionAdd);
+                            break;
+
+                        case "MESSAGE_REACTION_REMOVE":
+                            MessageReactionUpdate messageReactionRemove = JsonConvert.DeserializeObject<MessageReactionUpdate>(messageObj["d"].ToString());
+                            Interface.Oxide.CallHook("Discord_MessageReactionRemove", messageReactionRemove);
+                            break;
+
+                        case "MESSAGE_REACTION_REMOVE_ALL":
+                            MessageReactionRemoveAll messageReactionRemoveAll = JsonConvert.DeserializeObject<MessageReactionRemoveAll>(messageObj["d"].ToString());
+                            Interface.Oxide.CallHook("Discord_MessageReactionRemoveAll", messageReactionRemoveAll);
+                            break;
+
+                        case "PRESENCE_UPDATE":
+                            PresenceUpdate presenceUpdate = JsonConvert.DeserializeObject<PresenceUpdate>(messageObj["d"].ToString());
+                            Interface.Oxide.CallHook("Discord_PresenceUpdate", presenceUpdate);
+                            break;
+
+                        case "TYPING_START":
+                            TypingStart typingStart = JsonConvert.DeserializeObject<TypingStart>(messageObj["d"].ToString());
+                            Interface.Oxide.CallHook("Discord_TypingStart", typingStart);
+                            break;
+
+                        case "USER_UPDATE":
+                            User userUpdate = JsonConvert.DeserializeObject<User>(messageObj["d"].ToString());
+                            Interface.Oxide.CallHook("Discord_UserUpdate", userUpdate);
+                            break;
+
+                        case "VOICE_STATE_UPDATE":
+                            VoiceState voiceStateUpdate = JsonConvert.DeserializeObject<VoiceState>(messageObj["d"].ToString());
+                            Interface.Oxide.CallHook("Discord_VoiceStateUpdate", voiceStateUpdate);
+                            break;
+
+                        case "VOICE_SERVER_UPDATE":
+                            VoiceServerUpdate voiceServerUpdate = JsonConvert.DeserializeObject<VoiceServerUpdate>(messageObj["d"].ToString());
+                            Interface.Oxide.CallHook("Discord_VoiceServerUpdate", voiceServerUpdate);
+                            break;
+
+                        case "WEBHOOKS_UPDATE":
+                            WebhooksUpdate webhooksUpdate = JsonConvert.DeserializeObject<WebhooksUpdate>(messageObj["d"].ToString());
+                            Interface.Oxide.CallHook("Discord_WebhooksUpdate", webhooksUpdate);
+                            break;
 
                         default:
                             Interface.Oxide.CallHook("Discord_UnhandledMessage", messageObj);

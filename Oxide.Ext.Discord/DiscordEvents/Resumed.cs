@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Oxide.Ext.Discord.DiscordObjects
+namespace Oxide.Ext.Discord.DiscordEvents
 {
     public class Resumed
     {
