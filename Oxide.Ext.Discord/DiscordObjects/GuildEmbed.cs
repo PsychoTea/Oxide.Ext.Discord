@@ -2,7 +2,7 @@
 {
     public class GuildEmbed
     {
-        public bool enabled;
-        public string channel_id;
+        public bool enabled { get; set; }
+        public string channel_id { get; set; }
     }
 }

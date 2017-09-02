@@ -41,6 +41,10 @@
     <Compile Include="DiscordEvents\TypingStart.cs" />
     <Compile Include="DiscordEvents\VoiceServerUpdate.cs" />
     <Compile Include="DiscordEvents\WebhooksUpdate.cs" />
+    <Compile Include="DiscordObjects\AuditLog.cs" />
+    <Compile Include="DiscordObjects\AuditLogChange.cs" />
+    <Compile Include="DiscordObjects\AuditLogChangeKey.cs" />
+    <Compile Include="DiscordObjects\AuditLogEntry.cs" />
     <Compile Include="DiscordObjects\Ban.cs" />
     <Compile Include="DiscordObjects\Game.cs" />
     <Compile Include="DiscordEvents\GuildIntergrationsUpdate.cs" />
@@ -69,6 +73,7 @@
     <Compile Include="DiscordObjects\Integration.cs" />
     <Compile Include="DiscordObjects\Invite.cs" />
     <Compile Include="DiscordObjects\Member.cs" />
+    <Compile Include="DiscordObjects\OptionalAuditEntryInfo.cs" />
     <Compile Include="DiscordObjects\Overwrite.cs" />
     <Compile Include="DiscordObjects\Presence.cs" />
     <Compile Include="DiscordObjects\Provider.cs" />

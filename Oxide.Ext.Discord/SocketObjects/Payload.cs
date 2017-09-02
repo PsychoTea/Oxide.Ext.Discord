@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace Oxide.Ext.Discord.DiscordObjects
 {
@@ -10,10 +9,10 @@ namespace Oxide.Ext.Discord.DiscordObjects
         [JsonProperty("properties")]
         public Payload_Property Property { get; set; }
         [JsonProperty("compress")]
-        public bool Compress;
+        public bool Compress { get; set; }
         [JsonProperty("large_threshold")]
         public int Large_Threshold { get; set; }
         [JsonProperty("shard")]
-        public int[] Shard = new List<int>() { 0, 1 }.ToArray();
+        public int[] Shard { get; set; } = new int[] { 0, 1, };
     }
 }

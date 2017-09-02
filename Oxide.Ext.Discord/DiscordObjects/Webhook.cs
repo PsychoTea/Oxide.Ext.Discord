@@ -6,13 +6,13 @@ namespace Oxide.Ext.Discord.DiscordObjects
 {
     public class Webhook
     {
-        public string id;
-        public string guild_id;
-        public string channel_id;
-        public User user;
-        public string name;
-        public string avatar;
-        public string token;
+        public string id { get; set; }
+        public string guild_id { get; set; }
+        public string channel_id { get; set; }
+        public User user { get; set; }
+        public string name { get; set; }
+        public string avatar { get; set; }
+        public string token { get; set; }
 
         public static void CreateWebhook(DiscordClient client, string channelID, string name, string avatar, Action<Webhook> callback = null)
         {
