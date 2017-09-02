@@ -5,7 +5,7 @@ namespace Oxide.Ext.Discord.DiscordEvents
 {
     public class Ready
     {
-        public int v { get; set; }
+        public int? v { get; set; }
         public User user { get; set; }
         public List<Channel> private_channels { get; set; }
         public List<Guild> guilds { get; set; }
