@@ -15,23 +15,23 @@ namespace Oxide.Ext.Discord.DiscordObjects
         public string owner_id { get; set; }
         public string region { get; set; }
         public string afk_channel_id { get; set; }
-        public int afk_timeout { get; set; }
-        public bool embed_enabled { get; set; }
+        public int? afk_timeout { get; set; }
+        public bool? embed_enabled { get; set; }
         public string embed_channel_id { get; set; }
-        public int verification_level { get; set; }
-        public int default_message_notifications { get; set; }
-        public int explicit_content_filter { get; set; }
+        public int? verification_level { get; set; }
+        public int? default_message_notifications { get; set; }
+        public int? explicit_content_filter { get; set; }
         public List<Role> roles { get; set; }
         public List<Emoji> emojis { get; set; }
         public List<string> features { get; set; }
-        public int mfa_level { get; set; }
+        public int? mfa_level { get; set; }
         public string application_id { get; set; }
-        public bool widget_enabled { get; set; }
+        public bool? widget_enabled { get; set; }
         public string widget_channel_id { get; set; }
         public string joined_at { get; set; }
-        public bool large { get; set; }
-        public bool unavailable { get; set; }
-        public int member_count { get; set; }
+        public bool? large { get; set; }
+        public bool? unavailable { get; set; }
+        public int? member_count { get; set; }
         public List<VoiceState> voice_states { get; set; }
         public List<Member> members { get; set; }
         public List<Channel> channels { get; set; }

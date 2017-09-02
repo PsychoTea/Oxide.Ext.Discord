@@ -9,7 +9,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
         public string id { get; set; }
         public string name { get; set; }
         public string sample_hostname { get; set; }
-        public int sample_port { get; set; }
+        public int? sample_port { get; set; }
         public bool vip { get; set; }
         public bool optimal { get; set; }
         public bool deprecated { get; set; }

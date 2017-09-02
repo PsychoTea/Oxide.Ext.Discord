@@ -23,7 +23,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
         public string nonce { get; set; }
         public bool pinned { get; set; }
         public string webhook_id { get; set; }
-        public int type { get; set; }
+        public int? type { get; set; }
 
         public void Reply(DiscordClient client, Message message, Action<Message> callback = null)
         {

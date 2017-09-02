@@ -8,23 +8,23 @@ namespace Oxide.Ext.Discord.DiscordObjects
         {
             public string url { get; set; }
             public string proxy_url { get; set; }
-            public int height { get; set; }
-            public int width { get; set; }
+            public int? height { get; set; }
+            public int? width { get; set; }
         }
 
         public class Video
         {
             public string url { get; set; }
-            public int height { get; set; }
-            public int width { get; set; }
+            public int? height { get; set; }
+            public int? width { get; set; }
         }
 
         public class Image
         {
             public string url { get; set; }
             public string proxy_url { get; set; }
-            public int height { get; set; }
-            public int width { get; set; }
+            public int? height { get; set; }
+            public int? width { get; set; }
         }
 
         public class Provider
@@ -60,7 +60,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
         public string description { get; set; }
         public string url { get; set; }
         public string timestamp { get; set; }
-        public int color { get; set; }
+        public int? color { get; set; }
         public Footer footer { get; set; }
         public Image image { get; set; }
         public Thumbnail thumbnail { get; set; }
