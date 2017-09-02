@@ -18,15 +18,32 @@ namespace Oxide.Ext.Discord.WebSockets
             public string URL;
             string Method;
             object Data = null;
-            Action<object> Callback = null;
+            Action Callback = null;
+            Action<object> CallbackObj = null;
             Type ReturnType = typeof(void);
             
-            public RequestObject(string url, string method, object data = null, Action<object> callback = null, Type returnType = null)
+            public RequestObject(string url, string method, Type returnType = null)
+            {
+                URL = url;
+                Method = method;
+                ReturnType = returnType;
+            }
+
+            public RequestObject(string url, string method, object data = null, Action callback = null, Type returnType = null)
             {
                 URL = url;
                 Method = method;
                 Data = data;
                 Callback = callback;
+                ReturnType = returnType;
+            }
+
+            public RequestObject(string url, string method, object data = null, Action<object> callback = null, Type returnType = null)
+            {
+                URL = url;
+                Method = method;
+                Data = data;
+                CallbackObj = callback;
                 ReturnType = (returnType == null) ? typeof(void) : returnType;
             }
 
@@ -58,11 +75,14 @@ namespace Oxide.Ext.Discord.WebSockets
                     return null;
                 }
 
-                if (ReturnType == typeof(void)) 
+                if (ReturnType == typeof(void))
+                {
+                    Callback?.Invoke();
                     return null;
+                }
 
                 var retObj = JsonConvert.DeserializeObject(output, ReturnType);
-                Callback?.Invoke(retObj);
+                CallbackObj?.Invoke(retObj);
                 return retObj;
             }
         }
@@ -125,7 +145,7 @@ namespace Oxide.Ext.Discord.WebSockets
             ThreadManager.Stop();
         }
 
-        public void DoRequest(string URL, string method, object data = null, Action<object> callback = null)
+        public void DoRequest(string URL, string method, object data = null, Action callback = null)
         {
             var reqObj = new RequestObject(URL, method, data, callback);
             ThreadManager.AddRequest(reqObj);
@@ -139,7 +159,7 @@ namespace Oxide.Ext.Discord.WebSockets
 
         public T DoRequestNow<T>(string URL, string method)
         {
-            var reqObj = new RequestObject(URL, method, null, null, typeof(T));
+            var reqObj = new RequestObject(URL, method, typeof(T));
             return (T)reqObj.DoRequest();
         }
     }

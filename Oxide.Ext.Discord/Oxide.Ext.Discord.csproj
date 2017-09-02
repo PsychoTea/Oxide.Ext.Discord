@@ -41,6 +41,7 @@
     <Compile Include="DiscordEvents\TypingStart.cs" />
     <Compile Include="DiscordEvents\VoiceServerUpdate.cs" />
     <Compile Include="DiscordEvents\WebhooksUpdate.cs" />
+    <Compile Include="DiscordObjects\Ban.cs" />
     <Compile Include="DiscordObjects\Game.cs" />
     <Compile Include="DiscordEvents\GuildIntergrationsUpdate.cs" />
     <Compile Include="DiscordEvents\GuildMembersChunk.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="DiscordObjects\Integration.cs" />
     <Compile Include="DiscordObjects\Invite.cs" />
     <Compile Include="DiscordObjects\Member.cs" />
+    <Compile Include="DiscordObjects\Overwrite.cs" />
     <Compile Include="DiscordObjects\Presence.cs" />
     <Compile Include="DiscordObjects\Provider.cs" />
     <Compile Include="DiscordEvents\Ready.cs" />
@@ -81,6 +83,7 @@
     <Compile Include="Exceptions\InvalidCreationException.cs" />
     <Compile Include="Exceptions\NoURLException.cs" />
     <Compile Include="Exceptions\SocketRunningException.cs" />
+    <Compile Include="RESTObjects\ObjectPosition.cs" />
     <Compile Include="SocketObjects\DiscordPayload.cs" />
     <Compile Include="SocketObjects\Handshake.cs" />
     <Compile Include="DiscordObjects\Message.cs" />
