@@ -6,31 +6,30 @@ I will do this later
 
 ### Plugin Example
 ```csharp
+using Oxide.Ext.Discord.Libraries.WebSockets;
+using Oxide.Ext.Discord.Libraries;
+using Oxide.Core.Libraries.Covalence;
+
 namespace Oxide.Plugins
 {
-    [Info("Discord Alerts", "DylanSMR", 0.1, ResourceId = 000)]
-    [Description("A discord alerts plugin.")]
+    [Info("Test Discord Alerts", "DylanSMR", 0.1)]
+    [Description("A test plugin for the Oxide.Ext.Discord Extension.")]
     class DiscordAlerts : CovalencePlugin
     {
-		WebSocketClient client; //Just a variable.
-		void DiscordSocket_WebsocketOpened(WebSocketClient client){
-			PrintWarning("Websocket Opened Confirmed"); //Prints that the hook is open.
-		}
-		void DiscordSocket_SocketReady(string url, WebSocketClient cl){
-			cl.CreateSocket(); //Creates the actual socket when the extension says its ready.
-		}
-		void Discord_TextMessage(Message message){
-			PrintWarning(message.content); //Prints a message to console
-		}
+		DiscordClient client;
+		private const string token = "Insert_Api_Key_Here";
 		void Loaded()
 		{
-			client = new WebSocketClient(false); //Creates the web socket, false meaning it does not create it yet. Can be created at another point.
+			client = Discord.GetClient(token, true);
+		}
+		void DiscordSocket_WebSocketOpened(){
+			LogWarning("Web Socket Opened!");
 		}
 		void Unload(){
-			client.Disconnect(); //Disconnects  the client via unload. If this is not done, the wss server will never unload(probably).
-		}
-		void SendMessage(string channel, string text){
-			client.SendMessage(channel, text);
+			var localClient = Discord.GetClient(token, false, true);
+			if(localClient != null) 
+				if(Discord.CloseClient(localClient)) LogWarning("Discord Connection Ended");
+				else LogWarning("Failed to end discord connection.");
 		}
     }
 }
