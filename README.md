@@ -45,4 +45,4 @@ namespace Oxide.Plugins
 ```
 
 ### Hooks
-Update to date hooks at dylansmr.us/discord/
+Up to date hooks at dylansmr.us/discord/
