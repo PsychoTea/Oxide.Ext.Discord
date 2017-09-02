@@ -21,5 +21,18 @@ namespace Oxide.Ext.Discord.Libraries.DiscordObjects
                 callback?.Invoke(returnValue as User);
             });
         }
+        public void GroupDMAddRecipient(DiscordClient client, string channelID, string accessToken, string nick)
+        {
+            var jsonObj = new Dictionary<string, string>()
+            {
+                { "access_token", accessToken },
+                { "nick", nick }
+            };
+            client.REST.DoRequest($"/channels/{channelID}/recipients/{id}", "PUT", jsonObj);
+        }
+        public void GroupDMRemoveRecipient(DiscordClient client, string channelID)
+        {
+            client.REST.DoRequest($"/channels/{channelID}/recipients/{id}", "DELETE");
+        }
     }
 }
