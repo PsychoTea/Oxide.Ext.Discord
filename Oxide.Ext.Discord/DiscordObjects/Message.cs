@@ -24,6 +24,15 @@ namespace Oxide.Ext.Discord.DiscordObjects
         public Author author { get; set; }
         public List<object> attachments { get; set; }
 
+        public void Reply(DiscordClient client, Message message, Action<Message> callback = null)
+        {
+            var temp = message.content;
+            message.content = $"<@{author.id}> " + temp;
+            client.REST.DoRequest<Message>($"/channels/{channel_id}/messages", "POST", message, (returnValue) =>
+            {
+                callback?.Invoke(returnValue as Message);
+            });
+        }
         public void CreateReaction(DiscordClient client, string emoji)
         {
             client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions/{emoji}/@me", "PUT");
