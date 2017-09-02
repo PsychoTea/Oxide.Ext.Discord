@@ -17,6 +17,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
         public List<User> mentions { get; set; }
         public List<string> mention_roles { get; set; }
         public List<Attachment> attachments { get; set; }
+        public Embed embed { get; set; }
         public List<Embed> embeds { get; set; }
         public List<Reaction> reactions { get; set; }
         public string nonce { get; set; }
@@ -33,6 +34,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
                 callback?.Invoke(returnValue as Message);
             });
         }
+
         public void CreateReaction(DiscordClient client, string emoji)
         {
             client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions/{emoji}/@me", "PUT");

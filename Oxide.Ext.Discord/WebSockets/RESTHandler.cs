@@ -55,7 +55,7 @@ namespace Oxide.Ext.Discord.WebSockets
 
                 if (Data != null)
                 {
-                    string contents = JsonConvert.SerializeObject(Data);
+                    string contents = JsonConvert.SerializeObject(Data, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
                     byte[] bytes = Encoding.ASCII.GetBytes(contents);
                     req.ContentLength = bytes.Length;
 

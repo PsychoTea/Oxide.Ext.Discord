@@ -76,8 +76,10 @@ namespace Oxide.Ext.Discord.WebSockets
 
         public void Disconnect()
         {
-            if (Socket.IsAlive)
-                Socket.Close();
+            //if (Socket.IsAlive)
+            //{
+            //    Socket.CloseAsync();
+            //}
 
             WSSURL = "";
 
@@ -87,7 +89,7 @@ namespace Oxide.Ext.Discord.WebSockets
         public bool IsAlive() => Socket.IsAlive;
 
         public void SendData(string contents) => Socket.Send(contents);
-
+        
         public void CreateHeartbeat(float heartbeatInterval, int lastHeartbeat)
         {
             if (Timer != null)
