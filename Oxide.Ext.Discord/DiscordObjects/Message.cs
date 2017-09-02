@@ -45,6 +45,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
             client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions/{emoji}/@me", "DELETE");
         }
 
+        public void DeleteOwnReaction(DiscordClient client, string emoji, User user) => DeleteOwnReaction(client, emoji, user.id);
         public void DeleteOwnReaction(DiscordClient client, string emoji, string userID)
         {
             client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions/{emoji}/{userID}", "DELETE");

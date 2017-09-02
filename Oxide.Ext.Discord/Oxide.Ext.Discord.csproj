@@ -88,6 +88,7 @@
     <Compile Include="Exceptions\InvalidCreationException.cs" />
     <Compile Include="Exceptions\NoURLException.cs" />
     <Compile Include="Exceptions\SocketRunningException.cs" />
+    <Compile Include="RESTObjects\Nick.cs" />
     <Compile Include="RESTObjects\ObjectPosition.cs" />
     <Compile Include="RESTObjects\WebhookPayload.cs" />
     <Compile Include="SocketObjects\DiscordPayload.cs" />
