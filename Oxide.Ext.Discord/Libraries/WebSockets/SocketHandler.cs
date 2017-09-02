@@ -73,10 +73,7 @@ namespace Oxide.Ext.Discord.Libraries.WebSockets
                     float time = (float)info["d"]["heartbeat_interval"] / 1000f;
                     Client.CreateHeartbeat(time, lastHeartbeat);
                     break;
-
-                case "7":
-                    break;
-
+                    
                 case "0":
                     switch (messageObj["t"].ToString())
                     {
