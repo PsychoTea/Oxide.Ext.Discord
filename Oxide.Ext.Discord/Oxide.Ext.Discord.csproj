@@ -41,6 +41,7 @@
     <Compile Include="DiscordEvents\TypingStart.cs" />
     <Compile Include="DiscordEvents\VoiceServerUpdate.cs" />
     <Compile Include="DiscordEvents\WebhooksUpdate.cs" />
+    <Compile Include="DiscordObjects\Attachment.cs" />
     <Compile Include="DiscordObjects\AuditLog.cs" />
     <Compile Include="DiscordObjects\AuditLogChange.cs" />
     <Compile Include="DiscordObjects\AuditLogChangeKey.cs" />
@@ -60,7 +61,6 @@
     <Compile Include="DiscordEvents\PresenceUpdate.cs" />
     <Compile Include="DiscordExtension.cs" />
     <Compile Include="DiscordObjects\Account.cs" />
-    <Compile Include="DiscordObjects\Author.cs" />
     <Compile Include="DiscordObjects\Channel.cs" />
     <Compile Include="DiscordEvents\ChannelPinsUpdate.cs" />
     <Compile Include="DiscordObjects\Connection.cs" />
@@ -76,11 +76,10 @@
     <Compile Include="DiscordObjects\OptionalAuditEntryInfo.cs" />
     <Compile Include="DiscordObjects\Overwrite.cs" />
     <Compile Include="DiscordObjects\Presence.cs" />
-    <Compile Include="DiscordObjects\Provider.cs" />
     <Compile Include="DiscordEvents\Ready.cs" />
     <Compile Include="DiscordEvents\Resumed.cs" />
+    <Compile Include="DiscordObjects\Reaction.cs" />
     <Compile Include="DiscordObjects\Role.cs" />
-    <Compile Include="DiscordObjects\Thumbnail.cs" />
     <Compile Include="DiscordObjects\User.cs" />
     <Compile Include="DiscordObjects\VoiceRegion.cs" />
     <Compile Include="DiscordObjects\VoiceState.cs" />

@@ -6,23 +6,23 @@ namespace Oxide.Ext.Discord.DiscordObjects
 {
     public class Message
     {
-        public string webhook_id { get; set; }
-        public int type { get; set; }
-        public bool tts { get; set; }
+        public string id { get; set; }
+        public string channel_id { get; set; }
+        public User author { get; set; }
+        public string content { get; set; }
         public string timestamp { get; set; }
-        public bool pinned { get; set; }
-        public object nonce { get; set; }
+        public string edited_timestamp { get; set; }
+        public bool tts { get; set; }
+        public bool mention_everyone { get; set; }
         public List<User> mentions { get; set; }
         public List<string> mention_roles { get; set; }
-        public bool mention_everyone { get; set; }
-        public string id { get; set; }
+        public List<Attachment> attachments { get; set; }
         public List<Embed> embeds { get; set; }
-        public Embed embed { get; set; }
-        public object edited_timestamp { get; set; }
-        public string content { get; set; }
-        public string channel_id { get; set; }
-        public Author author { get; set; }
-        public List<object> attachments { get; set; }
+        public List<Reaction> reactions { get; set; }
+        public string nonce { get; set; }
+        public bool pinned { get; set; }
+        public string webhook_id { get; set; }
+        public int type { get; set; }
 
         public void Reply(DiscordClient client, Message message, Action<Message> callback = null)
         {
