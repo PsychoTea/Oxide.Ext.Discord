@@ -273,11 +273,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
 
         public void BeginGuildPrune(DiscordClient client, int days, Action<int> callback = null)
         {
-            var jsonObj = new Dictionary<string, object>()
-            {
-                { "days", days }
-            };
-            client.REST.DoRequest<JObject>($"/guilds/{id}/prune", "POST", jsonObj, (returnValue) =>
+            client.REST.DoRequest<JObject>($"/guilds/{id}/prune?days={days}", "POST", null, (returnValue) =>
             {
                 callback?.Invoke((int)(returnValue as JObject).GetValue("pruned").ToObject(typeof(int)));
             });
@@ -291,6 +287,79 @@ namespace Oxide.Ext.Discord.DiscordObjects
             });
         }
 
-        //public void GetGuildInvites()
+        public void GetGuildInvites(DiscordClient client, Action<List<Invite>> callback = null)
+        {
+            client.REST.DoRequest<List<Invite>>($"/guilds/{id}/invites", "GET", null, (returnValue) =>
+            {
+                callback?.Invoke(returnValue as List<Invite>);
+            });
+        }
+
+        public void GetGuildIntegrations(DiscordClient client, Action<List<Integration>> callback = null)
+        {
+            client.REST.DoRequest<List<Integration>>($"/guilds/{id}/integrations", "GET", null, (returnValue) =>
+            {
+                callback?.Invoke(returnValue as List<Integration>);
+            });
+        }
+
+        public void CreateGuildIntegration(DiscordClient client, string type, string id, Action callback = null)
+        {
+            var jsonObj = new Dictionary<string, object>()
+            {
+                { "type", type },
+                { "id", id }
+            };
+            client.REST.DoRequest($"/guilds/{id}/integrations", "POST", jsonObj, () =>
+            {
+                callback?.Invoke();
+            });
+        }
+
+        public void ModifyGuildIntegration(DiscordClient client, string integrationID, int expireBehaviour, int expireGracePeroid, bool enableEmoticons, Action callback = null)
+        {
+            var jsonObj = new Dictionary<string, object>()
+            {
+                { "expire_behaviour", expireBehaviour },
+                { "expire_grace_peroid", expireGracePeroid },
+                { "enable_emoticons", enableEmoticons }
+            };
+            client.REST.DoRequest($"/guilds/{id}/integrations/{integrationID}", "PATCH", jsonObj, () =>
+            {
+                callback?.Invoke();
+            });
+        }
+
+        public void DeleteGuildIntegration(DiscordClient client, string integrationID, Action callback = null)
+        {
+            client.REST.DoRequest($"/guilds/{id}/integrations/{integrationID}", "DELETE", null, () =>
+            {
+                callback?.Invoke();
+            });
+        }
+
+        public void SyncGuildIntegration(DiscordClient client, string integrationID, Action callback = null)
+        {
+            client.REST.DoRequest($"/guilds/{id}/integrations/{integrationID}/sync", "POST", null, () =>
+            {
+                callback?.Invoke();
+            });
+        }
+
+        public void GetGuildEmbed(DiscordClient client, Action<GuildEmbed> callback = null)
+        {
+            client.REST.DoRequest<GuildEmbed>($"/guilds/{id}/embed", "GET", null, (returnValue) =>
+            {
+                callback?.Invoke(returnValue as GuildEmbed);
+            });
+        }
+
+        public void ModifyGuildEmbed(DiscordClient client, GuildEmbed guildEmbed, Action<GuildEmbed> callback = null)
+        {
+            client.REST.DoRequest<GuildEmbed>($"/guilds/{id}/embed", "PATCH", guildEmbed, (returnValue) =>
+            {
+                callback.Invoke(returnValue as GuildEmbed);
+            });
+        }
     }
 }

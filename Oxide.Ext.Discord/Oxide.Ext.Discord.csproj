@@ -64,6 +64,7 @@
     <Compile Include="DiscordObjects\Emoji.cs" />
     <Compile Include="DiscordObjects\Guild.cs" />
     <Compile Include="DiscordEvents\GuildEmojisUpdate.cs" />
+    <Compile Include="DiscordObjects\GuildEmbed.cs" />
     <Compile Include="DiscordObjects\GuildMember.cs" />
     <Compile Include="DiscordObjects\Integration.cs" />
     <Compile Include="DiscordObjects\Invite.cs" />
