@@ -77,6 +77,7 @@ namespace Oxide.Ext.Discord.WebSockets
                     break;
                     
                 case "0":
+                    Interface.Oxide.LogInfo($"got message type 0: {messageObj["t"]}");
                     switch (messageObj["t"].ToString())
                     {
                         case "READY":
@@ -112,7 +113,9 @@ namespace Oxide.Ext.Discord.WebSockets
                         // this isn't set up right
                         // https://discordapp.com/developers/docs/topics/gateway#guild-create
                         case "GUILD_CREATE":
-                            Client.DiscordServer = JsonConvert.DeserializeObject<Server>(messageObj["d"].ToString());
+                            Guild guildCreate = JsonConvert.DeserializeObject<Guild>(messageObj["d"].ToString());
+                            Client.DiscordServer = guildCreate;
+                            Interface.Oxide.CallHook("Discord_GuildCreate", guildCreate);
                             break;
 
                         case "GUILD_UPDATE":

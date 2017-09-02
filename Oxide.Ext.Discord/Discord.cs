@@ -9,7 +9,7 @@ namespace Oxide.Ext.Discord
     {
         public static List<DiscordClient> Clients { get; private set; } = new List<DiscordClient>();
 
-        public static DiscordClient GetClient(string apiKey, bool autoConnect = true)
+        public static DiscordClient GetClient(string apiKey)
         {
             var search = Clients.Where(x => x.Settings.ApiToken == apiKey);
             if (search.Count() > 1)
@@ -23,11 +23,19 @@ namespace Oxide.Ext.Discord
             }
 
             if (search.Count() == 1)
-                return search.First();
-            
+            {
+                var client = search.First();
+                if (!client.IsAlive())
+                {
+                    client.Connect();
+                }
+
+                return client;
+            }
+
             var newClient = new DiscordClient();
             Clients.Add(newClient);
-            newClient.Initialize(apiKey, autoConnect);
+            newClient.Initialize(apiKey);
             return newClient;
         }
 

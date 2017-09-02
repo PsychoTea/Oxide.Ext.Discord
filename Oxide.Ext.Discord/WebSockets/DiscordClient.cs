@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Oxide.Core;
 using Oxide.Core.Libraries;
@@ -5,14 +6,14 @@ using Oxide.Ext.Discord.DiscordObjects;
 using Oxide.Ext.Discord.Exceptions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using WebSocketSharp; 
+using WebSocketSharp;
 
 namespace Oxide.Ext.Discord.WebSockets
 {
     public class DiscordClient
     {
         public DiscordSettings Settings { get; private set; } = new DiscordSettings();
-        public Server DiscordServer { get; set; }
+        public Guild DiscordServer { get; set; }
         public RESTHandler REST { get; private set; }
         public string WSSURL { get; private set; }
         private WebSocket Socket = null;
@@ -25,7 +26,7 @@ namespace Oxide.Ext.Discord.WebSockets
         /// <exception cref="SocketRunningException">Throws when CreateSocket is called, but a socket is already running.</exception>
         /// <exception cref="InvalidCreationException">Throws when a user tries to use this method to create a discord client. Should use the static method in the Discord class.</exception>
 
-        public void Initialize(string apiKey, bool connectAuto)
+        public void Initialize(string apiKey)
         {
             if (string.IsNullOrEmpty(apiKey))
                 throw new APIKeyException();
@@ -36,15 +37,21 @@ namespace Oxide.Ext.Discord.WebSockets
             if (!Discord.Clients.Any(x => x.Settings.ApiToken == apiKey))
                 throw new InvalidCreationException();
 
-            this.GetURL();
+            this.Connect();
+        }
 
-            if (!connectAuto)
+        public void Connect()
+        {
+            if (!string.IsNullOrEmpty(WSSURL))
             {
-                Interface.Oxide.CallHook("DiscordSocket_SocketReady", WSSURL, this);
+                this.CreateSocket();
                 return;
             }
 
-            this.CreateSocket();
+            this.GetURL(() =>
+            {
+                this.CreateSocket();
+            });
         }
 
         public void CreateSocket()
@@ -107,10 +114,13 @@ namespace Oxide.Ext.Discord.WebSockets
             });
         }
 
-        private void GetURL()
+        private void GetURL(Action callback)
         {
-            var data = REST.DoRequestNow<JObject>("/gateway", "GET");
-            WSSURL = data.GetValue("url").ToString();
+            REST.DoRequest<JObject>("/gateway", "GET", null, (data) =>
+            {
+                WSSURL = (data as JObject).GetValue("url").ToString();
+                callback.Invoke();
+            });
         }
     }
 }
