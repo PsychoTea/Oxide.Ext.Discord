@@ -89,6 +89,17 @@ namespace Oxide.Ext.Discord.DiscordObjects
             });
         }
 
+        public void CreateDM(DiscordClient client, string userId, Action<Channel> callback = null)
+        {
+            var jsonObj1 = new Dictionary<string, string>()
+            {
+                {"recipient_id",userId}
+            };
+            client.REST.DoRequest<Channel>("/users/@me/channels", "POST", jsonObj1, (returnValue) => {
+                callback?.Invoke(returnValue as Channel);
+            });
+        }
+        
         public void GroupDMAddRecipient(DiscordClient client, Channel channel, string accessToken, Action callback = null) => GroupDMAddRecipient(client, channel.id, accessToken, this.username, callback);
         public void GroupDMAddRecipient(DiscordClient client, string channelID, string accessToken, string nick, Action callback = null)
         {
