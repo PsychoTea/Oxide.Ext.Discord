@@ -78,24 +78,14 @@ namespace Oxide.Ext.Discord.WebSockets
 
         public void Disconnect()
         {
-            Interface.Oxide.LogInfo("1");
             if (Socket.IsAlive)
             {
                 Socket.CloseAsync();
             }
 
-            Interface.Oxide.LogInfo("2");
             WSSURL = "";
-
-            Interface.Oxide.LogInfo("3");
-
             REST?.Shutdown();
-
-            Interface.Oxide.LogInfo("4");
-
             UpHandler?.Shutdown();
-
-            Interface.Oxide.LogInfo("DiscordClient.Disconnect was executed");
         }
         
         public bool IsAlive() => Socket.IsAlive;
