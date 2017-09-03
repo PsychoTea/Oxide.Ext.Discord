@@ -12,6 +12,8 @@ build/
 bld/
 x64/
 x86/
+Oxide.Ext.Discord/bin
+Oxide.Ext.Discord/obj
 
 # Build testing
 ## MSTest
