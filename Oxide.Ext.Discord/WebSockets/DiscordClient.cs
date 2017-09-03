@@ -3,7 +3,7 @@ using System.Timers;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Oxide.Core;
+using Oxide.Core.Plugins;
 using Oxide.Ext.Discord.DiscordObjects;
 using Oxide.Ext.Discord.Exceptions;
 using WebSocketSharp;
@@ -12,6 +12,7 @@ namespace Oxide.Ext.Discord.WebSockets
 {
     public class DiscordClient
     {
+        public Plugin Plugin { get; private set; }
         public DiscordSettings Settings { get; private set; } = new DiscordSettings();
         public Guild DiscordServer { get; set; }
         public RESTHandler REST { get; private set; }
@@ -19,7 +20,7 @@ namespace Oxide.Ext.Discord.WebSockets
         public UpkeepHandler UpHandler { get; private set; }
         private WebSocket Socket = null;
         private SocketHandler Handler;
-        private System.Timers.Timer Timer;
+        private Timer Timer;
         private int LastHeartbeat;
 
         /// <exception cref="APIKeyException">Throws when a user does not provide a API key.</exception>
@@ -27,11 +28,12 @@ namespace Oxide.Ext.Discord.WebSockets
         /// <exception cref="SocketRunningException">Throws when CreateSocket is called, but a socket is already running.</exception>
         /// <exception cref="InvalidCreationException">Throws when a user tries to use this method to create a discord client. Should use the static method in the Discord class.</exception>
 
-        public void Initialize(string apiKey)
+        public void Initialize(Plugin plugin, string apiKey)
         {
             if (string.IsNullOrEmpty(apiKey))
                 throw new APIKeyException();
-            
+
+            Plugin = plugin ?? throw new PluginNullException();
             Settings.ApiToken = apiKey;
             REST = new RESTHandler(Settings.ApiToken);
 
@@ -63,7 +65,7 @@ namespace Oxide.Ext.Discord.WebSockets
             if (Socket != null && Socket.ReadyState != WebSocketState.Closed)
                 throw new SocketRunningException();
 
-            if (Interface.Oxide.CallHook("DiscordSocket_SocketConnecting", WSSURL) != null)
+            if (Plugin.CallHook("DiscordSocket_SocketConnecting", WSSURL) != null)
                 return;
 
             Socket = new WebSocket(WSSURL + "/?v=6&encoding=json");
@@ -74,6 +76,8 @@ namespace Oxide.Ext.Discord.WebSockets
             Socket.OnError += Handler.SocketErrored;
             Socket.OnMessage += Handler.SocketMessage;
             Socket.ConnectAsync();
+
+            Plugin.CallHook("DiscordSocket_ConnectionStarted");
         }
 
         public void Disconnect()
@@ -125,7 +129,7 @@ namespace Oxide.Ext.Discord.WebSockets
 
             string message = JsonConvert.SerializeObject(packet);
             Socket.Send(message);
-            Interface.Oxide.CallHook("DiscordSocket_HeartbeatSent");
+            Plugin.CallHook("DiscordSocket_HeartbeatSent");
         }
 
         private void GetURL(Action callback)

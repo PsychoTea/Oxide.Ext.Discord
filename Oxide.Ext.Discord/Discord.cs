@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Oxide.Core;
+using Oxide.Core.Plugins;
+using Oxide.Ext.Discord.Exceptions;
 using Oxide.Ext.Discord.WebSockets;
 
 namespace Oxide.Ext.Discord
@@ -9,8 +11,14 @@ namespace Oxide.Ext.Discord
     {
         public static List<DiscordClient> Clients { get; private set; } = new List<DiscordClient>();
 
-        public static DiscordClient GetClient(string apiKey)
+        public static DiscordClient GetClient(Plugin plugin, string apiKey)
         {
+            if (plugin == null)
+                throw new PluginNullException();
+
+            if (string.IsNullOrEmpty(apiKey))
+                throw new APIKeyException();
+
             var search = Clients.Where(x => x.Settings.ApiToken == apiKey);
             if (search.Count() > 1)
             {
@@ -35,7 +43,7 @@ namespace Oxide.Ext.Discord
 
             var newClient = new DiscordClient();
             Clients.Add(newClient);
-            newClient.Initialize(apiKey);
+            newClient.Initialize(plugin, apiKey);
             return newClient;
         }
 

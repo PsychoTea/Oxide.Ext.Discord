@@ -84,6 +84,7 @@
     <Compile Include="DiscordObjects\VoiceRegion.cs" />
     <Compile Include="DiscordObjects\VoiceState.cs" />
     <Compile Include="DiscordObjects\Webhook.cs" />
+    <Compile Include="Exceptions\PluginNullException.cs" />
     <Compile Include="Exceptions\APIKeyException.cs" />
     <Compile Include="Exceptions\InvalidCreationException.cs" />
     <Compile Include="Exceptions\NoURLException.cs" />
