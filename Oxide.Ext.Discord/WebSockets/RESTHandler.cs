@@ -89,32 +89,32 @@ namespace Oxide.Ext.Discord.WebSockets
 
         private static class ThreadManager
         {
-            static Thread thread = null;
+            static Thread Thread = null;
             static List<RequestObject> PendingRequests = new List<RequestObject>();
 
             public static void Start()
             {
-                if (thread != null) return;
+                if (Thread != null) return;
 
-                thread = new Thread(() => RunThread());
-                thread.Start();
+                Thread = new Thread(() => RunThread());
+                Thread.Start();
             }
 
             public static void Stop()
             {
-                thread?.Abort();
-                thread = null;
+                Thread?.Abort();
+                Thread = null;
             }
 
             public static void AddRequest(RequestObject newRequest)
             {
-                if (thread == null) ThreadManager.Start();
+                if (Thread == null) ThreadManager.Start();
                 PendingRequests.Add(newRequest);
             }
 
             static void RunThread()
             {
-                while (thread.ThreadState != ThreadState.AbortRequested)
+                while (Thread.ThreadState != ThreadState.AbortRequested)
                 {
                     if (PendingRequests.Count > 0)
                     {

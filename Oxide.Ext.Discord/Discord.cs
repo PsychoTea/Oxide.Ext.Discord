@@ -41,8 +41,19 @@ namespace Oxide.Ext.Discord
 
         public static void CloseClient(DiscordClient client)
         {
-            if (client == null || client.IsClosed()) return;
+            Interface.Oxide.LogInfo("CloseClient has been called");
+            if (client == null)
+            {
+                Interface.Oxide.LogInfo("client is null");
+                return;
+            }
+            if (client.IsClosed())
+            {
+                Interface.Oxide.LogInfo("client is closed");
+                return;
+            }
             client.Disconnect();
+            Interface.Oxide.LogInfo("called client.Disconnect");
             Clients.Remove(client);
         }
     }

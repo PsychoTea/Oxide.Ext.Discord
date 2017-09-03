@@ -78,19 +78,31 @@ namespace Oxide.Ext.Discord.WebSockets
 
         public void Disconnect()
         {
+            Interface.Oxide.LogInfo("1");
             if (Socket.IsAlive)
             {
                 Socket.CloseAsync();
             }
 
+            Interface.Oxide.LogInfo("2");
             WSSURL = "";
 
-            REST?.Shutdown();
-            UpHandler?.Shutdown();
-        }
+            Interface.Oxide.LogInfo("3");
 
-        public bool IsClosed() => Socket.ReadyState == WebSocketState.Closed;
+            REST?.Shutdown();
+
+            Interface.Oxide.LogInfo("4");
+
+            UpHandler?.Shutdown();
+
+            Interface.Oxide.LogInfo("DiscordClient.Disconnect was executed");
+        }
+        
         public bool IsAlive() => Socket.IsAlive;
+
+        public bool IsClosing() => Socket.ReadyState == WebSocketState.Closing;
+        
+        public bool IsClosed() => Socket.ReadyState == WebSocketState.Closed;
 
         public void SendData(string contents) => Socket.Send(contents);
         
@@ -108,7 +120,7 @@ namespace Oxide.Ext.Discord.WebSockets
 
         private void HeartbeatElapsed(object sender, ElapsedEventArgs e)
         {
-            if (!Socket.IsAlive)
+            if (!Socket.IsAlive || IsClosing() || IsClosed())
             {
                 Timer.Dispose();
                 Timer = null;

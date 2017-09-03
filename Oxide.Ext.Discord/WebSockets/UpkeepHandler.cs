@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Oxide.Core;
+using System;
 using System.Timers;
 
 namespace Oxide.Ext.Discord.WebSockets
@@ -19,7 +20,7 @@ namespace Oxide.Ext.Discord.WebSockets
             Timer = new Timer();
             Timer.Elapsed += CheckForBeat;
             Timer.AutoReset = true;
-            Timer.Interval = 5000;
+            Timer.Interval = 1000;
             Timer.Start();
         }
 
@@ -35,6 +36,7 @@ namespace Oxide.Ext.Discord.WebSockets
         {
             if (Math.Floor((DateTime.UtcNow - LastUpdate).TotalSeconds) > 5)
             {
+                Interface.Oxide.LogInfo($"[Discord Ext] Discord connection closed (no heartbeat)");
                 Discord.CloseClient(Client);
             }
         }
