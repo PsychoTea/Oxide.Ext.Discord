@@ -12,7 +12,7 @@ namespace Oxide.Ext.Discord.WebSockets
 {
     public class DiscordClient
     {
-        public Plugin Plugin { get; private set; }
+        public Plugin Plugin { get; set; }
         public DiscordSettings Settings { get; private set; } = new DiscordSettings();
         public Guild DiscordServer { get; set; }
         public RESTHandler REST { get; private set; }
@@ -76,13 +76,11 @@ namespace Oxide.Ext.Discord.WebSockets
             Socket.OnError += Handler.SocketErrored;
             Socket.OnMessage += Handler.SocketMessage;
             Socket.ConnectAsync();
-
-            Plugin.CallHook("DiscordSocket_ConnectionStarted");
         }
 
         public void Disconnect()
         {
-            if (Socket.IsAlive)
+            if (!IsClosed())
             {
                 Socket.CloseAsync();
             }
@@ -92,7 +90,7 @@ namespace Oxide.Ext.Discord.WebSockets
             UpHandler?.Shutdown();
         }
         
-        public bool IsAlive() => Socket.IsAlive;
+        public bool IsAlive() => Socket?.IsAlive ?? false;
 
         public bool IsClosing() => Socket.ReadyState == WebSocketState.Closing;
         

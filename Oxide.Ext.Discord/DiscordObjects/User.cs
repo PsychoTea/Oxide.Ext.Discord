@@ -1,9 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Oxide.Ext.Discord.WebSockets;
 using Oxide.Ext.Discord.RESTObjects;
-using System.Collections;
-using System.Linq;
 
 namespace Oxide.Ext.Discord.DiscordObjects
 {
@@ -15,7 +14,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
         public string avatar { get; set; }
         public bool? bot { get; set; }
 
-        public void GetCurrentUser(DiscordClient client, Action<User> callback = null)
+        public static void GetCurrentUser(DiscordClient client, Action<User> callback = null)
         {
             client.REST.DoRequest<User>($"/users/@me", "GET", null, (returnValue) =>
             {

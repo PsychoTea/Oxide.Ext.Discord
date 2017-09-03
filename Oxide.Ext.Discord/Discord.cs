@@ -11,7 +11,7 @@ namespace Oxide.Ext.Discord
     {
         public static List<DiscordClient> Clients { get; private set; } = new List<DiscordClient>();
 
-        public static DiscordClient GetClient(Plugin plugin, string apiKey)
+        public static void CreateClient(Plugin plugin, string apiKey)
         {
             if (plugin == null)
                 throw new PluginNullException();
@@ -33,23 +33,28 @@ namespace Oxide.Ext.Discord
             if (search.Count() == 1)
             {
                 var client = search.First();
-                if (!client.IsAlive())
+                client.Plugin = plugin;
+
+                // Hmm... if the WS is connected and DiscordServer is null
+                // a SocketRunningException will be thrown
+                if (client.IsAlive() && client.DiscordServer != null)
                 {
-                    client.Connect();
+                    client.Plugin.CallHook("DiscordSocket_Initialized", client);
+                    return;
                 }
 
-                return client;
+                client.Initialize(plugin, apiKey);
+                return;
             }
 
             var newClient = new DiscordClient();
             Clients.Add(newClient);
             newClient.Initialize(plugin, apiKey);
-            return newClient;
         }
 
         public static void CloseClient(DiscordClient client)
         {
-            if ((client?.IsClosing() ?? false) || (client?.IsClosed() ?? false)) return; 
+            if (client == null) return;
             client.Disconnect();
             Clients.Remove(client);
         }

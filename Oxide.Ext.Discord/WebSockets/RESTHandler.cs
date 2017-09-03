@@ -8,6 +8,7 @@ using System.Threading;
 using Newtonsoft.Json;
 using Oxide.Core;
 using Oxide.Core.Libraries;
+using Newtonsoft.Json.Linq;
 
 namespace Oxide.Ext.Discord.WebSockets
 {
@@ -21,7 +22,7 @@ namespace Oxide.Ext.Discord.WebSockets
             Action Callback = null;
             Action<object> CallbackObj = null;
             Type ReturnType = typeof(void);
-            
+
             public RequestObject(string url, string method, Type returnType = null)
             {
                 URL = url;
@@ -47,12 +48,12 @@ namespace Oxide.Ext.Discord.WebSockets
                 ReturnType = (returnType == null) ? typeof(void) : returnType;
             }
 
-            public object DoRequest()
+            public void DoRequest()
             {
                 var req = WebRequest.Create($"{URLBase}{URL}");
                 req.SetRawHeaders(Headers);
                 req.Method = Method;
-
+                
                 if (Data != null)
                 {
                     string contents = JsonConvert.SerializeObject(Data, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
@@ -64,26 +65,31 @@ namespace Oxide.Ext.Discord.WebSockets
                         stream.Write(bytes, 0, bytes.Length);
                     }
                 }
+                
+                HttpWebResponse response;
+                try
+                {
+                    response = req.GetResponse() as HttpWebResponse;
+                }
+                catch (WebException ex)
+                {
+                    var httpResponse = ex.Response as HttpWebResponse;
+                    string message = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
+                    Interface.Oxide.LogWarning($"[Discord Ext] an error occured whilst submitting a request to {req.RequestUri} (code {httpResponse.StatusCode}): {message}");
+                    return;
+                }
 
-                var response = req.GetResponse() as HttpWebResponse;
                 var reader = new StreamReader(response.GetResponseStream());
                 string output = reader.ReadToEnd().Trim();
-
-                if (response.StatusCode != HttpStatusCode.OK && response.StatusCode != HttpStatusCode.NoContent)
-                {
-                    Interface.Oxide.LogWarning($"An error occured whilst submitting a request to {req.RequestUri} (code {response.StatusCode}): {output}");
-                    return null;
-                }
 
                 if (ReturnType == typeof(void))
                 {
                     Callback?.Invoke();
-                    return null;
+                    return;
                 }
 
                 var retObj = JsonConvert.DeserializeObject(output, ReturnType);
                 CallbackObj?.Invoke(retObj);
-                return retObj;
             }
         }
 
@@ -94,26 +100,37 @@ namespace Oxide.Ext.Discord.WebSockets
 
             public static void Start()
             {
-                if (Thread != null && Thread.ThreadState == ThreadState.Running) return;
+                if (IsRunning())
+                {
+                    Interface.Oxide.LogWarning($"[Discord Ext] RESTHandler thread started whilst already running!");
+                    return;
+                }
 
                 Thread = new Thread(() => RunThread());
                 Thread.Start();
             }
 
+            public static bool IsRunning() => (Thread != null && Thread.ThreadState == ThreadState.Running);
+
             public static void Stop() => Thread?.Abort();
 
-            public static void AddRequest(RequestObject newRequest) => PendingRequests.Add(newRequest);
+            public static void AddRequest(RequestObject newRequest)
+            {
+                PendingRequests.Add(newRequest);
+
+                if (!IsRunning())
+                {
+                    ThreadManager.Start();
+                }
+            }
 
             static void RunThread()
             {
-                while (Thread.ThreadState != ThreadState.AbortRequested)
+                while (PendingRequests.Count > 0)
                 {
-                    if (PendingRequests.Count > 0)
-                    {
-                        var currentRequest = PendingRequests.First();
-                        currentRequest.DoRequest();
-                        PendingRequests.Remove(currentRequest);
-                    }
+                    var currentRequest = PendingRequests.First();
+                    currentRequest.DoRequest();
+                    PendingRequests.Remove(currentRequest);
                 }
             }
         }
@@ -128,14 +145,9 @@ namespace Oxide.Ext.Discord.WebSockets
                 { "Authorization", $"Bot {apiKey}" },
                 { "Content-Type", "application/json" }
             };
-
-            ThreadManager.Start();
         }
 
-        public void Shutdown()
-        {
-            ThreadManager.Stop();
-        }
+        public void Shutdown() => ThreadManager.Stop();
 
         public void DoRequest(string URL, string method, object data = null, Action callback = null)
         {

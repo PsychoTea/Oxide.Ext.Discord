@@ -27,8 +27,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
 
         public void Reply(DiscordClient client, Message message, Action<Message> callback = null)
         {
-            var temp = message.content;
-            message.content = $"<@{author.id}> " + temp;
+            message.content = $"<@{author.id}> {message.content}";
             client.REST.DoRequest<Message>($"/channels/{channel_id}/messages", "POST", message, (returnValue) =>
             {
                 callback?.Invoke(returnValue as Message);

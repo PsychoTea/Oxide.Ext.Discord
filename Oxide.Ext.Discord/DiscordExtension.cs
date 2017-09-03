@@ -14,5 +14,15 @@ namespace Oxide.Ext.Discord
         public override string Name => "Discord";
         public override string Author => "DylanSMR";
         public override VersionNumber Version => new VersionNumber(AssemblyVersion.Major, AssemblyVersion.Minor, AssemblyVersion.Build);
+
+        public override void OnModLoad()
+        {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Interface.Oxide.LogException("An exception was thrown!", e.ExceptionObject as Exception);
+        }
     }
 }
