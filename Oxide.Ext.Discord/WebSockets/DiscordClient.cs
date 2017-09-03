@@ -112,7 +112,7 @@ namespace Oxide.Ext.Discord.WebSockets
             
             if (Timer != null) return;
 
-            Timer = new System.Timers.Timer();
+            Timer = new Timer();
             Timer.Interval = heartbeatInterval;
             Timer.Elapsed += HeartbeatElapsed;
             Timer.Start();

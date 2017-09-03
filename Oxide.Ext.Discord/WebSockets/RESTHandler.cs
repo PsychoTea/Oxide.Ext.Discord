@@ -156,11 +156,5 @@ namespace Oxide.Ext.Discord.WebSockets
             var reqObj = new RequestObject(URL, method, data, callback, typeof(T));
             ThreadManager.AddRequest(reqObj);
         }
-
-        public T DoRequestNow<T>(string URL, string method)
-        {
-            var reqObj = new RequestObject(URL, method, typeof(T));
-            return (T)reqObj.DoRequest();
-        }
     }
 }
