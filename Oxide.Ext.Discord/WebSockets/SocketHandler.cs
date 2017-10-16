@@ -3,10 +3,10 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Oxide.Core;
+using Oxide.Ext.Discord.DiscordEvents;
 using Oxide.Ext.Discord.DiscordObjects;
 using Oxide.Ext.Discord.Exceptions;
 using WebSocketSharp;
-using Oxide.Ext.Discord.DiscordEvents;
 
 namespace Oxide.Ext.Discord.WebSockets
 {
@@ -40,20 +40,20 @@ namespace Oxide.Ext.Discord.WebSockets
             var sp = JsonConvert.SerializeObject(payload);
             Client.SendData(sp);
             Interface.Oxide.LogInfo($"[Discord Ext] Connected to Discord.");
-            Client.Plugin.CallHook("DiscordSocket_WebSocketOpened");
+            Client.CallHook("DiscordSocket_WebSocketOpened");
         }
 
         public void SocketClosed(object sender, CloseEventArgs e)
         {
             if (e.Code == 4004) throw new APIKeyException();
             Interface.Oxide.LogInfo($"[Discord Ext] Discord connection closed (code: {e.Code}) {(!e.WasClean ? $"\nReason: {e.Reason}" : "")}");
-            Client.Plugin.CallHook("DiscordSocket_WebSocketClosed", e.Reason, e.Code, e.WasClean);
+            Client.CallHook("DiscordSocket_WebSocketClosed", e.Reason, e.Code, e.WasClean);
         }
 
         public void SocketErrored(object sender, WebSocketSharp.ErrorEventArgs e)
         {
             Interface.Oxide.LogWarning($"[Discord Ext] An error has occured: Response: {e.Message}");
-            Client.Plugin.CallHook("DiscordSocket_WebSocketErrored", e.Exception, e.Message);
+            Client.CallHook("DiscordSocket_WebSocketErrored", e.Exception, e.Message);
         }
         
         public void SocketMessage(object sender, MessageEventArgs e)
@@ -81,32 +81,32 @@ namespace Oxide.Ext.Discord.WebSockets
                     {
                         case "READY":
                             Ready ready = JsonConvert.DeserializeObject<Ready>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_Ready", ready);
+                            Client.CallHook("Discord_Ready", ready);
                             break;
 
                         case "RESUMED":
                             Resumed resumed = JsonConvert.DeserializeObject<Resumed>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_Resumed", resumed);
+                            Client.CallHook("Discord_Resumed", resumed);
                             break;
 
                         case "CHANNEL_CREATE":
                             Channel channelCreate = JsonConvert.DeserializeObject<Channel>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_ChannelCreate", channelCreate);
+                            Client.CallHook("Discord_ChannelCreate", channelCreate);
                             break;
 
                         case "CHANNEL_UPDATE":
                             Channel channelUpdate = JsonConvert.DeserializeObject<Channel>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_ChannelUpdate", channelUpdate);
+                            Client.CallHook("Discord_ChannelUpdate", channelUpdate);
                             break;
 
                         case "CHANNEL_DELETE":
                             Channel channelDelete = JsonConvert.DeserializeObject<Channel>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_ChannelDelete", channelDelete);
+                            Client.CallHook("Discord_ChannelDelete", channelDelete);
                             break;
 
                         case "CHANNEL_PINS_UPDATE":
                             ChannelPinsUpdate channelPinsUpdate = JsonConvert.DeserializeObject<ChannelPinsUpdate>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_ChannelPinsUpdate", channelPinsUpdate);
+                            Client.CallHook("Discord_ChannelPinsUpdate", channelPinsUpdate);
                             break;
 
                         // this isn't set up right
@@ -114,142 +114,142 @@ namespace Oxide.Ext.Discord.WebSockets
                         case "GUILD_CREATE":
                             Guild guildCreate = JsonConvert.DeserializeObject<Guild>(messageObj["d"].ToString());
                             Client.DiscordServer = guildCreate;
-                            Client.Plugin.CallHook("DiscordSocket_Initialized", Client);
-                            //Client.Plugin.CallHook("Discord_GuildCreate", guildCreate);
+                            Client.CallHook("DiscordSocket_Initialized", Client);
+                            //Client.CallHook("Discord_GuildCreate", guildCreate);
                             break;
 
                         case "GUILD_UPDATE":
                             Guild guildUpdate = JsonConvert.DeserializeObject<Guild>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_GuildUpdate", guildUpdate);
+                            Client.CallHook("Discord_GuildUpdate", guildUpdate);
                             break;
 
                         case "GUILD_DELETE":
                             Guild guildDelete = JsonConvert.DeserializeObject<Guild>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_GuildDelete", guildDelete);
+                            Client.CallHook("Discord_GuildDelete", guildDelete);
                             break;
 
                         case "GUILD_BAN_ADD":
                             GuildBan guildBanAdd = JsonConvert.DeserializeObject<GuildBan>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_GuildBanAdd", guildBanAdd);
+                            Client.CallHook("Discord_GuildBanAdd", guildBanAdd);
                             break;
 
                         case "GUILD_BAN_REMOVE":
                             GuildBan guildBanRemove = JsonConvert.DeserializeObject<GuildBan>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_GuildBanRemove", guildBanRemove);
+                            Client.CallHook("Discord_GuildBanRemove", guildBanRemove);
                             break;
 
                         case "GUILD_EMOJIS_UPDATE":
                             GuildEmojisUpdate guildEmojisUpdate = JsonConvert.DeserializeObject<GuildEmojisUpdate>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_GuildEmojisUpdate", guildEmojisUpdate);
+                            Client.CallHook("Discord_GuildEmojisUpdate", guildEmojisUpdate);
                             break;
 
                         case "GUILD_INTEGRATIONS_UPDATE":
                             GuildIntergrationsUpdate guildIntergrationsUpdate = JsonConvert.DeserializeObject<GuildIntergrationsUpdate>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_GuildIntergrationsUpdate", guildIntergrationsUpdate);
+                            Client.CallHook("Discord_GuildIntergrationsUpdate", guildIntergrationsUpdate);
                             break;
 
                         case "GUILD_MEMBER_ADD":
                             GuildMemberAdd guildMemberAdd = JsonConvert.DeserializeObject<GuildMemberAdd>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_MemberAdded", guildMemberAdd);
+                            Client.CallHook("Discord_MemberAdded", guildMemberAdd);
                             break;
 
                         case "GUILD_MEMBER_REMOVE":
                             GuildMemberRemove guildMemberRemove = JsonConvert.DeserializeObject<GuildMemberRemove>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_MemberRemoved", guildMemberRemove);
+                            Client.CallHook("Discord_MemberRemoved", guildMemberRemove);
                             break;
 
                         case "GUILD_MEMBER_UPDATE":
                             GuildMemberUpdate guildMemberUpdate = JsonConvert.DeserializeObject<GuildMemberUpdate>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_GuildMemberUpdate", guildMemberUpdate);
+                            Client.CallHook("Discord_GuildMemberUpdate", guildMemberUpdate);
                             break;
 
                         case "GUILD_MEMBERS_CHUNK":
                             GuildMembersChunk guildMembersChunk = JsonConvert.DeserializeObject<GuildMembersChunk>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_GuildMembersChunk", guildMembersChunk);
+                            Client.CallHook("Discord_GuildMembersChunk", guildMembersChunk);
                             break;
 
                         case "GUILD_ROLE_CREATE":
                             GuildRoleCreate guildRoleCreate = JsonConvert.DeserializeObject<GuildRoleCreate>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_GuildRoleCreate", guildRoleCreate);
+                            Client.CallHook("Discord_GuildRoleCreate", guildRoleCreate);
                             break;
 
                         case "GUILD_ROLE_UPDATE":
                             GuildRoleUpdate guildRoleUpdate = JsonConvert.DeserializeObject<GuildRoleUpdate>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_GuildRoleUpdate", guildRoleUpdate);
+                            Client.CallHook("Discord_GuildRoleUpdate", guildRoleUpdate);
                             break;
 
                         case "GUILD_ROLE_DELETE":
                             GuildRoleDelete guildRoleDelete = JsonConvert.DeserializeObject<GuildRoleDelete>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_GuildRoleDelete", guildRoleDelete);
+                            Client.CallHook("Discord_GuildRoleDelete", guildRoleDelete);
                             break;
 
                         case "MESSAGE_CREATE":
                             Message messageCreate = JsonConvert.DeserializeObject<Message>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_MessageCreate", messageCreate);
+                            Client.CallHook("Discord_MessageCreate", messageCreate);
                             break;
 
                         case "MESSAGE_UPDATE":
                             Message messageUpdate = JsonConvert.DeserializeObject<Message>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_MessageUpdate", messageUpdate);
+                            Client.CallHook("Discord_MessageUpdate", messageUpdate);
                             break;
 
                         case "MESSAGE_DELETE":
                             MessageDelete messageDelete = JsonConvert.DeserializeObject<MessageDelete>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_MessageDelete", messageDelete);
+                            Client.CallHook("Discord_MessageDelete", messageDelete);
                             break;
 
                         case "MESSAGE_DELETE_BULK":
                             MessageDeleteBulk messageDeleteBulk = JsonConvert.DeserializeObject<MessageDeleteBulk>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_MessageDeleteBulk", messageDeleteBulk);
+                            Client.CallHook("Discord_MessageDeleteBulk", messageDeleteBulk);
                             break;
 
                         case "MESSAGE_REACTION_ADD":
                             MessageReactionUpdate messageReactionAdd = JsonConvert.DeserializeObject<MessageReactionUpdate>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_MessageReactionAdd", messageReactionAdd);
+                            Client.CallHook("Discord_MessageReactionAdd", messageReactionAdd);
                             break;
 
                         case "MESSAGE_REACTION_REMOVE":
                             MessageReactionUpdate messageReactionRemove = JsonConvert.DeserializeObject<MessageReactionUpdate>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_MessageReactionRemove", messageReactionRemove);
+                            Client.CallHook("Discord_MessageReactionRemove", messageReactionRemove);
                             break;
 
                         case "MESSAGE_REACTION_REMOVE_ALL":
                             MessageReactionRemoveAll messageReactionRemoveAll = JsonConvert.DeserializeObject<MessageReactionRemoveAll>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_MessageReactionRemoveAll", messageReactionRemoveAll);
+                            Client.CallHook("Discord_MessageReactionRemoveAll", messageReactionRemoveAll);
                             break;
 
                         case "PRESENCE_UPDATE":
                             PresenceUpdate presenceUpdate = JsonConvert.DeserializeObject<PresenceUpdate>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_PresenceUpdate", presenceUpdate);
+                            Client.CallHook("Discord_PresenceUpdate", presenceUpdate);
                             break;
 
                         case "TYPING_START":
                             TypingStart typingStart = JsonConvert.DeserializeObject<TypingStart>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_TypingStart", typingStart);
+                            Client.CallHook("Discord_TypingStart", typingStart);
                             break;
 
                         case "USER_UPDATE":
                             User userUpdate = JsonConvert.DeserializeObject<User>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_UserUpdate", userUpdate);
+                            Client.CallHook("Discord_UserUpdate", userUpdate);
                             break;
 
                         case "VOICE_STATE_UPDATE":
                             VoiceState voiceStateUpdate = JsonConvert.DeserializeObject<VoiceState>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_VoiceStateUpdate", voiceStateUpdate);
+                            Client.CallHook("Discord_VoiceStateUpdate", voiceStateUpdate);
                             break;
 
                         case "VOICE_SERVER_UPDATE":
                             VoiceServerUpdate voiceServerUpdate = JsonConvert.DeserializeObject<VoiceServerUpdate>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_VoiceServerUpdate", voiceServerUpdate);
+                            Client.CallHook("Discord_VoiceServerUpdate", voiceServerUpdate);
                             break;
 
                         case "WEBHOOKS_UPDATE":
                             WebhooksUpdate webhooksUpdate = JsonConvert.DeserializeObject<WebhooksUpdate>(messageObj["d"].ToString());
-                            Client.Plugin.CallHook("Discord_WebhooksUpdate", webhooksUpdate);
+                            Client.CallHook("Discord_WebhooksUpdate", webhooksUpdate);
                             break;
 
                         default:
-                            Client.Plugin.CallHook("Discord_UnhandledMessage", messageObj);
+                            Client.CallHook("Discord_UnhandledMessage", messageObj);
                             Interface.Oxide.LogWarning($"[Discord Ext] [Debug] Unhandled message: {messageObj["t"]}, data: {messageObj["d"]}");
                             break;
                     }
