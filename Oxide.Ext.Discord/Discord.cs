@@ -33,13 +33,13 @@ namespace Oxide.Ext.Discord
             if (search.Count() == 1)
             {
                 var client = search.First();
-                client.Plugin = plugin;
 
                 // Hmm... if the WS is connected and DiscordServer is null
-                // a SocketRunningException will be thrown
+                // a SocketRunningException will (probably) be thrown
                 if (client.IsAlive() && client.DiscordServer != null)
                 {
-                    client.Plugin.CallHook("DiscordSocket_Initialized", client);
+                    client.RegisterPlugin(plugin);
+                    client.CallHook("DiscordSocket_Initialized", client);
                     return;
                 }
 
