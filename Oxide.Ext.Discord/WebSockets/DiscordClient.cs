@@ -1,8 +1,10 @@
 using System;
-using System.Timers;
+using System.Collections.Generic;
 using System.Linq;
+using System.Timers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Oxide.Core;
 using Oxide.Core.Plugins;
 using Oxide.Ext.Discord.DiscordObjects;
 using Oxide.Ext.Discord.Exceptions;
@@ -12,7 +14,7 @@ namespace Oxide.Ext.Discord.WebSockets
 {
     public class DiscordClient
     {
-        public Plugin Plugin { get; set; }
+        public List<Plugin> Plugins { get; private set; } = new List<Plugin>();
         public DiscordSettings Settings { get; private set; } = new DiscordSettings();
         public Guild DiscordServer { get; set; }
         public RESTHandler REST { get; private set; }
@@ -33,7 +35,11 @@ namespace Oxide.Ext.Discord.WebSockets
             if (string.IsNullOrEmpty(apiKey))
                 throw new APIKeyException();
 
-            Plugin = plugin ?? throw new PluginNullException();
+            if (plugin == null)
+                throw new PluginNullException();
+
+            RegisterPlugin(plugin);
+
             Settings.ApiToken = apiKey;
             REST = new RESTHandler(Settings.ApiToken);
 
@@ -65,7 +71,7 @@ namespace Oxide.Ext.Discord.WebSockets
             if (Socket != null && Socket.ReadyState != WebSocketState.Closed)
                 throw new SocketRunningException();
 
-            if (Plugin.CallHook("DiscordSocket_SocketConnecting", WSSURL) != null)
+            if (this.CallHook("DiscordSocket_SocketConnecting", WSSURL) != null)
                 return;
 
             Socket = new WebSocket(WSSURL + "/?v=6&encoding=json");
@@ -89,23 +95,52 @@ namespace Oxide.Ext.Discord.WebSockets
             REST?.Shutdown();
             UpHandler?.Shutdown();
         }
-        
+
         public bool IsAlive() => Socket?.IsAlive ?? false;
 
         public bool IsClosing() => Socket.ReadyState == WebSocketState.Closing;
-        
+
         public bool IsClosed() => Socket.ReadyState == WebSocketState.Closed;
 
         public void SendData(string contents) => Socket.Send(contents);
-        
+
+        public void RegisterPlugin(Plugin plugin)
+        {
+            var search = Plugins.Where(x => x.Title == plugin.Title);
+            search.ToList().ForEach(x => Plugins.Remove(x));
+            Plugins.Add(plugin);
+        }
+
+        public object CallHook(string hookname, params object[] args)
+        {
+            Dictionary<string, object> returnValues = new Dictionary<string, object>();
+
+            foreach (var plugin in Plugins)
+            {
+                var retVal = plugin.CallHook(hookname, args);
+                returnValues.Add(plugin.Title, retVal);
+            }
+
+            if (returnValues.Count(x => x.Value != null) > 1)
+            {
+                string conflicts = string.Join("\n", returnValues.Select(x => $"Plugin {x.Key}: {returnValues.Values.ToString()}").ToArray());
+                Interface.Oxide.LogWarning($"[Discord Ext] A hook conflict was triggered on {hookname} between: {conflicts}");
+                return null;
+            }
+
+            return returnValues.FirstOrDefault(x => x.Value != null).Value;
+        }
+
         public void CreateHeartbeat(float heartbeatInterval, int lastHeartbeat)
         {
             LastHeartbeat = lastHeartbeat;
-            
+
             if (Timer != null) return;
 
-            Timer = new Timer();
-            Timer.Interval = heartbeatInterval;
+            Timer = new Timer()
+            {
+                Interval = heartbeatInterval
+            };
             Timer.Elapsed += HeartbeatElapsed;
             Timer.Start();
         }
@@ -127,7 +162,8 @@ namespace Oxide.Ext.Discord.WebSockets
 
             string message = JsonConvert.SerializeObject(packet);
             Socket.Send(message);
-            Plugin.CallHook("DiscordSocket_HeartbeatSent");
+
+            this.CallHook("DiscordSocket_HeartbeatSent");
         }
 
         private void GetURL(Action callback)
