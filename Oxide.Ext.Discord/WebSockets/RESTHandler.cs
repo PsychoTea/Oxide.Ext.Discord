@@ -52,7 +52,7 @@ namespace Oxide.Ext.Discord.WebSockets
                 var req = WebRequest.Create($"{URLBase}{URL}");
                 req.SetRawHeaders(Headers);
                 req.Method = Method;
-                
+
                 if (Data != null)
                 {
                     string contents = JsonConvert.SerializeObject(Data, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
@@ -74,7 +74,7 @@ namespace Oxide.Ext.Discord.WebSockets
                 {
                     var httpResponse = ex.Response as HttpWebResponse;
                     string message = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
-                    Interface.Oxide.LogWarning($"[Discord Ext] an error occured whilst submitting a request to {req.RequestUri} (code {httpResponse.StatusCode}): {message}");
+                    Interface.Oxide.LogWarning($"[Discord Ext] An error occured whilst submitting a request to {req.RequestUri} (code {httpResponse.StatusCode}): {message}");
                     return;
                 }
 
@@ -101,7 +101,7 @@ namespace Oxide.Ext.Discord.WebSockets
             {
                 if (IsRunning())
                 {
-                    Interface.Oxide.LogWarning($"[Discord Ext] RESTHandler thread started whilst already running!");
+                    Interface.Oxide.LogWarning($"[Discord Ext] RESTHandler thread was started whilst already running!");
                     return;
                 }
 
@@ -109,7 +109,7 @@ namespace Oxide.Ext.Discord.WebSockets
                 Thread.Start();
             }
 
-            public static bool IsRunning() => Thread != null;
+            public static bool IsRunning() => Thread != null && Thread.ThreadState != ThreadState.Stopped;
 
             public static void Stop()
             {
