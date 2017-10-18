@@ -39,14 +39,20 @@ namespace Oxide.Ext.Discord.WebSockets
 
             var sp = JsonConvert.SerializeObject(payload);
             Client.SendData(sp);
-            Interface.Oxide.LogInfo($"[Discord Ext] Connected to Discord.");
+
             Client.CallHook("DiscordSocket_WebSocketOpened");
         }
 
         public void SocketClosed(object sender, CloseEventArgs e)
         {
-            if (e.Code == 4004) throw new APIKeyException();
-            Interface.Oxide.LogInfo($"[Discord Ext] Discord connection closed (code: {e.Code}) {(!e.WasClean ? $"\nReason: {e.Reason}" : "")}");
+            if (e.Code == 4004)
+                throw new APIKeyException();
+
+            if (!e.WasClean)
+            {
+                Interface.Oxide.LogWarning($"[Discord Ext] Discord connection closed uncleanly: code {e.Code}, Reason: {e.Reason}");
+            }
+
             Client.CallHook("DiscordSocket_WebSocketClosed", e.Reason, e.Code, e.WasClean);
         }
 
@@ -66,7 +72,9 @@ namespace Oxide.Ext.Discord.WebSockets
 
             JToken heartbeatToken;
             int lastHeartbeat = 0;
-            if (!(messageObj.TryGetValue("s", out heartbeatToken) && int.TryParse(heartbeatToken.ToString(), out lastHeartbeat))) lastHeartbeat = 0;
+            if (!(messageObj.TryGetValue("s", out heartbeatToken) && 
+                  int.TryParse(heartbeatToken.ToString(), out lastHeartbeat)))
+                lastHeartbeat = 0;
 
             switch (messageObj.GetValue("op").ToString())
             {
