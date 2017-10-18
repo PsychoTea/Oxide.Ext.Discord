@@ -41,6 +41,7 @@ namespace Oxide.Ext.Discord.WebSockets
             {
                 Interface.Oxide.LogInfo($"[Discord Ext] Discord connection closed (no heartbeat)");
                 Discord.CloseClient(Client);
+                Shutdown();
             }
         }
     }
