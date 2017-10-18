@@ -8,7 +8,6 @@ using System.Threading;
 using Newtonsoft.Json;
 using Oxide.Core;
 using Oxide.Core.Libraries;
-using Newtonsoft.Json.Linq;
 
 namespace Oxide.Ext.Discord.WebSockets
 {
@@ -110,9 +109,13 @@ namespace Oxide.Ext.Discord.WebSockets
                 Thread.Start();
             }
 
-            public static bool IsRunning() => (Thread != null && Thread.ThreadState == ThreadState.Running);
+            public static bool IsRunning() => Thread != null;
 
-            public static void Stop() => Thread?.Abort();
+            public static void Stop()
+            {
+                Thread?.Abort();
+                Thread = null;
+            }
 
             public static void AddRequest(RequestObject newRequest)
             {
@@ -124,7 +127,7 @@ namespace Oxide.Ext.Discord.WebSockets
                 }
             }
 
-            static void RunThread()
+            private static void RunThread()
             {
                 while (PendingRequests.Count > 0)
                 {
