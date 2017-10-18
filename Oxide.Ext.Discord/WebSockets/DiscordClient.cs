@@ -69,7 +69,7 @@ namespace Oxide.Ext.Discord.WebSockets
                 throw new NoURLException();
 
             if (Socket != null && Socket.ReadyState != WebSocketState.Closed)
-                throw new SocketRunningException();
+                throw new SocketRunningException(this);
 
             if (this.CallHook("DiscordSocket_SocketConnecting", WSSURL) != null)
                 return;
@@ -93,7 +93,6 @@ namespace Oxide.Ext.Discord.WebSockets
 
             WSSURL = "";
             REST?.Shutdown();
-            UpHandler?.Shutdown();
         }
 
         public bool IsAlive() => Socket?.IsAlive ?? false;
@@ -144,6 +143,8 @@ namespace Oxide.Ext.Discord.WebSockets
             Timer.Elapsed += HeartbeatElapsed;
             Timer.Start();
         }
+
+        public string GetPluginNames(string delimiter = ", ") => string.Join(delimiter, Plugins.Select(x => x.Name).ToArray());
 
         private void HeartbeatElapsed(object sender, ElapsedEventArgs e)
         {
