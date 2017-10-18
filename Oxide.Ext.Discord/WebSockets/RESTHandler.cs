@@ -16,32 +16,36 @@ namespace Oxide.Ext.Discord.WebSockets
         private class RequestObject
         {
             public string URL;
-            string Method;
-            object Data = null;
-            Action Callback = null;
-            Action<object> CallbackObj = null;
-            Type ReturnType = typeof(void);
+            private string Method;
+            private Dictionary<string, string> Headers;
+            private object Data = null;
+            private Action Callback = null;
+            private Action<object> CallbackObj = null;
+            private Type ReturnType = typeof(void);
 
-            public RequestObject(string url, string method, Type returnType = null)
+            public RequestObject(string url, string method, Dictionary<string, string> headers = null, Type returnType = null)
             {
                 URL = url;
                 Method = method;
+                Headers = headers;
                 ReturnType = returnType;
             }
 
-            public RequestObject(string url, string method, object data = null, Action callback = null, Type returnType = null)
+            public RequestObject(string url, string method, Dictionary<string, string> headers = null, object data = null, Action callback = null, Type returnType = null)
             {
                 URL = url;
                 Method = method;
+                Headers = headers;
                 Data = data;
                 Callback = callback;
                 ReturnType = returnType;
             }
 
-            public RequestObject(string url, string method, object data = null, Action<object> callback = null, Type returnType = null)
+            public RequestObject(string url, string method, Dictionary<string, string> headers = null, object data = null, Action<object> callback = null, Type returnType = null)
             {
                 URL = url;
                 Method = method;
+                Headers = headers;
                 Data = data;
                 CallbackObj = callback;
                 ReturnType = (returnType == null) ? typeof(void) : returnType;
@@ -50,8 +54,12 @@ namespace Oxide.Ext.Discord.WebSockets
             public void DoRequest()
             {
                 var req = WebRequest.Create($"{URLBase}{URL}");
-                req.SetRawHeaders(Headers);
                 req.Method = Method;
+
+                if (Headers != null)
+                {
+                    req.SetRawHeaders(Headers);
+                }
 
                 if (Data != null)
                 {
@@ -139,7 +147,7 @@ namespace Oxide.Ext.Discord.WebSockets
         }
 
         private const string URLBase = "https://discordapp.com/api";
-        private static Dictionary<string, string> Headers;
+        private Dictionary<string, string> Headers;
 
         public RESTHandler(string apiKey)
         {
@@ -154,13 +162,13 @@ namespace Oxide.Ext.Discord.WebSockets
 
         public void DoRequest(string URL, string method, object data = null, Action callback = null)
         {
-            var reqObj = new RequestObject(URL, method, data, callback);
+            var reqObj = new RequestObject(URL, method, Headers, data, callback);
             ThreadManager.AddRequest(reqObj);
         }
 
         public void DoRequest<T>(string URL, string method, object data = null, Action<object> callback = null)
         {
-            var reqObj = new RequestObject(URL, method, data, callback, typeof(T));
+            var reqObj = new RequestObject(URL, method, Headers, data, callback, typeof(T));
             ThreadManager.AddRequest(reqObj);
         }
     }
