@@ -122,7 +122,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
 
         public void ListGuildMembers(DiscordClient client, Action<List<GuildMember>> callback = null)
         {
-            client.REST.DoRequest<List<GuildMember>>($"/guilds/{id}/members", "GET", null, (returnValue) =>
+            client.REST.DoRequest<List<GuildMember>>($"/guilds/{id}/members?limit=1000", "GET", null, (returnValue) =>
             {
                 callback?.Invoke(returnValue as List<GuildMember>);
             });

@@ -1,13 +1,16 @@
 ﻿using Oxide.Core;
 using System;
 using System.Timers;
+using Oxide.Ext.Discord.DiscordObjects;
+using System.Linq;
 
 namespace Oxide.Ext.Discord.WebSockets
 {
     public class UpkeepHandler
     {
         private DiscordClient Client;
-        private Timer Timer;
+        private Timer UpkeepTimer;
+        private Timer GuildMemberRefreshTimer;
         private DateTime LastUpdate;
 
         public UpkeepHandler(DiscordClient client)
@@ -17,11 +20,17 @@ namespace Oxide.Ext.Discord.WebSockets
             LastUpdate = DateTime.UtcNow;
             this.Client = client;
 
-            Timer = new Timer();
-            Timer.Elapsed += CheckForBeat;
-            Timer.AutoReset = true;
-            Timer.Interval = 1000;
-            Timer.Start();
+            UpkeepTimer = new Timer();
+            UpkeepTimer.Elapsed += CheckForBeat;
+            UpkeepTimer.AutoReset = true;
+            UpkeepTimer.Interval = 1000;
+            UpkeepTimer.Start();
+
+            GuildMemberRefreshTimer = new Timer();
+            GuildMemberRefreshTimer.Elapsed += GuildMemberRefresh;
+            GuildMemberRefreshTimer.AutoReset = true;
+            GuildMemberRefreshTimer.Interval = 60000;
+            GuildMemberRefreshTimer.Start();
         }
 
         public void SendBeat()
@@ -31,8 +40,11 @@ namespace Oxide.Ext.Discord.WebSockets
 
         public void Shutdown()
         {
-            Timer.Dispose();
-            Timer = null;
+            UpkeepTimer.Dispose();
+            UpkeepTimer = null;
+
+            GuildMemberRefreshTimer.Dispose();
+            GuildMemberRefreshTimer = null;
         }
 
         private void CheckForBeat(object sender, ElapsedEventArgs args)
@@ -43,6 +55,16 @@ namespace Oxide.Ext.Discord.WebSockets
                 Discord.CloseClient(Client);
                 Shutdown();
             }
+        }
+
+        private void GuildMemberRefresh(object sender, ElapsedEventArgs args)
+        {
+            Interface.Oxide.LogInfo($"Updating from {Client.DiscordServer.members.Count}");
+            Client.DiscordServer.ListGuildMembers(Client, guildMembers =>
+            {
+                Client.DiscordServer.members = guildMembers.Select(x => new Member(x)).ToList();
+                Interface.Oxide.LogInfo($"Updated to {Client.DiscordServer.members.Count}");
+            });
         }
     }
 }
