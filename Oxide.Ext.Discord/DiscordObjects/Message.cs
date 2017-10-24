@@ -25,9 +25,9 @@ namespace Oxide.Ext.Discord.DiscordObjects
         public string webhook_id { get; set; }
         public int? type { get; set; }
 
-        public void Reply(DiscordClient client, Message message, Action<Message> callback = null)
+        public void Reply(DiscordClient client, Message message, bool ping = true, Action<Message> callback = null)
         {
-            message.content = $"<@{author.id}> {message.content}";
+            message.content = ping ? $"<@{author.id}> {message.content}" : message.content;
             client.REST.DoRequest<Message>($"/channels/{channel_id}/messages", "POST", message, (returnValue) =>
             {
                 callback?.Invoke(returnValue as Message);
