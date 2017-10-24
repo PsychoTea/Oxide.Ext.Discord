@@ -59,11 +59,9 @@ namespace Oxide.Ext.Discord.WebSockets
 
         private void GuildMemberRefresh(object sender, ElapsedEventArgs args)
         {
-            Interface.Oxide.LogInfo($"Updating from {Client.DiscordServer.members.Count}");
             Client.DiscordServer.ListGuildMembers(Client, guildMembers =>
             {
                 Client.DiscordServer.members = guildMembers.Select(x => new Member(x)).ToList();
-                Interface.Oxide.LogInfo($"Updated to {Client.DiscordServer.members.Count}");
             });
         }
     }
