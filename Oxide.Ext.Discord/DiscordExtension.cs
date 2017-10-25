@@ -12,7 +12,7 @@ namespace Oxide.Ext.Discord
         public DiscordExtension(ExtensionManager manager) : base(manager) { }
 
         public override string Name => "Discord";
-        public override string Author => "DylanSMR";
+        public override string Author => "PsychoTea & DylanSMR";
         public override VersionNumber Version => new VersionNumber(AssemblyVersion.Major, AssemblyVersion.Minor, AssemblyVersion.Build);
 
         public override void OnModLoad()
