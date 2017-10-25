@@ -1,8 +1,8 @@
-# Oxide.Ext.Discord - Readme
-This is the readme for the oxide extension discord. More stuff will go here later.
+# Oxide.Ext.Discord
+An extension for oxide that handles the discord api. Currently being developed by PsychoTea, and co-developed by DylanSMR. Any question can be asked to either of us on Discord, Oxide, or github. 
 
 ### Getting your API Key
-I will do this later
+Will do this at some point.
 
 ### Plugin Example
 ```csharp
@@ -12,37 +12,35 @@ using Oxide.Ext.Discord.WebSockets;
 
 namespace Oxide.Plugins
 {
-    [Info("DiscordToChat", "DylanSMR", 0.1)]
-    [Description("Some discord stuff.")]
+    [Info("Cool Plugin Title", "Your Name", "0.0.1")]
+    [Description("Discord Stuff")]
 
     class DiscordToChat : RustPlugin
     {
-        DiscordClient client;
+        DiscordClient Client; // Capital Variables because Psycho likes those.
+        
+        public readonly string ApiKey = "Your Super Secret Key Here";
+        
         void Loaded()
         {
-            client = Discord.GetClient("My_Api_Key_Here", true);
+            Discord.CreateClient(this, ApiKey); //Creates the client, params: Plugin, Key
         }
-        void Unload()
+        
+        void DiscordSocket_Initialized(DiscordClient Client) //Called when the client is created and is ready to be used, no return value.
         {
-            Discord.CloseClient(client);
+            this.Client = Client;       
+            timer.Every(1f, () => Client.UpHandler.SendBeat()); //Sends a alert to the client confirming the plugin is active.
+            
+            //You can do anything else here. 
         }
-        void Discord_MessageCreate(Message message)
-        {
-            if (!message.content.StartsWith("!")) return;
-
-            var args = message.content.Split(' ');
-            switch (args[0].ToLower())
-            {
-                case "!hello":
-                    Message replyMessage = new Message();
-                    replyMessage.content = $"Hello {message.author.username}";
-                    message.Reply(client, replyMessage, null);
-                    break;
-            }
+        
+        void Discord_MessageCreate(Message Message){ //Called when a message is created in discord, params: Message
+            Message.CreateReaction(Client, ":sad:"); //Adds a sad emoji to the message. 
+            PrintToChat($"Discord Message: [{Message.channel_id}]-{Message.author.name} : {Message.content}");
         }
     }
 }
 ```
 
 ### Hooks
-Up to date hooks at dylansmr.us/discord/
+~~Up to date hooks at dylansmr.us/discord/~~ Not available, hooks will be available at dylansmr.us at some point.
