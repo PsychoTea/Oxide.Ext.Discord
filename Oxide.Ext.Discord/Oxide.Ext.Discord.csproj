@@ -106,13 +106,13 @@
     <Compile Include="WebSockets\UpkeepHandler.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="Oxide.Core, Version=2.0.3440.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Oxide.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.References, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Visual Studio 2017\Projects\Oxide.Ext.PsychoMod\Oxide.Ext.PsychoMod\bin\Debug\Oxide.References.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -124,10 +124,6 @@
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="websocket-sharp, Version=1.0.4.0, Culture=neutral, PublicKeyToken=5660b08a1845a91e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\websocket-sharp.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Dependencies\Newtonsoft.Json.dll" />

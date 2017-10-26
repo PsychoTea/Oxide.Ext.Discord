@@ -51,7 +51,7 @@ namespace Oxide.Ext.Discord.WebSockets
         {
             if ((DateTime.UtcNow - LastUpdate).TotalSeconds > 10)
             {
-                Interface.Oxide.LogInfo($"[Discord Ext] Discord connection closed (no heartbeat, last beat @ {LastUpdate.ToShortTimeString()})");
+                Interface.Oxide.LogInfo($"[Discord Ext] Discord connection closed (no heartbeat: last beat at {LastUpdate.ToLongTimeString()}, time now is {DateTime.UtcNow.ToLongTimeString()})");
                 Discord.CloseClient(Client);
                 Shutdown();
             }
