@@ -126,9 +126,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Dependencies\Newtonsoft.Json.dll" />
     <Content Include="Dependencies\Oxide.Core.dll" />
-    <Content Include="Dependencies\websocket-sharp.dll" />
+    <Content Include="Dependencies\Oxide.References.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
