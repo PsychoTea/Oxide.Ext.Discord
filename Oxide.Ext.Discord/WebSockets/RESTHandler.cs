@@ -102,10 +102,10 @@ namespace Oxide.Ext.Discord.WebSockets
 
         private static class ThreadManager
         {
-            static Thread Thread = null;
-            static List<RequestObject> PendingRequests = new List<RequestObject>();
+            private static Thread Thread = null;
+            private static List<RequestObject> PendingRequests = new List<RequestObject>();
 
-            public static void Start()
+            private static void Start()
             {
                 if (IsRunning())
                 {
