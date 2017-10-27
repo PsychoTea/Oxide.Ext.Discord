@@ -130,6 +130,8 @@ namespace Oxide.Ext.Discord.WebSockets
             return returnValues.FirstOrDefault(x => x.Value != null).Value;
         }
 
+        public string GetPluginNames(string delimiter = ", ") => string.Join(delimiter, Plugins.Select(x => x.Name).ToArray());
+
         public void CreateHeartbeat(float heartbeatInterval, int lastHeartbeat)
         {
             LastHeartbeat = lastHeartbeat;
@@ -143,9 +145,7 @@ namespace Oxide.Ext.Discord.WebSockets
             Timer.Elapsed += HeartbeatElapsed;
             Timer.Start();
         }
-
-        public string GetPluginNames(string delimiter = ", ") => string.Join(delimiter, Plugins.Select(x => x.Name).ToArray());
-
+        
         private void HeartbeatElapsed(object sender, ElapsedEventArgs e)
         {
             if (!Socket.IsAlive || IsClosing() || IsClosed())
