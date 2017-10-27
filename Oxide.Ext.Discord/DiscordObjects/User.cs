@@ -38,6 +38,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
                 { "username", username },
                 { "avatar", avatarData }
             };
+
             client.REST.DoRequest<User>($"/users/@me", "PATCH", jsonObj, (returnValue) =>
             {
                 callback?.Invoke(returnValue as User);
@@ -89,13 +90,15 @@ namespace Oxide.Ext.Discord.DiscordObjects
             });
         }
 
-        public void CreateDM(DiscordClient client, string userId, Action<Channel> callback = null)
+        public void CreateDM(DiscordClient client, Action<Channel> callback = null)
         {
-            var jsonObj1 = new Dictionary<string, string>()
+            var jsonObj = new Dictionary<string, string>()
             {
-                {"recipient_id",userId}
+                {"recipient_id", this.id }
             };
-            client.REST.DoRequest<Channel>("/users/@me/channels", "POST", jsonObj1, (returnValue) => {
+
+            client.REST.DoRequest<Channel>("/users/@me/channels", "POST", jsonObj, (returnValue) => 
+            {
                 callback?.Invoke(returnValue as Channel);
             });
         }
@@ -108,6 +111,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
                 { "access_token", accessToken },
                 { "nick", nick }
             };
+
             client.REST.DoRequest($"/channels/{channelID}/recipients/{id}", "PUT", jsonObj, () =>
             {
                 callback?.Invoke();
