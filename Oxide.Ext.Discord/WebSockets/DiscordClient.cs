@@ -55,7 +55,7 @@ namespace Oxide.Ext.Discord.WebSockets
         {
             foreach (var plugin in Plugins)
             {
-                foreach (var field in plugin.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+                foreach (var field in plugin.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
                 {
                     if (field.GetCustomAttributes(typeof(DiscordClientAttribute), true).Any())
                     {
