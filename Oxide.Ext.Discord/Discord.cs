@@ -39,7 +39,8 @@ namespace Oxide.Ext.Discord
                 if (client.IsAlive() && client.DiscordServer != null)
                 {
                     client.RegisterPlugin(plugin);
-                    client.CallHook("DiscordSocket_Initialized", client);
+                    client.SetDiscordClient();
+                    client.CallHook("DiscordSocket_Initialized");
                     return;
                 }
 

@@ -34,6 +34,7 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Attributes\DiscordClientAttribute.cs" />
     <Compile Include="Discord.cs" />
     <Compile Include="DiscordEvents\GuildBan.cs" />
     <Compile Include="DiscordEvents\GuildMemberAdd.cs" />

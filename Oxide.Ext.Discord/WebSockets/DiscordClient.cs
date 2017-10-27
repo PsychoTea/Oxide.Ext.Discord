@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Timers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Oxide.Core;
 using Oxide.Core.Plugins;
+using Oxide.Ext.Discord.Attributes;
 using Oxide.Ext.Discord.DiscordObjects;
 using Oxide.Ext.Discord.Exceptions;
 using WebSocketSharp;
@@ -47,6 +49,20 @@ namespace Oxide.Ext.Discord.WebSockets
                 throw new InvalidCreationException();
 
             this.Connect();
+        }
+
+        public void SetDiscordClient()
+        {
+            foreach (var plugin in Plugins)
+            {
+                foreach (var field in plugin.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+                {
+                    if (field.GetCustomAttributes(typeof(DiscordClientAttribute), true).Any())
+                    {
+                        field.SetValue(plugin, this);
+                    }
+                }
+            }
         }
 
         public void Connect()
