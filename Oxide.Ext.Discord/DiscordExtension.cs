@@ -17,12 +17,19 @@ namespace Oxide.Ext.Discord
 
         public override void OnModLoad()
         {
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += (sender, exception) =>
+            {
+                Interface.Oxide.LogException("An exception was thrown!", exception.ExceptionObject as Exception);
+            };
         }
 
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        public override void OnShutdown()
         {
-            Interface.Oxide.LogException("An exception was thrown!", e.ExceptionObject as Exception);
+            foreach (var client in Discord.Clients)
+            {
+                Discord.CloseClient(client);
+            }
+            Interface.Oxide.LogInfo("[Discord Ext] Disconnected all clients - server shutdown.");
         }
     }
 }
