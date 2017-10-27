@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Oxide.Core;
 using Oxide.Core.Extensions;
+using Oxide.Ext.Discord.WebSockets;
 
 namespace Oxide.Ext.Discord
 {
@@ -25,10 +27,12 @@ namespace Oxide.Ext.Discord
 
         public override void OnShutdown()
         {
-            foreach (var client in Discord.Clients)
+            // new List prevents against InvalidOperationException
+            foreach (var client in new List<DiscordClient>(Discord.Clients))
             {
                 Discord.CloseClient(client);
             }
+
             Interface.Oxide.LogInfo("[Discord Ext] Disconnected all clients - server shutdown.");
         }
     }
