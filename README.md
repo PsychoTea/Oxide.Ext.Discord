@@ -1,42 +1,54 @@
 # Oxide.Ext.Discord
-An extension for oxide that handles the discord api. Currently being developed by PsychoTea, and co-developed by DylanSMR. Any question can be asked to either of us on Discord, Oxide, or github. 
+An extension for Oxide, which acts as a bridge between Oxide plugins and the Discord API. Currently being developed by PsychoTea, and co-developed by DylanSMR. Please submit any questions to us via Discord, Oxide, or GitHub.
+
+Should you encounter an issue, please feel free to create an issue here.
+
+Want to contribute? Create a fork of the repo and create a pull request for any changes you wish to make!
 
 ### Getting your API Key
-Will do this at some point.
+TODO: Explain how to get an API key
 
 ### Plugin Example
 ```csharp
 using Oxide.Ext.Discord;
+using Oxide.Ext.Discord.Attributes;
 using Oxide.Ext.Discord.DiscordObjects;
 using Oxide.Ext.Discord.WebSockets;
 
 namespace Oxide.Plugins
 {
-    [Info("Cool Plugin Title", "Your Name", "0.0.1")]
-    [Description("Discord Stuff")]
+    [Info("DiscordExtExample", "Your Name", "1.0.0")]
 
-    class DiscordToChat : RustPlugin
+    class DiscordExtExample : CovalencePlugin
     {
-        DiscordClient Client; // Capital Variables because Psycho likes those.
-        
-        public readonly string ApiKey = "Your Super Secret Key Here";
-        
-        void Loaded()
+        // Define the DiscordClient field that will be set
+        // to when our DiscordClient is created & connected
+        [DiscordClient] DiscordClient Client;
+
+        void OnServerInitialized()
         {
-            Discord.CreateClient(this, ApiKey); //Creates the client, params: Plugin, Key
+            Discord.CreateClient(this, "<api key here>"); // Create a new DiscordClient
         }
-        
-        void DiscordSocket_Initialized(DiscordClient Client) //Called when the client is created and is ready to be used, no return value.
+
+        // Called when 
+        void DiscordSocket_Initialized()
         {
-            this.Client = Client;       
-            timer.Every(1f, () => Client.UpHandler.SendBeat()); //Sends a alert to the client confirming the plugin is active.
-            
-            //You can do anything else here. 
+            Puts("Discord connected!");
+
+            // When this hook is called, our Client variable
+            // will be set to the main DiscordClient that
+            // has been created for us
+
+            Puts($"Connected to server: {Client.DiscordServer.name}");
         }
-        
-        void Discord_MessageCreate(Message Message){ //Called when a message is created in discord, params: Message
-            Message.CreateReaction(Client, ":sad:"); //Adds a sad emoji to the message. 
-            PrintToChat($"Discord Message: [{Message.channel_id}]-{Message.author.name} : {Message.content}");
+
+        // Called when a message is created on the Discord server
+        void Discord_MessageCreate(Message message)
+        {
+            message.CreateReaction(Client, ":sad:"); // Add a sad reaction to the message
+
+            // Post the message to chat
+            server.Broadcast($"Discord Message: {message.author.username} - {message.content}");
         }
     }
 }
