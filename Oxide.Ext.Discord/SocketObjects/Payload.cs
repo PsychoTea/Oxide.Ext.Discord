@@ -7,7 +7,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
         [JsonProperty("token")]
         public string Token { get; set; }
         [JsonProperty("properties")]
-        public Payload_Property Property { get; set; }
+        public PayloadProperty Property { get; set; }
         [JsonProperty("compress")]
         public bool Compress { get; set; }
         [JsonProperty("large_threshold")]
