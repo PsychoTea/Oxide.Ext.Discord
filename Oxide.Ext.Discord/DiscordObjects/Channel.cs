@@ -17,18 +17,14 @@ namespace Oxide.Ext.Discord.DiscordObjects
         public List<User> recipients { get; set; }
         public string icon { get; set; }
 
-        public static Channel GetChannel(DiscordClient client, string channelID)
+        public static void GetChannel(DiscordClient client, string channelID, Action<Channel> callback = null)
         {
-            Channel Found = client.DiscordServer.channels.Find(x => x.id.Equals(channelID));
-            return Found;
+            client.REST.DoRequest<Channel>($"/channels/{channelID}", "GET", null, (returnValue) =>
+            {
+                callback?.Invoke(returnValue as Channel);
+            });
         }
-
-        public static Channel GetChannelByName(DiscordClient client, string channelName)
-        {
-            Channel Found = client.DiscordServer.channels.Find(x => x.name.Equals(channelName));
-            return Found;
-        }
-
+        
         public void ModifyChannel(DiscordClient client, Channel newChannel, Action<Channel> callback = null)
         {
             client.REST.DoRequest<Channel>($"/channels/{id}", "PATCH", newChannel, (returnValue) =>
