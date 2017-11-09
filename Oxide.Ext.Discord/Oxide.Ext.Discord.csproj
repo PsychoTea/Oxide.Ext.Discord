@@ -99,7 +99,7 @@
     <Compile Include="DiscordObjects\Message.cs" />
     <Compile Include="SocketObjects\Packet.cs" />
     <Compile Include="SocketObjects\Payload.cs" />
-    <Compile Include="SocketObjects\Payload_Property.cs" />
+    <Compile Include="SocketObjects\PayloadProperty.cs" />
     <Compile Include="DiscordSettings.cs" />
     <Compile Include="WebSockets\RESTHandler.cs" />
     <Compile Include="WebSockets\SocketHandler.cs" />
