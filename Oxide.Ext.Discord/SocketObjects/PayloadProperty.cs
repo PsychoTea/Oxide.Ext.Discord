@@ -1,6 +1,6 @@
 ﻿namespace Oxide.Ext.Discord.DiscordObjects
 {
-    class Payload_Property
+    class PayloadProperty
     {
         public string os { get; set; }
         public string browser { get; set; }
