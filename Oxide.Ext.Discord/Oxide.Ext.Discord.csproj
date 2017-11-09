@@ -85,6 +85,7 @@
     <Compile Include="DiscordObjects\VoiceRegion.cs" />
     <Compile Include="DiscordObjects\VoiceState.cs" />
     <Compile Include="DiscordObjects\Webhook.cs" />
+    <Compile Include="Exceptions\LimitedClientException.cs" />
     <Compile Include="Exceptions\PluginNullException.cs" />
     <Compile Include="Exceptions\APIKeyException.cs" />
     <Compile Include="Exceptions\InvalidCreationException.cs" />
@@ -132,7 +133,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "S:\Libraries\Documents\GitHub\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Oxide.Ext.Discord.dll" "C:\RustServer\rust_legacy_server\rust_server_Data\Managed\Oxide.Ext.Discord.dll"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -10,5 +10,6 @@
         public int? permissions { get; set; }
         public bool? managed { get; set; }
         public bool? mentionable { get; set; }
+        public string guild_id { get; set; }
     }
 }

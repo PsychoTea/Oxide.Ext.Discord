@@ -51,9 +51,12 @@ namespace Oxide.Ext.Discord.WebSockets
             this.Connect();
         }
 
-        public void SetDiscordClient()
+        public void SetDiscordClient(Plugin Plugin = null)
         {
-            foreach (var plugin in Plugins)
+            List<Plugin> affectedPlugins = new List<Plugin>();
+            if (Plugin != null) affectedPlugins.Add(Plugin);
+            else affectedPlugins.AddRange(Plugins);
+            foreach (var plugin in affectedPlugins)
             {
                 foreach (var field in plugin.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
                 {
@@ -87,7 +90,7 @@ namespace Oxide.Ext.Discord.WebSockets
             if (Socket != null && Socket.ReadyState != WebSocketState.Closed)
                 throw new SocketRunningException(this);
 
-            if (this.CallHook("DiscordSocket_SocketConnecting", WSSURL) != null)
+            if (this.CallHook("DiscordSocket_SocketConnecting", null, WSSURL) != null)
                 return;
 
             Socket = new WebSocket(WSSURL + "/?v=6&encoding=json");
@@ -126,9 +129,15 @@ namespace Oxide.Ext.Discord.WebSockets
             Plugins.Add(plugin);
         }
 
-        public object CallHook(string hookname, params object[] args)
+        public object CallHook(string hookname, Plugin forcedPlugin = null, params object[] args)
         {
             Dictionary<string, object> returnValues = new Dictionary<string, object>();
+
+            if(forcedPlugin != null)
+            {
+                forcedPlugin.CallHook(hookname, args);
+                return null;
+            }
 
             foreach (var plugin in Plugins)
             {

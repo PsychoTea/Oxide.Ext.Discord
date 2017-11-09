@@ -17,12 +17,16 @@ namespace Oxide.Ext.Discord.DiscordObjects
         public List<User> recipients { get; set; }
         public string icon { get; set; }
 
-        public static void GetChannel(DiscordClient client, string channelID, Action<Channel> callback = null)
+        public static Channel GetChannel(DiscordClient client, string channelID)
         {
-            client.REST.DoRequest<Channel>($"/channels/{channelID}", "GET", null, (returnValue) =>
-            {
-                callback?.Invoke(returnValue as Channel);
-            });
+            Channel Found = client.DiscordServer.channels.Find(x => x.id.Equals(channelID));
+            return Found;
+        }
+
+        public static Channel GetChannelByName(DiscordClient client, string channelName)
+        {
+            Channel Found = client.DiscordServer.channels.Find(x => x.name.Equals(channelName));
+            return Found;
         }
 
         public void ModifyChannel(DiscordClient client, Channel newChannel, Action<Channel> callback = null)
@@ -61,6 +65,26 @@ namespace Oxide.Ext.Discord.DiscordObjects
         public void CreateMessage(DiscordClient client, Message message, Action<Message> callback = null)
         {
             client.REST.DoRequest<Message>($"/channels/{id}/messages", "POST", message, (returnValue) =>
+            {
+                callback?.Invoke(returnValue as Message);
+            });
+        }
+
+        public void CreateMessage(DiscordClient client, string message, Action<Message> callback = null)
+        {
+            Message cMessage = new Message();
+            cMessage.content = message;
+            client.REST.DoRequest<Message>($"/channels/{id}/messages", "POST", cMessage, (returnValue) =>
+            {
+                callback?.Invoke(returnValue as Message);
+            });
+        }
+
+        public void CreateMessage(DiscordClient client, Embed embed, Action<Message> callback = null)
+        {
+            Message cMessage = new Message();
+            cMessage.embed = embed;
+            client.REST.DoRequest<Message>($"/channels/{id}/messages", "POST", cMessage, (returnValue) =>
             {
                 callback?.Invoke(returnValue as Message);
             });

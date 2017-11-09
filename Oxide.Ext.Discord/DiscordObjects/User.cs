@@ -13,6 +13,15 @@ namespace Oxide.Ext.Discord.DiscordObjects
         public string discriminator { get; set; }
         public string avatar { get; set; }
         public bool? bot { get; set; }
+        public string guild_id { get; set; }
+        public User user { get; set; }
+        public string nick { get; set; }
+        public List<string> roles { get; set; }
+        public string joined_at { get; set; }
+        public bool deaf { get; set; }
+        public bool mute { get; set; }
+        public Game game { get; set; }
+        public string status { get; set; }
 
         public static void GetCurrentUser(DiscordClient client, Action<User> callback = null)
         {

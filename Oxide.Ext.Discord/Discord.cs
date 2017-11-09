@@ -19,38 +19,43 @@ namespace Oxide.Ext.Discord
             if (string.IsNullOrEmpty(apiKey))
                 throw new APIKeyException();
 
-            var search = Clients.Where(x => x.Settings.ApiToken == apiKey);
-            if (search.Count() > 1)
+            var search = Clients.Find(x => x.Plugins.Find(y => y.Filename == plugin.Filename) != null);
+            if(search != null)
             {
-                Interface.Oxide.LogWarning("[Discord Ext] Multiple DiscordClient's found for one APIKey, destroying...");
-                search.ToList().ForEach(x =>
-                {
-                    x.Disconnect();
-                    Clients.Remove(x);
-                });
+                if (!search.Settings.ApiToken.Equals(apiKey))
+                    throw new LimitedClientException();
+
+
+                search.Plugins.Remove(search.Plugins.Find(x => x.Filename == plugin.Filename));
+                search.RegisterPlugin(plugin);
+                search.SetDiscordClient(plugin);
+                search.CallHook("DiscordSocket_Initialized", plugin);
             }
-
-            if (search.Count() == 1)
+            else
             {
-                var client = search.First();
-
-                // Hmm... if the WS is connected and DiscordServer is null
-                // a SocketRunningException will (probably) be thrown
-                if (client.IsAlive() && client.DiscordServer != null)
+                search = Clients.Find(x => x.Settings.ApiToken.Equals(apiKey));
+                if (search != null)
                 {
-                    client.RegisterPlugin(plugin);
-                    client.SetDiscordClient();
-                    client.CallHook("DiscordSocket_Initialized");
-                    return;
+                    if (search.IsAlive() && search.DiscordServer != null)
+                    {
+                        search.RegisterPlugin(plugin);
+                        search.SetDiscordClient(plugin);
+                        search.CallHook("DiscordSocket_Initialized", plugin);
+                    }
+                    else
+                    {
+                        search.Initialize(plugin, apiKey);
+                        search.SetDiscordClient();
+                        search.CallHook("DiscordSocket_Initialized", plugin);
+                    }
                 }
-
-                client.Initialize(plugin, apiKey);
-                return;
+                else
+                {
+                    var newClient = new DiscordClient();
+                    Clients.Add(newClient);
+                    newClient.Initialize(plugin, apiKey);
+                }
             }
-
-            var newClient = new DiscordClient();
-            Clients.Add(newClient);
-            newClient.Initialize(plugin, apiKey);
         }
 
         public static void CloseClient(DiscordClient client)
