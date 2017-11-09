@@ -25,7 +25,7 @@ namespace Oxide.Ext.Discord.WebSockets
                 payload = new Payload()
                 {
                     Token = Client.Settings.ApiToken,
-                    Property = new Payload_Property()
+                    Property = new PayloadProperty()
                     {
                         os = Environment.OSVersion.ToString(),
                         browser = "orfbotpp",
