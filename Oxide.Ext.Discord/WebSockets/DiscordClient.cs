@@ -35,10 +35,14 @@ namespace Oxide.Ext.Discord.WebSockets
         public void Initialize(Plugin plugin, string apiKey)
         {
             if (string.IsNullOrEmpty(apiKey))
+            {
                 throw new APIKeyException();
+            }
 
             if (plugin == null)
+            {
                 throw new PluginNullException();
+            }
 
             RegisterPlugin(plugin);
 
@@ -46,23 +50,24 @@ namespace Oxide.Ext.Discord.WebSockets
             REST = new RESTHandler(Settings.ApiToken);
 
             if (!Discord.Clients.Any(x => x.Settings.ApiToken == apiKey))
+            {
                 throw new InvalidCreationException();
+            }
 
             this.Connect();
         }
 
-        public void SetDiscordClient(Plugin Plugin = null)
+        public void UpdatePluginReference(Plugin plugin = null)
         {
-            List<Plugin> affectedPlugins = new List<Plugin>();
-            if (Plugin != null) affectedPlugins.Add(Plugin);
-            else affectedPlugins.AddRange(Plugins);
-            foreach (var plugin in affectedPlugins)
+            List<Plugin> affectedPlugins = (plugin == null) ? Plugins : new List<Plugin>() { plugin };
+
+            foreach (var pluginItem in affectedPlugins)
             {
-                foreach (var field in plugin.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
+                foreach (var field in pluginItem.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
                 {
                     if (field.GetCustomAttributes(typeof(DiscordClientAttribute), true).Any())
                     {
-                        field.SetValue(plugin, this);
+                        field.SetValue(pluginItem, this);
                     }
                 }
             }
@@ -85,14 +90,15 @@ namespace Oxide.Ext.Discord.WebSockets
         public void CreateSocket()
         {
             if (string.IsNullOrEmpty(WSSURL))
+            {
                 throw new NoURLException();
+            }
 
             if (Socket != null && Socket.ReadyState != WebSocketState.Closed)
+            {
                 throw new SocketRunningException(this);
-
-            if (this.CallHook("DiscordSocket_SocketConnecting", null, WSSURL) != null)
-                return;
-
+            }
+            
             Socket = new WebSocket(WSSURL + "/?v=6&encoding=json");
             Handler = new SocketHandler(this);
             UpHandler = new UpkeepHandler(this);
@@ -126,18 +132,18 @@ namespace Oxide.Ext.Discord.WebSockets
         {
             var search = Plugins.Where(x => x.Title == plugin.Title);
             search.ToList().ForEach(x => Plugins.Remove(x));
+
             Plugins.Add(plugin);
         }
 
-        public object CallHook(string hookname, Plugin forcedPlugin = null, params object[] args)
+        public object CallHook(string hookname, Plugin specificPlugin = null, params object[] args)
         {
-            Dictionary<string, object> returnValues = new Dictionary<string, object>();
-
-            if(forcedPlugin != null)
+            if (specificPlugin != null)
             {
-                forcedPlugin.CallHook(hookname, args);
-                return null;
+                return specificPlugin.CallHook(hookname, args);
             }
+
+            Dictionary<string, object> returnValues = new Dictionary<string, object>();
 
             foreach (var plugin in Plugins)
             {
@@ -147,8 +153,8 @@ namespace Oxide.Ext.Discord.WebSockets
 
             if (returnValues.Count(x => x.Value != null) > 1)
             {
-                string conflicts = string.Join("\n", returnValues.Select(x => $"Plugin {x.Key}: {returnValues.Values.ToString()}").ToArray());
-                Interface.Oxide.LogWarning($"[Discord Ext] A hook conflict was triggered on {hookname} between: {conflicts}");
+                string conflicts = string.Join("\n", returnValues.Select(x => $"Plugin {x.Key} - {x.Value}").ToArray());
+                Interface.Oxide.LogWarning($"[Discord Ext] A hook conflict was triggered on {hookname} between:\n{conflicts}");
                 return null;
             }
 

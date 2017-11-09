@@ -128,7 +128,7 @@ namespace Oxide.Ext.Discord.WebSockets
                         case "GUILD_CREATE":
                             Guild guildCreate = JsonConvert.DeserializeObject<Guild>(messageObj["d"].ToString());
                             Client.DiscordServer = guildCreate;
-                            Client.SetDiscordClient();
+                            Client.UpdatePluginReference();
                             Client.CallHook("DiscordSocket_Initialized");
                             Client.CallHook("Discord_GuildCreate", null, guildCreate);
                             break;
