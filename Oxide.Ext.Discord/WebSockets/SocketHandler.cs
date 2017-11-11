@@ -134,10 +134,8 @@ namespace Oxide.Ext.Discord.WebSockets
                             break;
 
                         case "GUILD_UPDATE":
-                            Guild guildNew = JsonConvert.DeserializeObject<Guild>(messageObj["d"].ToString());
-                            Guild guildOld = new Guild();
-                            guildOld = guildNew;
-                            Client.CallHook("Discord_GuildUpdate", null, guildNew, guildOld);
+                            Guild guildUpdate = JsonConvert.DeserializeObject<Guild>(messageObj["d"].ToString());
+                            Client.CallHook("Discord_GuildUpdate", null, guildUpdate);
                             break;
 
                         case "GUILD_DELETE":
@@ -147,7 +145,6 @@ namespace Oxide.Ext.Discord.WebSockets
 
                         case "GUILD_BAN_ADD":
                             User bannedUser = JsonConvert.DeserializeObject<User>(messageObj["d"].ToString());
-                            
                             Client.CallHook("Discord_GuildBanAdd", null, bannedUser);
                             break;
 
