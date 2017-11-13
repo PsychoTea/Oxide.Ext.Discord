@@ -77,14 +77,10 @@ namespace Oxide.Ext.Discord.WebSockets
                   int.TryParse(heartbeatToken.ToString(), out lastHeartbeat)))
                 lastHeartbeat = 0;
 
-            switch (messageObj.GetValue("op").ToString())
+            string opCode = messageObj.GetValue("op").ToString();
+            switch (opCode)
             {
-                case "10":
-                    JObject info = JObject.Parse(e.Data);
-                    float time = (float)info["d"]["heartbeat_interval"];
-                    Client.CreateHeartbeat(time, lastHeartbeat);
-                    break;
-                    
+                // Dispatch (dispatches an event)
                 case "0":
                     switch (messageObj["t"].ToString())
                     {
@@ -328,6 +324,45 @@ namespace Oxide.Ext.Discord.WebSockets
                             Interface.Oxide.LogWarning($"[Discord Ext] [Debug] Unhandled message: {messageObj["t"]}, data: {messageObj["d"]}");
                             break;
                     }
+                    break;
+
+                // Heartbeat (used for ping checking)
+                // Note: I think we should be manually sending a heartbeat
+                // when this is received
+                // https://discordapp.com/developers/docs/topics/gateway#gateway-heartbeat
+                case "1":
+                    Interface.Oxide.LogInfo($"[DiscordExt] Manully sent heartbeat (received opcode 1)");
+                    Client.SendHeartbeat();
+                    break;
+
+                // Reconnect (used to tell clients to reconnect to the gateway)
+                // we should immediately reconnect here
+                case "7":
+                    Interface.Oxide.LogInfo($"[DiscordExt] Reconnect has been called (opcode 7)! Reconnecting...");
+                    Client.Socket.ConnectAsync();
+                    break;
+
+                // Invalid Session (used to notify client they have an invalid 
+                // session ID)
+                case "9":
+                    Interface.Oxide.LogInfo($"[DiscordExt] Invalid Session ID opcode recieved!");
+                    break;
+
+                // Hello (sent immediately after connecting, contains heartbeat
+                // and server debug information)
+                case "10":
+                    JObject info = JObject.Parse(e.Data);
+                    float time = (float)info["d"]["heartbeat_interval"];
+                    Client.CreateHeartbeat(time, lastHeartbeat);
+                    break;
+
+                // Heartbeat ACK (sent immediately following a client heartbeat
+                // that was received)
+                case "11":
+                    break;
+
+                default:
+                    Interface.Oxide.LogInfo($"[DiscordExt] Unhandled OP code: code {opCode}, message: {e.Data}");
                     break;
             }
         }
