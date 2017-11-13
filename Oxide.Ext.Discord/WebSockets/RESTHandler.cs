@@ -86,8 +86,11 @@ namespace Oxide.Ext.Discord.WebSockets
                     return;
                 }
 
-                var reader = new StreamReader(response.GetResponseStream());
-                string output = reader.ReadToEnd().Trim();
+                string output;
+                using (var reader = new StreamReader(response.GetResponseStream()))
+                {
+                    output = reader.ReadToEnd().Trim();
+                }
 
                 if (ReturnType == typeof(void))
                 {
