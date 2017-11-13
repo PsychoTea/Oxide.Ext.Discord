@@ -22,7 +22,7 @@ namespace Oxide.Ext.Discord.WebSockets
         public RESTHandler REST { get; private set; }
         public string WSSURL { get; private set; }
         public UpkeepHandler UpHandler { get; private set; }
-        private WebSocket Socket = null;
+        public WebSocket Socket { get; private set; } = null;
         private SocketHandler Handler;
         private Timer Timer;
         private int LastHeartbeat;
@@ -98,7 +98,7 @@ namespace Oxide.Ext.Discord.WebSockets
             {
                 throw new SocketRunningException(this);
             }
-            
+
             Socket = new WebSocket(WSSURL + "/?v=6&encoding=json");
             Handler = new SocketHandler(this);
             UpHandler = new UpkeepHandler(this);
@@ -176,16 +176,9 @@ namespace Oxide.Ext.Discord.WebSockets
             Timer.Elapsed += HeartbeatElapsed;
             Timer.Start();
         }
-        
-        private void HeartbeatElapsed(object sender, ElapsedEventArgs e)
-        {
-            if (!Socket.IsAlive || IsClosing() || IsClosed())
-            {
-                Timer.Dispose();
-                Timer = null;
-                return;
-            }
 
+        public void SendHeartbeat()
+        {
             var packet = new Packet()
             {
                 op = 1,
@@ -196,6 +189,18 @@ namespace Oxide.Ext.Discord.WebSockets
             Socket.Send(message);
 
             this.CallHook("DiscordSocket_HeartbeatSent");
+        }
+
+        private void HeartbeatElapsed(object sender, ElapsedEventArgs e)
+        {
+            if (!Socket.IsAlive || IsClosing() || IsClosed())
+            {
+                Timer.Dispose();
+                Timer = null;
+                return;
+            }
+
+            SendHeartbeat();
         }
 
         private void GetURL(Action callback)
