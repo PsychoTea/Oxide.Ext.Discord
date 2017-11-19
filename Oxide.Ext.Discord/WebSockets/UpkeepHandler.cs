@@ -1,39 +1,38 @@
-﻿using System.Linq;
-using System.Timers;
-using Oxide.Ext.Discord.DiscordObjects;
-
-namespace Oxide.Ext.Discord.WebSockets
+﻿namespace Oxide.Ext.Discord.WebSockets
 {
+    using System.Linq;
+    using System.Timers;
+
     public class UpkeepHandler
     {
-        private DiscordClient Client;
-        private Timer GuildMemberRefreshTimer;
+        private DiscordClient client;
+        private Timer guildMemberRefreshTimer;
 
         public UpkeepHandler(DiscordClient client)
         {
             if (client == null) return;
 
-            this.Client = client;
+            this.client = client;
 
-            GuildMemberRefreshTimer = new Timer();
-            GuildMemberRefreshTimer.Elapsed += GuildMemberRefresh;
-            GuildMemberRefreshTimer.AutoReset = true;
-            GuildMemberRefreshTimer.Interval = 60000;
-            GuildMemberRefreshTimer.Start();
+            guildMemberRefreshTimer = new Timer();
+            guildMemberRefreshTimer.Elapsed += GuildMemberRefresh;
+            guildMemberRefreshTimer.AutoReset = true;
+            guildMemberRefreshTimer.Interval = 60000;
+            guildMemberRefreshTimer.Start();
         }
 
         public void Shutdown()
         {
-            GuildMemberRefreshTimer.Dispose();
-            GuildMemberRefreshTimer = null;
+            guildMemberRefreshTimer.Dispose();
+            guildMemberRefreshTimer = null;
         }
         
         // This is retarded
         private void GuildMemberRefresh(object sender, ElapsedEventArgs args)
         {
-            Client.DiscordServer.ListGuildMembers(Client, guildMembers =>
+            client.DiscordServer.ListGuildMembers(client, guildMembers =>
             {
-                Client.DiscordServer.members = guildMembers.ToList();
+                client.DiscordServer.members = guildMembers.ToList();
             });
         }
     }

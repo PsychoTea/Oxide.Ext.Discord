@@ -1,20 +1,27 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using Oxide.Ext.Discord.WebSockets;
-using Oxide.Ext.Discord.RESTObjects;
-
-namespace Oxide.Ext.Discord.DiscordObjects
+﻿namespace Oxide.Ext.Discord.DiscordObjects
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Oxide.Ext.Discord.RESTObjects;
+    using Oxide.Ext.Discord.WebSockets;
+
     public class User
     {
         public string id { get; set; }
+
         public string username { get; set; }
+
         public string discriminator { get; set; }
+
         public string avatar { get; set; }
+
         public bool? bot { get; set; }
+
         public bool? mfa_enabled { get; set; }
+
         public bool? verified { get; set; }
+
         public string email { get; set; }
 
         public static void GetCurrentUser(DiscordClient client, Action<User> callback = null)
@@ -34,6 +41,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
         }
 
         public void ModifyCurrentUser(DiscordClient client, Action<User> callback = null) => ModifyCurrentUser(client, this.username, this.avatar, callback);
+
         public void ModifyCurrentUser(DiscordClient client, string username = "", string avatarData = "", Action<User> callback = null)
         {
             var jsonObj = new Dictionary<string, string>()
@@ -57,6 +65,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
         }
 
         public void LeaveGuild(DiscordClient client, Guild guild) => LeaveGuild(client, guild.id);
+
         public void LeaveGuild(DiscordClient client, string guildID)
         {
             client.REST.DoRequest($"/users/@me/guilds/{guildID}", "DELETE");
@@ -97,7 +106,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
         {
             var jsonObj = new Dictionary<string, string>()
             {
-                {"recipient_id", this.id }
+                { "recipient_id", this.id }
             };
 
             client.REST.DoRequest<Channel>("/users/@me/channels", "POST", jsonObj, (returnValue) => 
@@ -107,6 +116,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
         }
         
         public void GroupDMAddRecipient(DiscordClient client, Channel channel, string accessToken, Action callback = null) => GroupDMAddRecipient(client, channel.id, accessToken, this.username, callback);
+
         public void GroupDMAddRecipient(DiscordClient client, string channelID, string accessToken, string nick, Action callback = null)
         {
             var jsonObj = new Dictionary<string, string>()
@@ -122,6 +132,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
         }
 
         public void GroupDMRemoveRecipient(DiscordClient client, Channel channel) => GroupDMRemoveRecipient(client, channel.id);
+
         public void GroupDMRemoveRecipient(DiscordClient client, string channelID)
         {
             client.REST.DoRequest($"/channels/{channelID}/recipients/{id}", "DELETE");

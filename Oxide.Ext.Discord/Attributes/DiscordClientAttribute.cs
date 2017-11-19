@@ -1,7 +1,9 @@
-﻿using System;
-
-namespace Oxide.Ext.Discord.Attributes
+﻿namespace Oxide.Ext.Discord.Attributes
 {
+    using System;
+
     [AttributeUsage(AttributeTargets.Field)]
-    public class DiscordClientAttribute : Attribute { }
+    public class DiscordClientAttribute : Attribute
+    {
+    }
 }

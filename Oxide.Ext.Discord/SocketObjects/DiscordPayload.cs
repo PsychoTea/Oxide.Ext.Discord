@@ -1,6 +1,7 @@
-﻿using Newtonsoft.Json;
-namespace Oxide.Ext.Discord.SocketObjects
+﻿namespace Oxide.Ext.Discord.SocketObjects
 {
+    using Newtonsoft.Json;
+
     public class DiscordPayload
     {
         [JsonProperty("content")]

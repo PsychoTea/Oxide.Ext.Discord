@@ -1,18 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using Oxide.Ext.Discord.RESTObjects;
-using Oxide.Ext.Discord.WebSockets;
-
-namespace Oxide.Ext.Discord.DiscordObjects
+﻿namespace Oxide.Ext.Discord.DiscordObjects
 {
+    using System;
+    using System.Collections.Generic;
+    using Oxide.Ext.Discord.RESTObjects;
+    using Oxide.Ext.Discord.WebSockets;
+
     public class Webhook
     {
         public string id { get; set; }
+
         public string guild_id { get; set; }
+
         public string channel_id { get; set; }
+
         public User user { get; set; }
+
         public string name { get; set; }
+
         public string avatar { get; set; }
+
         public string token { get; set; }
 
         public static void CreateWebhook(DiscordClient client, string channelID, string name, string avatar, Action<Webhook> callback = null)

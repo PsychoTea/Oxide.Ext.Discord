@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Oxide.Core.Plugins;
-using Oxide.Ext.Discord.Exceptions;
-using Oxide.Ext.Discord.WebSockets;
-
-namespace Oxide.Ext.Discord
+﻿namespace Oxide.Ext.Discord
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using Oxide.Core.Plugins;
+    using Oxide.Ext.Discord.Exceptions;
+    using Oxide.Ext.Discord.WebSockets;
+
     public class Discord
     {
         public static List<DiscordClient> Clients { get; private set; } = new List<DiscordClient>();

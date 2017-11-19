@@ -1,11 +1,12 @@
-﻿using Newtonsoft.Json;
-namespace Oxide.Ext.Discord.DiscordObjects
+﻿namespace Oxide.Ext.Discord.DiscordObjects
 {
-    class Handshake
+    using Newtonsoft.Json;
+
+    public class Handshake
     {
-        [JsonProperty("op")]
-        public int Op { get; set; }
+        public int op { get; set; }
+
         [JsonProperty("d")]
-        public Payload payload { get; set; }
+        public Payload Payload { get; set; }
     }
 }
