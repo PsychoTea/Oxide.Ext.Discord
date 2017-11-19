@@ -73,11 +73,14 @@ namespace Oxide.Ext.Discord.WebSockets
 
             JToken heartbeatToken;
             int lastHeartbeat = 0;
-            if (!(messageObj.TryGetValue("s", out heartbeatToken) && 
+            if (!(messageObj.TryGetValue("s", out heartbeatToken) &&
                   int.TryParse(heartbeatToken.ToString(), out lastHeartbeat)))
+            {
                 lastHeartbeat = 0;
+            }
 
             string opCode = messageObj.GetValue("op").ToString();
+            
             switch (opCode)
             {
                 // Dispatch (dispatches an event)
@@ -270,18 +273,27 @@ namespace Oxide.Ext.Discord.WebSockets
 
                         case "PRESENCE_UPDATE":
                             PresenceUpdate presenceUpdate = JsonConvert.DeserializeObject<PresenceUpdate>(messageObj["d"].ToString());
-                            User updatedPres = presenceUpdate.user;
-                            User oldPresUser = Client.DiscordServer.members.ToList().Find(x => x.user.id.Equals(updatedPres.id)).user;
-                            Client.DiscordServer.members.Remove(Client.DiscordServer.members.Find(x => x.user.id.Equals(updatedPres.id)));
-                            Member member1 = new Member();
-                            member1.user = updatedPres;
-                            member1.roles = updatedPres.roles;
-                            member1.deaf = updatedPres.deaf;
-                            member1.joined_at = updatedPres.joined_at;
-                            member1.mute = updatedPres.mute;
-                            member1.nick = updatedPres.nick;
-                            Client.DiscordServer.members.Add(member1);
-                            Client.CallHook("Discord_PresenceUpdate", null, updatedPres, oldPresUser);
+
+                            User updatedPresence = presenceUpdate?.user;
+
+                            if (updatedPresence != null)
+                            {
+                                var memberSearch = Client.DiscordServer.members.Where(x => x.user.id == updatedPresence.id);
+                                memberSearch.ToList().ForEach(x => Client.DiscordServer.members.Remove(x));
+
+                                Member presenceMember = new Member()
+                                {
+                                    deaf = updatedPresence.deaf,
+                                    user = updatedPresence,
+                                    joined_at = updatedPresence.joined_at,
+                                    mute = updatedPresence.mute,
+                                    nick = updatedPresence.nick,
+                                    roles = updatedPresence.roles
+                                };
+                                Client.DiscordServer.members.Add(presenceMember);
+                            }
+
+                            Client.CallHook("Discord_PresenceUpdate", null, updatedPresence);
                             break;
 
                         case "TYPING_START":
@@ -351,8 +363,7 @@ namespace Oxide.Ext.Discord.WebSockets
                 // Hello (sent immediately after connecting, contains heartbeat
                 // and server debug information)
                 case "10":
-                    JObject info = JObject.Parse(e.Data);
-                    float time = (float)info["d"]["heartbeat_interval"];
+                    float time = (float)messageObj["d"]["heartbeat_interval"];
                     Client.CreateHeartbeat(time, lastHeartbeat);
                     break;
 
