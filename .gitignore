@@ -76,3 +76,4 @@ _ReSharper*/
 *.DotSettings.user
 ## TeamCity add-in
 _TeamCity*
+*.StyleCop
