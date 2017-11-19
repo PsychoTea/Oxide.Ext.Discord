@@ -33,7 +33,7 @@ namespace Oxide.Ext.Discord.WebSockets
         {
             Client.DiscordServer.ListGuildMembers(Client, guildMembers =>
             {
-                Client.DiscordServer.members = guildMembers.Select(x => new Member(x)).ToList();
+                Client.DiscordServer.members = guildMembers.ToList();
             });
         }
     }

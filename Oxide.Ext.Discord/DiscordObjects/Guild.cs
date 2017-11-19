@@ -33,7 +33,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
         public bool? unavailable { get; set; }
         public int? member_count { get; set; }
         public List<VoiceState> voice_states { get; set; }
-        public List<Member> members { get; set; }
+        public List<GuildMember> members { get; set; }
         public List<Channel> channels { get; set; }
         public List<Presence> presences { get; set; }
 
