@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Oxide.Ext.Discord.DiscordEvents
+﻿namespace Oxide.Ext.Discord.DiscordEvents
 {
+    using System.Collections.Generic;
+
     public class Resumed
     {
         public List<string> _trace { get; set; }

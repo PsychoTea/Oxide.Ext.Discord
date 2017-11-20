@@ -1,28 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using Oxide.Ext.Discord.WebSockets;
-
-namespace Oxide.Ext.Discord.DiscordObjects
+﻿namespace Oxide.Ext.Discord.DiscordObjects
 {
+    using System;
+    using System.Collections.Generic;
+    using Oxide.Ext.Discord.WebSockets;
+
     public class Message
     {
         public string id { get; set; }
+
         public string channel_id { get; set; }
+
         public User author { get; set; }
+
         public string content { get; set; }
+
         public string timestamp { get; set; }
+
         public string edited_timestamp { get; set; }
+
         public bool tts { get; set; }
+
         public bool mention_everyone { get; set; }
+
         public List<User> mentions { get; set; }
+
         public List<string> mention_roles { get; set; }
+
         public List<Attachment> attachments { get; set; }
+
         public Embed embed { get; set; }
+
         public List<Embed> embeds { get; set; }
+
         public List<Reaction> reactions { get; set; }
+
         public string nonce { get; set; }
+
         public bool pinned { get; set; }
+
         public string webhook_id { get; set; }
+
         public int? type { get; set; }
 
         public void Reply(DiscordClient client, Message message, bool ping = true, Action<Message> callback = null)
@@ -45,6 +62,7 @@ namespace Oxide.Ext.Discord.DiscordObjects
         }
 
         public void DeleteOwnReaction(DiscordClient client, string emoji, User user) => DeleteOwnReaction(client, emoji, user.id);
+
         public void DeleteOwnReaction(DiscordClient client, string emoji, string userID)
         {
             client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions/{emoji}/{userID}", "DELETE");

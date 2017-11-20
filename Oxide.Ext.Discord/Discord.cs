@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Oxide.Core;
-using Oxide.Core.Plugins;
-using Oxide.Ext.Discord.Exceptions;
-using Oxide.Ext.Discord.WebSockets;
-
-namespace Oxide.Ext.Discord
+﻿namespace Oxide.Ext.Discord
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using Oxide.Core.Plugins;
+    using Oxide.Ext.Discord.Exceptions;
+    using Oxide.Ext.Discord.WebSockets;
+
     public class Discord
     {
         public static List<DiscordClient> Clients { get; private set; } = new List<DiscordClient>();
@@ -14,40 +13,34 @@ namespace Oxide.Ext.Discord
         public static void CreateClient(Plugin plugin, string apiKey)
         {
             if (plugin == null)
-                throw new PluginNullException();
-
-            if (string.IsNullOrEmpty(apiKey))
-                throw new APIKeyException();
-
-            var search = Clients.Where(x => x.Settings.ApiToken == apiKey);
-            if (search.Count() > 1)
             {
-                Interface.Oxide.LogWarning("[Discord Ext] Multiple DiscordClient's found for one APIKey, destroying...");
-                search.ToList().ForEach(x =>
-                {
-                    x.Disconnect();
-                    Clients.Remove(x);
-                });
+                throw new PluginNullException();
             }
 
-            if (search.Count() == 1)
+            if (string.IsNullOrEmpty(apiKey))
             {
-                var client = search.First();
+                throw new APIKeyException();
+            }
 
-                // Hmm... if the WS is connected and DiscordServer is null
-                // a SocketRunningException will (probably) be thrown
-                if (client.IsAlive() && client.DiscordServer != null)
+            // Find an existing DiscordClient and update it 
+            var client = Clients.FirstOrDefault(x => x.Plugins.Any(p => p.Title == plugin.Title));
+            if (client != null)
+            {
+                if (client.Settings.ApiToken != apiKey)
                 {
-                    client.RegisterPlugin(plugin);
-                    client.SetDiscordClient();
-                    client.CallHook("DiscordSocket_Initialized");
-                    return;
+                    throw new LimitedClientException();
                 }
 
-                client.Initialize(plugin, apiKey);
+                var existingPlugins = client.Plugins.Where(x => x.Title == plugin.Title).ToList();
+                existingPlugins.ForEach(x => client.Plugins.Remove(x));
+
+                client.RegisterPlugin(plugin);
+                client.UpdatePluginReference(plugin);
+                client.CallHook("DiscordSocket_Initialized", plugin);
                 return;
             }
 
+            // Create a new DiscordClient
             var newClient = new DiscordClient();
             Clients.Add(newClient);
             newClient.Initialize(plugin, apiKey);

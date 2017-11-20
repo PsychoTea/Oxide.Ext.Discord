@@ -1,12 +1,14 @@
-﻿using System;
-using Oxide.Ext.Discord.WebSockets;
-
-namespace Oxide.Ext.Discord.DiscordObjects
+﻿namespace Oxide.Ext.Discord.DiscordObjects
 {
+    using System;
+    using Oxide.Ext.Discord.WebSockets;
+
     public class Invite
     {
         public string code { get; set; }
+
         public Guild guild { get; set; }
+
         public Channel channel { get; set; }
 
         public static void GetInvite(DiscordClient client, string inviteCode, Action<Invite> callback = null)

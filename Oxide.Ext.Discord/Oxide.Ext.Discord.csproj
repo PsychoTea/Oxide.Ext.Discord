@@ -73,7 +73,6 @@
     <Compile Include="DiscordObjects\GuildMember.cs" />
     <Compile Include="DiscordObjects\Integration.cs" />
     <Compile Include="DiscordObjects\Invite.cs" />
-    <Compile Include="DiscordObjects\Member.cs" />
     <Compile Include="DiscordObjects\OptionalAuditEntryInfo.cs" />
     <Compile Include="DiscordObjects\Overwrite.cs" />
     <Compile Include="DiscordObjects\Presence.cs" />
@@ -85,6 +84,7 @@
     <Compile Include="DiscordObjects\VoiceRegion.cs" />
     <Compile Include="DiscordObjects\VoiceState.cs" />
     <Compile Include="DiscordObjects\Webhook.cs" />
+    <Compile Include="Exceptions\LimitedClientException.cs" />
     <Compile Include="Exceptions\PluginNullException.cs" />
     <Compile Include="Exceptions\APIKeyException.cs" />
     <Compile Include="Exceptions\InvalidCreationException.cs" />
@@ -98,7 +98,7 @@
     <Compile Include="DiscordObjects\Message.cs" />
     <Compile Include="SocketObjects\Packet.cs" />
     <Compile Include="SocketObjects\Payload.cs" />
-    <Compile Include="SocketObjects\Payload_Property.cs" />
+    <Compile Include="SocketObjects\PayloadProperty.cs" />
     <Compile Include="DiscordSettings.cs" />
     <Compile Include="WebSockets\RESTHandler.cs" />
     <Compile Include="WebSockets\SocketHandler.cs" />
@@ -132,7 +132,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "S:\Libraries\Documents\GitHub\Oxide.Ext.Discord\Oxide.Ext.Discord\bin\Debug\Oxide.Ext.Discord.dll" "C:\RustServer\rust_legacy_server\rust_server_Data\Managed\Oxide.Ext.Discord.dll"</PostBuildEvent>
+    <PostBuildEvent>echo Copying $(TargetPath) to C:\RustServer\rust_legacy_server\rust_server_Data\Managed\$(TargetFileName)
+copy $(TargetPath) C:\RustServer\rust_legacy_server\rust_server_Data\Managed\$(TargetFileName)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

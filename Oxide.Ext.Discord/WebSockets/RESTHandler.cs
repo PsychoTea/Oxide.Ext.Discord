@@ -1,69 +1,122 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading;
-using Newtonsoft.Json;
-using Oxide.Core;
-using Oxide.Core.Libraries;
-
-namespace Oxide.Ext.Discord.WebSockets
+﻿namespace Oxide.Ext.Discord.WebSockets
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Text;
+    using System.Threading;
+    using Newtonsoft.Json;
+    using Oxide.Core;
+    using Oxide.Core.Libraries;
+
     public class RESTHandler
     {
+        private static class ThreadManager
+        {
+            private static Thread thread = null;
+
+            private static List<RequestObject> pendingRequests = new List<RequestObject>();
+
+            public static bool IsRunning() => thread != null && thread.ThreadState != ThreadState.Stopped;
+
+            public static void Stop()
+            {
+                thread?.Abort();
+                thread = null;
+            }
+
+            public static void AddRequest(RequestObject newRequest)
+            {
+                pendingRequests.Add(newRequest);
+
+                if (!IsRunning())
+                {
+                    ThreadManager.Start();
+                }
+            }
+
+            private static void Start()
+            {
+                if (IsRunning())
+                {
+                    Interface.Oxide.LogWarning($"[Discord Ext] RESTHandler thread was started whilst already running!");
+                    return;
+                }
+
+                thread = new Thread(() => RunThread());
+                thread.Start();
+            }
+
+            private static void RunThread()
+            {
+                while (pendingRequests.Count > 0)
+                {
+                    var currentRequest = pendingRequests.First();
+                    currentRequest.DoRequest();
+                    pendingRequests.Remove(currentRequest);
+                }
+            }
+        }
+
         private class RequestObject
         {
-            public string URL;
-            private string Method;
-            private Dictionary<string, string> Headers;
-            private object Data = null;
-            private Action Callback = null;
-            private Action<object> CallbackObj = null;
-            private Type ReturnType = typeof(void);
+            public string URL { get; private set; }
+
+            private string method;
+
+            private Dictionary<string, string> headers;
+
+            private object data = null;
+
+            private Action callback = null;
+
+            private Action<object> callbackObj = null;
+
+            private Type returnType = typeof(void);
 
             public RequestObject(string url, string method, Dictionary<string, string> headers = null, Type returnType = null)
             {
                 URL = url;
-                Method = method;
-                Headers = headers;
-                ReturnType = returnType;
+                this.method = method;
+                this.headers = headers;
+                this.returnType = returnType;
             }
 
             public RequestObject(string url, string method, Dictionary<string, string> headers = null, object data = null, Action callback = null, Type returnType = null)
             {
                 URL = url;
-                Method = method;
-                Headers = headers;
-                Data = data;
-                Callback = callback;
-                ReturnType = returnType;
+                this.method = method;
+                this.headers = headers;
+                this.data = data;
+                this.callback = callback;
+                this.returnType = returnType;
             }
 
             public RequestObject(string url, string method, Dictionary<string, string> headers = null, object data = null, Action<object> callback = null, Type returnType = null)
             {
                 URL = url;
-                Method = method;
-                Headers = headers;
-                Data = data;
-                CallbackObj = callback;
-                ReturnType = (returnType == null) ? typeof(void) : returnType;
+                this.method = method;
+                this.headers = headers;
+                this.data = data;
+                callbackObj = callback;
+                this.returnType = (returnType == null) ? typeof(void) : returnType;
             }
 
             public void DoRequest()
             {
                 var req = WebRequest.Create($"{URLBase}{URL}");
-                req.Method = Method;
+                req.Method = method;
 
-                if (Headers != null)
+                if (headers != null)
                 {
-                    req.SetRawHeaders(Headers);
+                    req.SetRawHeaders(headers);
                 }
 
-                if (Data != null)
+                if (data != null)
                 {
-                    string contents = JsonConvert.SerializeObject(Data, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
+                    string contents = JsonConvert.SerializeObject(data, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
                     byte[] bytes = Encoding.ASCII.GetBytes(contents);
                     req.ContentLength = bytes.Length;
 
@@ -72,7 +125,7 @@ namespace Oxide.Ext.Discord.WebSockets
                         stream.Write(bytes, 0, bytes.Length);
                     }
                 }
-                
+
                 HttpWebResponse response;
                 try
                 {
@@ -86,72 +139,29 @@ namespace Oxide.Ext.Discord.WebSockets
                     return;
                 }
 
-                var reader = new StreamReader(response.GetResponseStream());
-                string output = reader.ReadToEnd().Trim();
-
-                if (ReturnType == typeof(void))
+                string output;
+                using (var reader = new StreamReader(response.GetResponseStream()))
                 {
-                    Callback?.Invoke();
+                    output = reader.ReadToEnd().Trim();
+                }
+
+                if (returnType == typeof(void))
+                {
+                    callback?.Invoke();
                     return;
                 }
 
-                var retObj = JsonConvert.DeserializeObject(output, ReturnType);
-                CallbackObj?.Invoke(retObj);
-            }
-        }
-
-        private static class ThreadManager
-        {
-            private static Thread Thread = null;
-            private static List<RequestObject> PendingRequests = new List<RequestObject>();
-
-            private static void Start()
-            {
-                if (IsRunning())
-                {
-                    Interface.Oxide.LogWarning($"[Discord Ext] RESTHandler thread was started whilst already running!");
-                    return;
-                }
-
-                Thread = new Thread(() => RunThread());
-                Thread.Start();
-            }
-
-            public static bool IsRunning() => Thread != null && Thread.ThreadState != ThreadState.Stopped;
-
-            public static void Stop()
-            {
-                Thread?.Abort();
-                Thread = null;
-            }
-
-            public static void AddRequest(RequestObject newRequest)
-            {
-                PendingRequests.Add(newRequest);
-
-                if (!IsRunning())
-                {
-                    ThreadManager.Start();
-                }
-            }
-
-            private static void RunThread()
-            {
-                while (PendingRequests.Count > 0)
-                {
-                    var currentRequest = PendingRequests.First();
-                    currentRequest.DoRequest();
-                    PendingRequests.Remove(currentRequest);
-                }
+                var retObj = JsonConvert.DeserializeObject(output, returnType);
+                callbackObj?.Invoke(retObj);
             }
         }
 
         private const string URLBase = "https://discordapp.com/api";
-        private Dictionary<string, string> Headers;
+        private Dictionary<string, string> headers;
 
         public RESTHandler(string apiKey)
         {
-            Headers = new Dictionary<string, string>()
+            headers = new Dictionary<string, string>()
             {
                 { "Authorization", $"Bot {apiKey}" },
                 { "Content-Type", "application/json" }
@@ -160,15 +170,15 @@ namespace Oxide.Ext.Discord.WebSockets
 
         public void Shutdown() => ThreadManager.Stop();
 
-        public void DoRequest(string URL, string method, object data = null, Action callback = null)
+        public void DoRequest(string url, string method, object data = null, Action callback = null)
         {
-            var reqObj = new RequestObject(URL, method, Headers, data, callback);
+            var reqObj = new RequestObject(url, method, headers, data, callback);
             ThreadManager.AddRequest(reqObj);
         }
 
-        public void DoRequest<T>(string URL, string method, object data = null, Action<object> callback = null)
+        public void DoRequest<T>(string url, string method, object data = null, Action<object> callback = null)
         {
-            var reqObj = new RequestObject(URL, method, Headers, data, callback, typeof(T));
+            var reqObj = new RequestObject(url, method, headers, data, callback, typeof(T));
             ThreadManager.AddRequest(reqObj);
         }
     }

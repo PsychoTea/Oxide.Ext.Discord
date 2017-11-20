@@ -1,9 +1,11 @@
-﻿using System;
-
-namespace Oxide.Ext.Discord.Exceptions
+﻿namespace Oxide.Ext.Discord.Exceptions
 {
+    using System;
+
     public class APIKeyException : Exception
     {
-        public APIKeyException() : base("Error! Please supply a valid API key!") { }
+        public APIKeyException() : base("Error! Please supply a valid API key!")
+        {
+        }
     }
 }

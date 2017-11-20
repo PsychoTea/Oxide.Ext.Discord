@@ -1,44 +1,52 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Timers;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Oxide.Core;
-using Oxide.Core.Plugins;
-using Oxide.Ext.Discord.Attributes;
-using Oxide.Ext.Discord.DiscordObjects;
-using Oxide.Ext.Discord.Exceptions;
-using WebSocketSharp;
-
 namespace Oxide.Ext.Discord.WebSockets
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using System.Timers;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
+    using Oxide.Core;
+    using Oxide.Core.Plugins;
+    using Oxide.Ext.Discord.Attributes;
+    using Oxide.Ext.Discord.DiscordObjects;
+    using Oxide.Ext.Discord.Exceptions;
+    using WebSocketSharp;
+
     public class DiscordClient
     {
         public List<Plugin> Plugins { get; private set; } = new List<Plugin>();
-        public DiscordSettings Settings { get; private set; } = new DiscordSettings();
-        public Guild DiscordServer { get; set; }
-        public RESTHandler REST { get; private set; }
-        public string WSSURL { get; private set; }
-        public UpkeepHandler UpHandler { get; private set; }
-        private WebSocket Socket = null;
-        private SocketHandler Handler;
-        private Timer Timer;
-        private int LastHeartbeat;
 
-        /// <exception cref="APIKeyException">Throws when a user does not provide a API key.</exception>
-        /// <exception cref="NoURLException">Throws when CreateSocket is called, but no url is stored.</exception>
-        /// <exception cref="SocketRunningException">Throws when CreateSocket is called, but a socket is already running.</exception>
-        /// <exception cref="InvalidCreationException">Throws when a user tries to use this method to create a discord client. Should use the static method in the Discord class.</exception>
+        public DiscordSettings Settings { get; private set; } = new DiscordSettings();
+
+        public Guild DiscordServer { get; set; }
+
+        public RESTHandler REST { get; private set; }
+
+        public string WSSURL { get; private set; }
+
+        public UpkeepHandler UpHandler { get; private set; }
+
+        public WebSocket Socket { get; private set; } = null;
+
+        private SocketHandler handler;
+
+        private Timer timer;
+
+        private int lastHeartbeat;
 
         public void Initialize(Plugin plugin, string apiKey)
         {
             if (string.IsNullOrEmpty(apiKey))
+            {
                 throw new APIKeyException();
+            }
 
             if (plugin == null)
+            {
                 throw new PluginNullException();
+            }
 
             RegisterPlugin(plugin);
 
@@ -46,20 +54,24 @@ namespace Oxide.Ext.Discord.WebSockets
             REST = new RESTHandler(Settings.ApiToken);
 
             if (!Discord.Clients.Any(x => x.Settings.ApiToken == apiKey))
+            {
                 throw new InvalidCreationException();
+            }
 
             this.Connect();
         }
 
-        public void SetDiscordClient()
+        public void UpdatePluginReference(Plugin plugin = null)
         {
-            foreach (var plugin in Plugins)
+            List<Plugin> affectedPlugins = (plugin == null) ? Plugins : new List<Plugin>() { plugin };
+
+            foreach (var pluginItem in affectedPlugins)
             {
-                foreach (var field in plugin.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
+                foreach (var field in pluginItem.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
                 {
                     if (field.GetCustomAttributes(typeof(DiscordClientAttribute), true).Any())
                     {
-                        field.SetValue(plugin, this);
+                        field.SetValue(pluginItem, this);
                     }
                 }
             }
@@ -82,21 +94,22 @@ namespace Oxide.Ext.Discord.WebSockets
         public void CreateSocket()
         {
             if (string.IsNullOrEmpty(WSSURL))
+            {
                 throw new NoURLException();
+            }
 
             if (Socket != null && Socket.ReadyState != WebSocketState.Closed)
+            {
                 throw new SocketRunningException(this);
-
-            if (this.CallHook("DiscordSocket_SocketConnecting", WSSURL) != null)
-                return;
+            }
 
             Socket = new WebSocket(WSSURL + "/?v=6&encoding=json");
-            Handler = new SocketHandler(this);
+            handler = new SocketHandler(this);
             UpHandler = new UpkeepHandler(this);
-            Socket.OnOpen += Handler.SocketOpened;
-            Socket.OnClose += Handler.SocketClosed;
-            Socket.OnError += Handler.SocketErrored;
-            Socket.OnMessage += Handler.SocketMessage;
+            Socket.OnOpen += handler.SocketOpened;
+            Socket.OnClose += handler.SocketClosed;
+            Socket.OnError += handler.SocketErrored;
+            Socket.OnMessage += handler.SocketMessage;
             Socket.ConnectAsync();
         }
 
@@ -107,7 +120,7 @@ namespace Oxide.Ext.Discord.WebSockets
                 Socket.CloseAsync();
             }
 
-            WSSURL = "";
+            WSSURL = string.Empty;
             REST?.Shutdown();
         }
 
@@ -123,11 +136,17 @@ namespace Oxide.Ext.Discord.WebSockets
         {
             var search = Plugins.Where(x => x.Title == plugin.Title);
             search.ToList().ForEach(x => Plugins.Remove(x));
+
             Plugins.Add(plugin);
         }
 
-        public object CallHook(string hookname, params object[] args)
+        public object CallHook(string hookname, Plugin specificPlugin = null, params object[] args)
         {
+            if (specificPlugin != null)
+            {
+                return specificPlugin.CallHook(hookname, args);
+            }
+
             Dictionary<string, object> returnValues = new Dictionary<string, object>();
 
             foreach (var plugin in Plugins)
@@ -138,8 +157,8 @@ namespace Oxide.Ext.Discord.WebSockets
 
             if (returnValues.Count(x => x.Value != null) > 1)
             {
-                string conflicts = string.Join("\n", returnValues.Select(x => $"Plugin {x.Key}: {returnValues.Values.ToString()}").ToArray());
-                Interface.Oxide.LogWarning($"[Discord Ext] A hook conflict was triggered on {hookname} between: {conflicts}");
+                string conflicts = string.Join("\n", returnValues.Select(x => $"Plugin {x.Key} - {x.Value}").ToArray());
+                Interface.Oxide.LogWarning($"[Discord Ext] A hook conflict was triggered on {hookname} between:\n{conflicts}");
                 return null;
             }
 
@@ -150,37 +169,42 @@ namespace Oxide.Ext.Discord.WebSockets
 
         public void CreateHeartbeat(float heartbeatInterval, int lastHeartbeat)
         {
-            LastHeartbeat = lastHeartbeat;
+            this.lastHeartbeat = lastHeartbeat;
 
-            if (Timer != null) return;
+            if (timer != null) return;
 
-            Timer = new Timer()
+            timer = new Timer()
             {
                 Interval = heartbeatInterval
             };
-            Timer.Elapsed += HeartbeatElapsed;
-            Timer.Start();
+            timer.Elapsed += HeartbeatElapsed;
+            timer.Start();
         }
-        
-        private void HeartbeatElapsed(object sender, ElapsedEventArgs e)
-        {
-            if (!Socket.IsAlive || IsClosing() || IsClosed())
-            {
-                Timer.Dispose();
-                Timer = null;
-                return;
-            }
 
+        public void SendHeartbeat()
+        {
             var packet = new Packet()
             {
                 op = 1,
-                d = LastHeartbeat
+                d = lastHeartbeat
             };
 
             string message = JsonConvert.SerializeObject(packet);
             Socket.Send(message);
 
             this.CallHook("DiscordSocket_HeartbeatSent");
+        }
+
+        private void HeartbeatElapsed(object sender, ElapsedEventArgs e)
+        {
+            if (!Socket.IsAlive || IsClosing() || IsClosed())
+            {
+                timer.Dispose();
+                timer = null;
+                return;
+            }
+
+            SendHeartbeat();
         }
 
         private void GetURL(Action callback)
