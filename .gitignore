@@ -77,3 +77,4 @@ _ReSharper*/
 ## TeamCity add-in
 _TeamCity*
 *.StyleCop
+*.Cache
