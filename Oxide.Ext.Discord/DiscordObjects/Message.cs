@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Text;
+    using System.Web;
     using Oxide.Ext.Discord.WebSockets;
 
     public class Message
@@ -61,16 +63,19 @@
             client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions/{emoji}/@me", "DELETE");
         }
 
-        public void DeleteOwnReaction(DiscordClient client, string emoji, User user) => DeleteOwnReaction(client, emoji, user.id);
+        public void DeleteUserReaction(DiscordClient client, string emoji, User user) => DeleteUserReaction(client, emoji, user.id);
 
-        public void DeleteOwnReaction(DiscordClient client, string emoji, string userID)
+        public void DeleteUserReaction(DiscordClient client, string emoji, string userID)
         {
             client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions/{emoji}/{userID}", "DELETE");
         }
 
         public void GetReactions(DiscordClient client, string emoji, Action<List<User>> callback = null)
         {
-            client.REST.DoRequest<List<User>>($"/channels/{channel_id}/messages/{id}/reactions/{emoji}", "GET", null, (returnValue) =>
+            byte[] encodedEmoji = Encoding.UTF8.GetBytes(emoji);
+            string hexString = HttpUtility.UrlEncode(encodedEmoji);
+
+            client.REST.DoRequest<List<User>>($"/channels/{channel_id}/messages/{id}/reactions/{hexString}", "GET", null, (returnValue) =>
             {
                 callback?.Invoke(returnValue as List<User>);
             });
