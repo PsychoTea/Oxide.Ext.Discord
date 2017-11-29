@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using Newtonsoft.Json.Linq;
     using Oxide.Ext.Discord.RESTObjects;
-    using Oxide.Ext.Discord.WebSockets;
+    using Oxide.Ext.Discord.REST;
 
     public class Guild
     {

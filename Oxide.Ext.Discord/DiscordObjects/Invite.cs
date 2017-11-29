@@ -1,7 +1,7 @@
 ﻿namespace Oxide.Ext.Discord.DiscordObjects
 {
     using System;
-    using Oxide.Ext.Discord.WebSockets;
+    using Oxide.Ext.Discord.REST;
 
     public class Invite
     {

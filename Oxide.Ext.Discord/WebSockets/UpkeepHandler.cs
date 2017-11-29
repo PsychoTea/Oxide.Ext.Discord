@@ -1,4 +1,4 @@
-﻿namespace Oxide.Ext.Discord.WebSockets
+﻿namespace Oxide.Ext.Discord.REST
 {
     using System.Linq;
     using System.Timers;

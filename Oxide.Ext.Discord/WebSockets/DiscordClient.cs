@@ -1,4 +1,4 @@
-namespace Oxide.Ext.Discord.WebSockets
+namespace Oxide.Ext.Discord.REST
 {
     using System;
     using System.Collections.Generic;

@@ -2,7 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using Oxide.Ext.Discord.WebSockets;
+    using Oxide.Ext.Discord.REST;
 
     public class VoiceRegion
     {

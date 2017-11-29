@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Oxide.Ext.Discord</RootNamespace>
     <AssemblyName>Oxide.Ext.Discord</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -93,6 +95,11 @@
     <Compile Include="RESTObjects\Nick.cs" />
     <Compile Include="RESTObjects\ObjectPosition.cs" />
     <Compile Include="RESTObjects\WebhookPayload.cs" />
+    <Compile Include="REST\Bucket.cs" />
+    <Compile Include="REST\Request.cs" />
+    <Compile Include="REST\RequestMethod.cs" />
+    <Compile Include="REST\RESTHandler.cs" />
+    <Compile Include="REST\RestResponse.cs" />
     <Compile Include="SocketObjects\DiscordPayload.cs" />
     <Compile Include="SocketObjects\Handshake.cs" />
     <Compile Include="DiscordObjects\Message.cs" />
@@ -100,7 +107,6 @@
     <Compile Include="SocketObjects\Payload.cs" />
     <Compile Include="SocketObjects\PayloadProperty.cs" />
     <Compile Include="DiscordSettings.cs" />
-    <Compile Include="WebSockets\RESTHandler.cs" />
     <Compile Include="WebSockets\SocketHandler.cs" />
     <Compile Include="WebSockets\DiscordClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -120,6 +126,7 @@
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Transactions" />
