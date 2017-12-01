@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Oxide.Ext.Discord.REST
 {
-    class Bucket : List<Request>
+    public class Bucket : List<Request>
     {
         public RequestMethod Method;
         public string Route;
@@ -18,11 +18,6 @@ namespace Oxide.Ext.Discord.REST
             this.Route = route;
         }
 
-        public Task<RestResponse> Fire(Request request)
-        {
-            while (request.Response == null) { }
-
-
-        }
+        public void Fire(Request request, Action<RestResponse> callback) => request.Fire(callback);
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Oxide.Ext.Discord.REST
 {
-    enum RequestMethod
+    public enum RequestMethod
     {
         GET,
         POST,

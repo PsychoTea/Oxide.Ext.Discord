@@ -1,4 +1,4 @@
-namespace Oxide.Ext.Discord.REST
+namespace Oxide.Ext.Discord
 {
     using System;
     using System.Collections.Generic;
@@ -12,6 +12,7 @@ namespace Oxide.Ext.Discord.REST
     using Oxide.Ext.Discord.Attributes;
     using Oxide.Ext.Discord.DiscordObjects;
     using Oxide.Ext.Discord.Exceptions;
+    using Oxide.Ext.Discord.REST;
     using WebSocketSharp;
 
     public class DiscordClient
@@ -126,9 +127,9 @@ namespace Oxide.Ext.Discord.REST
 
         public bool IsAlive() => Socket?.IsAlive ?? false;
 
-        public bool IsClosing() => Socket.ReadyState == WebSocketState.Closing;
+        public bool IsClosing() => Socket?.ReadyState == WebSocketState.Closing;
 
-        public bool IsClosed() => Socket.ReadyState == WebSocketState.Closed;
+        public bool IsClosed() => Socket?.ReadyState == WebSocketState.Closed;
 
         public void SendData(string contents) => Socket.Send(contents);
 
