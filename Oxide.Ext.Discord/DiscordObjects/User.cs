@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Oxide.Ext.Discord.REST;
     using Oxide.Ext.Discord.RESTObjects;
-    using Oxide.Ext.Discord.WebSockets;
 
     public class User
     {
@@ -26,7 +26,7 @@
 
         public static void GetCurrentUser(DiscordClient client, Action<User> callback = null)
         {
-            client.REST.DoRequest<User>($"/users/@me", "GET", null, (returnValue) =>
+            client.REST.DoRequest<User>($"/users/@me", RequestMethod.GET, null, (returnValue) =>
             {
                 callback?.Invoke(returnValue as User);
             });
@@ -34,7 +34,7 @@
 
         public static void GetUser(DiscordClient client, string userID, Action<User> callback = null)
         {
-            client.REST.DoRequest<User>($"/users/{userID}", "GET", null, (returnValue) =>
+            client.REST.DoRequest<User>($"/users/{userID}", RequestMethod.GET, null, (returnValue) =>
             {
                 callback?.Invoke(returnValue as User);
             });
@@ -50,7 +50,7 @@
                 { "avatar", avatarData }
             };
 
-            client.REST.DoRequest<User>($"/users/@me", "PATCH", jsonObj, (returnValue) =>
+            client.REST.DoRequest<User>($"/users/@me", RequestMethod.PATCH, jsonObj, (returnValue) =>
             {
                 callback?.Invoke(returnValue as User);
             });
@@ -58,22 +58,22 @@
 
         public void GetCurrentUserGuilds(DiscordClient client, Action<List<Guild>> callback = null)
         {
-            client.REST.DoRequest<List<Guild>>($"/users/@me/guilds", "GET", null, (returnValue) =>
+            client.REST.DoRequest<List<Guild>>($"/users/@me/guilds", RequestMethod.GET, null, (returnValue) =>
             {
                 callback?.Invoke(returnValue as List<Guild>);
             });
         }
 
-        public void LeaveGuild(DiscordClient client, Guild guild) => LeaveGuild(client, guild.id);
+        public void LeaveGuild(DiscordClient client, Guild guild, Action callback = null) => LeaveGuild(client, guild.id, callback);
 
-        public void LeaveGuild(DiscordClient client, string guildID)
+        public void LeaveGuild(DiscordClient client, string guildID, Action callback = null)
         {
-            client.REST.DoRequest($"/users/@me/guilds/{guildID}", "DELETE");
+            client.REST.DoRequest($"/users/@me/guilds/{guildID}", RequestMethod.DELETE, null, callback);
         }
 
         public void GetUserDMs(DiscordClient client, Action<List<Channel>> callback = null)
         {
-            client.REST.DoRequest<List<Channel>>($"/users/@me/channels", "GET", null, (returnValue) =>
+            client.REST.DoRequest<List<Channel>>($"/users/@me/channels", RequestMethod.GET, null, (returnValue) =>
             {
                 callback?.Invoke(returnValue as List<Channel>);
             });
@@ -88,7 +88,7 @@
                 { "access_tokens", accessTokens },
                 { "nicks", nicks }
             };
-            client.REST.DoRequest<Channel>($"/users/@me/channels", "POST", jsonObj, (returnValue) =>
+            client.REST.DoRequest<Channel>($"/users/@me/channels", RequestMethod.POST, jsonObj, (returnValue) =>
             {
                 callback?.Invoke(returnValue as Channel);
             });
@@ -96,7 +96,7 @@
 
         public void GetUserConnections(DiscordClient client, Action<List<Connection>> callback = null)
         {
-            client.REST.DoRequest<List<Connection>>($"/users/@me/connections", "GET", null, (returnValue) =>
+            client.REST.DoRequest<List<Connection>>($"/users/@me/connections", RequestMethod.GET, null, (returnValue) =>
             {
                 callback?.Invoke(returnValue as List<Connection>);
             });
@@ -109,12 +109,12 @@
                 { "recipient_id", this.id }
             };
 
-            client.REST.DoRequest<Channel>("/users/@me/channels", "POST", jsonObj, (returnValue) => 
-            {
-                callback?.Invoke(returnValue as Channel);
-            });
+            client.REST.DoRequest<Channel>("/users/@me/channels", RequestMethod.POST, jsonObj, (returnValue) =>
+             {
+                 callback?.Invoke(returnValue as Channel);
+             });
         }
-        
+
         public void GroupDMAddRecipient(DiscordClient client, Channel channel, string accessToken, Action callback = null) => GroupDMAddRecipient(client, channel.id, accessToken, this.username, callback);
 
         public void GroupDMAddRecipient(DiscordClient client, string channelID, string accessToken, string nick, Action callback = null)
@@ -125,7 +125,7 @@
                 { "nick", nick }
             };
 
-            client.REST.DoRequest($"/channels/{channelID}/recipients/{id}", "PUT", jsonObj, () =>
+            client.REST.DoRequest($"/channels/{channelID}/recipients/{id}", RequestMethod.PUT, jsonObj, () =>
             {
                 callback?.Invoke();
             });
@@ -133,9 +133,9 @@
 
         public void GroupDMRemoveRecipient(DiscordClient client, Channel channel) => GroupDMRemoveRecipient(client, channel.id);
 
-        public void GroupDMRemoveRecipient(DiscordClient client, string channelID)
+        public void GroupDMRemoveRecipient(DiscordClient client, string channelID, Action callback = null)
         {
-            client.REST.DoRequest($"/channels/{channelID}/recipients/{id}", "DELETE");
+            client.REST.DoRequest($"/channels/{channelID}/recipients/{id}", RequestMethod.DELETE, null, callback);
         }
     }
 }

@@ -5,7 +5,6 @@
     using System.Reflection;
     using Oxide.Core;
     using Oxide.Core.Extensions;
-    using Oxide.Ext.Discord.WebSockets;
 
     public class DiscordExtension : Extension
     {

@@ -2,7 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using Oxide.Ext.Discord.WebSockets;
+    using Oxide.Ext.Discord.REST;
 
     public class Channel
     {
@@ -28,7 +28,7 @@
 
         public static void GetChannel(DiscordClient client, string channelID, Action<Channel> callback = null)
         {
-            client.REST.DoRequest<Channel>($"/channels/{channelID}", "GET", null, (returnValue) =>
+            client.REST.DoRequest<Channel>($"/channels/{channelID}", RequestMethod.GET, null, (returnValue) =>
             {
                 callback?.Invoke(returnValue as Channel);
             });
@@ -36,7 +36,7 @@
         
         public void ModifyChannel(DiscordClient client, Channel newChannel, Action<Channel> callback = null)
         {
-            client.REST.DoRequest<Channel>($"/channels/{id}", "PATCH", newChannel, (returnValue) =>
+            client.REST.DoRequest<Channel>($"/channels/{id}", RequestMethod.PATCH, newChannel, (returnValue) =>
             {
                 callback?.Invoke(returnValue as Channel);
             });
@@ -44,7 +44,7 @@
 
         public void DeleteChannel(DiscordClient client, Action<Channel> callback = null)
         {
-            client.REST.DoRequest<Channel>($"/channels/{id}", "DELETE", null, (returnValue) =>
+            client.REST.DoRequest<Channel>($"/channels/{id}", RequestMethod.DELETE, null, (returnValue) =>
             {
                 callback?.Invoke(returnValue as Channel);
             });
@@ -52,7 +52,7 @@
 
         public void GetChannelMessages(DiscordClient client, Action<List<Message>> callback = null)
         {
-            client.REST.DoRequest<List<Message>>($"/channels/{id}/messages", "GET", null, (returnValue) =>
+            client.REST.DoRequest<List<Message>>($"/channels/{id}/messages", RequestMethod.GET, null, (returnValue) =>
             {
                 callback?.Invoke(returnValue as List<Message>);
             });
@@ -62,7 +62,7 @@
 
         public void GetChannelMessage(DiscordClient client, string messageID, Action<Message> callback = null)
         {
-            client.REST.DoRequest<Message>($"/channels/{id}/messages/{messageID}", "GET", null, (returnValue) =>
+            client.REST.DoRequest<Message>($"/channels/{id}/messages/{messageID}", RequestMethod.GET, null, (returnValue) =>
             {
                 callback?.Invoke(returnValue as Message);
             });
@@ -70,7 +70,7 @@
 
         public void CreateMessage(DiscordClient client, Message message, Action<Message> callback = null)
         {
-            client.REST.DoRequest<Message>($"/channels/{id}/messages", "POST", message, (returnValue) =>
+            client.REST.DoRequest<Message>($"/channels/{id}/messages", RequestMethod.POST, message, (returnValue) =>
             {
                 callback?.Invoke(returnValue as Message);
             });
@@ -83,7 +83,7 @@
                 content = message
             };
 
-            client.REST.DoRequest<Message>($"/channels/{id}/messages", "POST", createMessage, (returnValue) =>
+            client.REST.DoRequest<Message>($"/channels/{id}/messages", RequestMethod.POST, createMessage, (returnValue) =>
             {
                 callback?.Invoke(returnValue as Message);
             });
@@ -96,22 +96,22 @@
                 embed = embed
             };
 
-            client.REST.DoRequest<Message>($"/channels/{id}/messages", "POST", createMessage, (returnValue) =>
+            client.REST.DoRequest<Message>($"/channels/{id}/messages", RequestMethod.POST, createMessage, (returnValue) =>
             {
                 callback?.Invoke(returnValue as Message);
             });
         }
 
-        public void BulkDeleteMessages(DiscordClient client, string[] messageIds)
+        public void BulkDeleteMessages(DiscordClient client, string[] messageIds, Action callback = null)
         {
             var jsonObj = new Dictionary<string, string[]>() { { "messages", messageIds } };
 
-            client.REST.DoRequest($"/channels/{id}/messages/bulk-delete", "POST", jsonObj);
+            client.REST.DoRequest($"/channels/{id}/messages/bulk-delete", RequestMethod.POST, jsonObj, callback);
         }
 
         public void EditChannelPermissions(DiscordClient client, Overwrite overwrite, int? allow, int? deny, string type) => this.EditChannelPermissions(client, overwrite, allow, deny, type);
 
-        public void EditChannelPermissions(DiscordClient client, string overwriteID, int? allow, int? deny, string type)
+        public void EditChannelPermissions(DiscordClient client, string overwriteID, int? allow, int? deny, string type, Action callback = null)
         {
             var jsonObj = new Dictionary<string, object>()
             {
@@ -119,12 +119,12 @@
                 { "deny", deny },
                 { "type", type }
             };
-            client.REST.DoRequest($"/channels/{id}/permissions/{overwriteID}", "PUT", jsonObj);
+            client.REST.DoRequest($"/channels/{id}/permissions/{overwriteID}", RequestMethod.PUT, jsonObj, callback);
         }
 
         public void GetChannelInvites(DiscordClient client, Action<List<Invite>> callback = null)
         {
-            client.REST.DoRequest<List<Invite>>($"/channels/{id}/invites", "GET", null, (returnValue) =>
+            client.REST.DoRequest<List<Invite>>($"/channels/{id}/invites", RequestMethod.GET, null, (returnValue) =>
             {
                 callback?.Invoke(returnValue as List<Invite>);
             });
@@ -140,27 +140,27 @@
                 { "unique", unique }
             };
 
-            client.REST.DoRequest<Invite>($"/channels/{id}/invites", "POST", jsonObj, (returnValue) =>
+            client.REST.DoRequest<Invite>($"/channels/{id}/invites", RequestMethod.POST, jsonObj, (returnValue) =>
             {
                 callback?.Invoke(returnValue as Invite);
             });
         }
 
-        public void DeleteChannelPermission(DiscordClient client, Overwrite overwrite) => this.DeleteChannelPermission(client, overwrite.id);
+        public void DeleteChannelPermission(DiscordClient client, Overwrite overwrite, Action callback) => this.DeleteChannelPermission(client, overwrite.id, callback);
 
-        public void DeleteChannelPermission(DiscordClient client, string overwriteID)
+        public void DeleteChannelPermission(DiscordClient client, string overwriteID, Action callback)
         {
-            client.REST.DoRequest($"/channels/{id}/permissions/{overwriteID}", "DELETE");
+            client.REST.DoRequest($"/channels/{id}/permissions/{overwriteID}", RequestMethod.DELETE, null, callback);
         }
 
-        public void TriggerTypingIndicator(DiscordClient client)
+        public void TriggerTypingIndicator(DiscordClient client, Action callback)
         {
-            client.REST.DoRequest($"/channels/{id}/typing", "POST");
+            client.REST.DoRequest($"/channels/{id}/typing", RequestMethod.POST, null, callback);
         }
 
         public void GetPinnedMessages(DiscordClient client, Action<List<Message>> callback = null)
         {
-            client.REST.DoRequest<List<Message>>($"/channels/{id}/pins", "GET", null, (returnValue) =>
+            client.REST.DoRequest<List<Message>>($"/channels/{id}/pins", RequestMethod.GET, null, (returnValue) =>
             {
                 callback?.Invoke(returnValue as List<Message>);
             });
@@ -175,15 +175,15 @@
                 { "access_token", accessToken },
                 { "nick", nick }
             };
-            client.REST.DoRequest($"/channels/{id}/recipients/{userID}", "PUT", jsonObj, () =>
+            client.REST.DoRequest($"/channels/{id}/recipients/{userID}", RequestMethod.PUT, jsonObj, () =>
             {
                 callback?.Invoke();
             });
         }
 
-        public void GroupDMRemoveRecipient(DiscordClient client, string userID)
+        public void GroupDMRemoveRecipient(DiscordClient client, string userID, Action callback)
         {
-            client.REST.DoRequest($"/channels/{id}/recipients/{userID}", "DELETE");
+            client.REST.DoRequest($"/channels/{id}/recipients/{userID}", RequestMethod.DELETE, null, callback);
         }
     }
 }
