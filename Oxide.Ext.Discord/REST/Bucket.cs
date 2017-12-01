@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Timers;
+    using System.Threading;
 
     public class Bucket : List<Request>
     {
@@ -17,20 +17,51 @@
 
         public int Reset;
 
-        public bool Disposed;
-        
+        public bool Initialized = false;
+
+        public bool Disposed = false;
+
+        private Thread thread;
+
         public Bucket(RequestMethod method, string route)
         {
             this.Method = method;
             this.Route = route;
 
-            while (this.Count > 0 && !Disposed)
+            thread = new Thread(() => RunThread());
+            thread.Start();
+        }
+
+        public void Close()
+        {
+            thread?.Abort();
+            thread = null;
+        }
+
+        public void Queue(Request request)
+        {
+            this.Add(request);
+
+            if (!this.Initialized)
             {
+                this.Initialized = true;
+            }
+        }
+
+        private void RunThread()
+        {
+            // 'Initialized' basically allows us to start the while
+            // loop from the constructor even when this.Count = 0
+            // (eg after the bucket is created, before requests are added)
+            while (!Initialized || (this.Count > 0))
+            {
+                if (Disposed) break;
+
+                if (!Initialized) continue;
+
                 FireRequests();
             }
         }
-        
-        public void Queue(Request request) => this.Add(request);
 
         private void FireRequests()
         {

@@ -4,7 +4,7 @@ namespace Oxide.Ext.Discord.REST
 {
     class GlobalRateLimit
     {
-        public static bool Hit { get; private set; }
+        public static bool Hit { get; private set; } = false;
         
         private static Timer Timer;
 

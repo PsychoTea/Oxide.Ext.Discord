@@ -26,7 +26,11 @@
 
         public void Shutdown()
         {
-            Buckets.ForEach(x => x.Disposed = true);
+            Buckets.ForEach(x =>
+            {
+                x.Disposed = true;
+                x.Close();
+            });
         }
 
         public void DoRequest(string url, RequestMethod method, object data, Action callback)
