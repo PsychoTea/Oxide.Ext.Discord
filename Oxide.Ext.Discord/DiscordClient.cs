@@ -118,7 +118,7 @@ namespace Oxide.Ext.Discord
         {
             if (!IsClosed())
             {
-                Socket.CloseAsync();
+                Socket?.CloseAsync();
             }
 
             WSSURL = string.Empty;

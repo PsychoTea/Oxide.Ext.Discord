@@ -18,20 +18,29 @@ namespace Oxide.Ext.Discord.REST
         public string Endpoint { get; }
         public Dictionary<string, string> Headers { get; }
         public object Data { get; }
-        public RestResponse Response { get; }
+        public RestResponse Response { get; private set; }
+        public Action<RestResponse> Callback { get; }
+        public bool InProgress { get; private set; } = false;
 
-        public Request(RequestMethod method, string route, string endpoint, Dictionary<string, string> headers, object data)
+        private Bucket bucket;
+
+        public Request(RequestMethod method, string route, string endpoint, Dictionary<string, string> headers, object data, Action<RestResponse> callback)
         {
             this.Method = method;
             this.Route = route;
             this.Endpoint = endpoint;
             this.Headers = headers;
             this.Data = data;
+            this.Callback = callback;
         }
 
-        public void Fire(Action<RestResponse> callback)
+        public void Fire(Bucket bucket)
         {
-            string url = URLBase + Route;
+            this.bucket = bucket;
+
+            this.InProgress = true;
+
+            string url = URLBase + Route + Endpoint;
 
             Interface.Oxide.LogInfo($"Request.Fire was called for {url}");
 
@@ -72,13 +81,44 @@ namespace Oxide.Ext.Discord.REST
                 return;
             }
 
+            ParseHeaders(response.Headers);
+            
             string output;
             using (var reader = new StreamReader(response.GetResponseStream()))
             {
                 output = reader.ReadToEnd().Trim();
             }
 
-            callback.Invoke(new RestResponse(output));
+            this.Response = new RestResponse(output);
+
+            Callback?.Invoke(this.Response);
+
+            this.bucket.Remove(this);
+
+            this.InProgress = false;
+        }
+
+        private void ParseHeaders(WebHeaderCollection headers)
+        {
+            string rateLimitHeader = headers.Get("X-RateLimit-Limit");
+            string rateRemainingHeader = headers.Get("X-RateLimit-Remaining");
+            string rateResetHeader = headers.Get("X-RateLimit-Reset");
+
+            if (!string.IsNullOrEmpty(rateLimitHeader) &&
+                !string.IsNullOrEmpty(rateResetHeader) &&
+                !string.IsNullOrEmpty(rateResetHeader))
+            {
+                int rateLimit, rateRemaining, rateReset;
+
+                if (Int32.TryParse(rateLimitHeader, out rateLimit) &&
+                    Int32.TryParse(rateRemainingHeader, out rateRemaining) &&
+                    Int32.TryParse(rateResetHeader, out rateReset))
+                {
+                    bucket.Limit = rateLimit;
+                    bucket.Remaining = rateRemaining;
+                    bucket.Reset = rateReset;
+                }
+            }
         }
     }
 }
