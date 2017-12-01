@@ -7,7 +7,7 @@
 
     public class RESTHandler
     {
-        public List<Bucket> Buckets = new List<Bucket>();
+        private List<Bucket> buckets = new List<Bucket>();
 
         private string apiKey;
 
@@ -26,7 +26,7 @@
 
         public void Shutdown()
         {
-            Buckets.ForEach(x =>
+            buckets.ForEach(x =>
             {
                 x.Disposed = true;
                 x.Close();
@@ -64,15 +64,15 @@
 
         private void BucketRequest(Request request, Action<RestResponse> callback)
         {
-            Buckets.ForEach(x =>
+            buckets.ForEach(x =>
             {
                 if (x.Disposed)
                 {
-                    Buckets.Remove(x);
+                    buckets.Remove(x);
                 }
             });
 
-            var bucket = Buckets.SingleOrDefault(x => x.Method == request.Method &&
+            var bucket = buckets.SingleOrDefault(x => x.Method == request.Method &&
                                                       x.Route == request.Route);
 
             if (bucket != null)
@@ -82,7 +82,7 @@
             }
 
             var newBucket = new Bucket(request.Method, request.Route);
-            Buckets.Add(newBucket);
+            buckets.Add(newBucket);
             
             newBucket.Queue(request);
         }

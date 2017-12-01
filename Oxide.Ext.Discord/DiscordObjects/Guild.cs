@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using Newtonsoft.Json.Linq;
-    using Oxide.Ext.Discord.RESTObjects;
     using Oxide.Ext.Discord.REST;
+    using Oxide.Ext.Discord.RESTObjects;
 
     public class Guild
     {

@@ -1,23 +1,23 @@
-﻿using System.Timers;
-
-namespace Oxide.Ext.Discord.REST
+﻿namespace Oxide.Ext.Discord.REST
 {
-    class GlobalRateLimit
+    using System.Timers;
+
+    public class GlobalRateLimit
     {
         public static bool Hit { get; private set; } = false;
         
-        private static Timer Timer;
+        private static Timer timer;
 
         public static void Reached(int resetTime)
         {
             Hit = true;
 
-            Timer = new Timer(resetTime)
+            timer = new Timer(resetTime)
             {
                 Enabled = true
             };
 
-            Timer.Elapsed += (s, e) =>
+            timer.Elapsed += (s, e) =>
             {
                 Hit = false;
             };

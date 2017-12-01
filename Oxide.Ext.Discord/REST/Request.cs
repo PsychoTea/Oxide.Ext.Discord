@@ -137,9 +137,9 @@
             {
                 int rateLimit, rateRemaining, rateReset;
 
-                if (Int32.TryParse(rateLimitHeader, out rateLimit) &&
-                    Int32.TryParse(rateRemainingHeader, out rateRemaining) &&
-                    Int32.TryParse(rateResetHeader, out rateReset))
+                if (int.TryParse(rateLimitHeader, out rateLimit) &&
+                    int.TryParse(rateRemainingHeader, out rateRemaining) &&
+                    int.TryParse(rateResetHeader, out rateReset))
                 {
                     bucket.Limit = rateLimit;
                     bucket.Remaining = rateRemaining;

@@ -2,10 +2,10 @@
 {
     public class RateLimit
     {
-        public string message;
+        public string message { get; set; }
 
-        public int retry_after;
+        public int retry_after { get; set; }
 
-        public bool global;
+        public bool global { get; set; }
     }
 }

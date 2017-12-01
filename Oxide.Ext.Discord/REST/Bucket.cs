@@ -7,19 +7,19 @@
 
     public class Bucket : List<Request>
     {
-        public RequestMethod Method;
+        public RequestMethod Method { get; }
 
-        public string Route;
+        public string Route { get; }
 
-        public int Limit;
+        public int Limit { get; set; }
 
-        public int Remaining;
+        public int Remaining { get; set; }
 
-        public int Reset;
+        public int Reset { get; set; }
 
-        public bool Initialized = false;
+        public bool Initialized { get; private set; } = false;
 
-        public bool Disposed = false;
+        public bool Disposed { get; set; } = false;
 
         private Thread thread;
 
