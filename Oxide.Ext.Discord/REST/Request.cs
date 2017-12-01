@@ -51,6 +51,7 @@
 
             var req = WebRequest.Create(url);
             req.Method = Method.ToString();
+            req.Timeout = 3000;
 
             if (Headers != null)
             {
@@ -82,7 +83,10 @@
             {
                 var httpResponse = ex.Response as HttpWebResponse;
                 string message = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
+
                 Interface.Oxide.LogWarning($"[Discord Ext] An error occured whilst submitting a request to {req.RequestUri} (code {httpResponse.StatusCode}): {message}");
+
+                httpResponse.Close();
                 return;
             }
             
@@ -93,6 +97,8 @@
             }
 
             ParseHeaders(response.Headers, output);
+
+            response.Close();
 
             this.Response = new RestResponse(output);
 
