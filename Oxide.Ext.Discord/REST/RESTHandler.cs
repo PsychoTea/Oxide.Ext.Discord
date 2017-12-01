@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
-using Oxide.Core;
-
-namespace Oxide.Ext.Discord.REST
+﻿namespace Oxide.Ext.Discord.REST
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Newtonsoft.Json;
+
     public class RESTHandler
     {
         public List<Bucket> Buckets = new List<Bucket>();
 
         private string apiKey;
+
         private Dictionary<string, string> headers;
 
         public RESTHandler(string apiKey)
@@ -24,48 +24,27 @@ namespace Oxide.Ext.Discord.REST
             };
         }
 
-        public void DoRequest(string url, string method, object data = null, Action callback = null)
+        public void Shutdown()
         {
-            RequestMethod reqMethod = RequestMethod.GET;
-
-            switch (method)
-            {
-                case "GET": reqMethod = RequestMethod.GET; break;
-                case "POST": reqMethod = RequestMethod.POST; break;
-                case "PUT": reqMethod = RequestMethod.PUT; break;
-                case "PATCH": reqMethod = RequestMethod.PATCH; break;
-                case "DELETE": reqMethod = RequestMethod.DELETE; break;
-            }
-
-            CreateRequest(reqMethod, url, headers, data, obj => callback?.Invoke());
+            Buckets.ForEach(x => x.Disposed = true);
         }
 
-        public void DoRequest<T>(string url, string method, object data, Action<object> callback)
+        public void DoRequest(string url, RequestMethod method, object data, Action callback)
         {
-            RequestMethod reqMethod = RequestMethod.GET;
+            CreateRequest(method, url, headers, data, obj => callback?.Invoke());
+        }
 
-            switch (method)
-            {
-                case "GET": reqMethod = RequestMethod.GET; break;
-                case "POST": reqMethod = RequestMethod.POST; break;
-                case "PUT": reqMethod = RequestMethod.PUT; break;
-                case "PATCH": reqMethod = RequestMethod.PATCH; break;
-                case "DELETE": reqMethod = RequestMethod.DELETE; break;
-            }
-
-            CreateRequest(reqMethod, url, headers, data, response =>
+        public void DoRequest<T>(string url, RequestMethod method, object data, Action<object> callback)
+        {
+            CreateRequest(method, url, headers, data, response =>
             {
                 var callbackObj = JsonConvert.DeserializeObject(response.Data, typeof(T));
-                callback?.Invoke(callbackObj);
+                callback.Invoke(callbackObj);
             });
         }
-
-        public void Shutdown() { }
-
-        public void CreateRequest(RequestMethod method, string url, Dictionary<string, string> headers, object data, Action<RestResponse> callback)
+        
+        private void CreateRequest(RequestMethod method, string url, Dictionary<string, string> headers, object data, Action<RestResponse> callback)
         {
-            Interface.Oxide.LogInfo($"Got URL: {url}");
-
             // this is bad I know, but I'm way too fucking lazy to go 
             // and rewrite every single fucking REST request call
             string[] parts = url.Split('/');
@@ -81,6 +60,14 @@ namespace Oxide.Ext.Discord.REST
 
         private void BucketRequest(Request request, Action<RestResponse> callback)
         {
+            Buckets.ForEach(x =>
+            {
+                if (x.Disposed)
+                {
+                    Buckets.Remove(x);
+                }
+            });
+
             var bucket = Buckets.SingleOrDefault(x => x.Method == request.Method &&
                                                       x.Route == request.Route);
 
@@ -94,8 +81,6 @@ namespace Oxide.Ext.Discord.REST
             Buckets.Add(newBucket);
             
             newBucket.Queue(request);
-
-            return;
         }
     }
 }

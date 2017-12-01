@@ -1,42 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Timers;
-
-namespace Oxide.Ext.Discord.REST
+﻿namespace Oxide.Ext.Discord.REST
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Timers;
+
     public class Bucket : List<Request>
     {
         public RequestMethod Method;
+
         public string Route;
 
         public int Limit;
+
         public int Remaining;
+
         public int Reset;
 
-        private Timer timer;
-
+        public bool Disposed;
+        
         public Bucket(RequestMethod method, string route)
         {
             this.Method = method;
             this.Route = route;
 
-            timer = new Timer(250)
+            while (this.Count > 0 && !Disposed)
             {
-                AutoReset = true,
-                Enabled = true
-            };
-            timer.Elapsed += Timer_Elapsed;
+                FireRequests();
+            }
         }
         
         public void Queue(Request request) => this.Add(request);
 
-        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        private void FireRequests()
         {
-            if (this.Count == 0)
+            if (GlobalRateLimit.Hit)
             {
-                // Dispose
-                timer.Dispose();
                 return;
             }
 

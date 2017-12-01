@@ -210,7 +210,7 @@ namespace Oxide.Ext.Discord
 
         private void GetURL(Action callback)
         {
-            REST.DoRequest<JObject>("/gateway", "GET", null, (data) =>
+            REST.DoRequest<JObject>("/gateway", RequestMethod.GET, null, (data) =>
             {
                 WSSURL = (data as JObject).GetValue("url").ToString();
                 callback.Invoke();

@@ -47,27 +47,28 @@
         public void Reply(DiscordClient client, Message message, bool ping = true, Action<Message> callback = null)
         {
             message.content = ping ? $"<@{author.id}> {message.content}" : message.content;
-            client.REST.DoRequest<Message>($"/channels/{channel_id}/messages", "POST", message, (returnValue) =>
+
+            client.REST.DoRequest<Message>($"/channels/{channel_id}/messages", RequestMethod.POST, message, (returnValue) =>
             {
                 callback?.Invoke(returnValue as Message);
             });
         }
 
-        public void CreateReaction(DiscordClient client, string emoji)
+        public void CreateReaction(DiscordClient client, string emoji, Action callback = null)
         {
-            client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions/{emoji}/@me", "PUT");
+            client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions/{emoji}/@me", RequestMethod.PUT, null, callback);
         }
 
-        public void DeleteOwnReaction(DiscordClient client, string emoji)
+        public void DeleteOwnReaction(DiscordClient client, string emoji, Action callback = null)
         {
-            client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions/{emoji}/@me", "DELETE");
+            client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions/{emoji}/@me", RequestMethod.DELETE, null, callback);
         }
 
-        public void DeleteUserReaction(DiscordClient client, string emoji, User user) => DeleteUserReaction(client, emoji, user.id);
+        public void DeleteUserReaction(DiscordClient client, string emoji, User user, Action callback = null) => DeleteUserReaction(client, emoji, user.id, callback);
 
-        public void DeleteUserReaction(DiscordClient client, string emoji, string userID)
+        public void DeleteUserReaction(DiscordClient client, string emoji, string userID, Action callback = null)
         {
-            client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions/{emoji}/{userID}", "DELETE");
+            client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions/{emoji}/{userID}", RequestMethod.DELETE, null, callback);
         }
 
         public void GetReactions(DiscordClient client, string emoji, Action<List<User>> callback = null)
@@ -75,20 +76,20 @@
             byte[] encodedEmoji = Encoding.UTF8.GetBytes(emoji);
             string hexString = HttpUtility.UrlEncode(encodedEmoji);
 
-            client.REST.DoRequest<List<User>>($"/channels/{channel_id}/messages/{id}/reactions/{hexString}", "GET", null, (returnValue) =>
+            client.REST.DoRequest<List<User>>($"/channels/{channel_id}/messages/{id}/reactions/{hexString}", RequestMethod.GET, null, (returnValue) =>
             {
                 callback?.Invoke(returnValue as List<User>);
             });
         }
 
-        public void DeleteAllReactions(DiscordClient client)
+        public void DeleteAllReactions(DiscordClient client, Action callback = null)
         {
-            client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions", "DELETE");
+            client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions", RequestMethod.DELETE, null, callback);
         }
 
         public void EditMessage(DiscordClient client, Action<Message> callback = null)
         {
-            client.REST.DoRequest<Message>($"/channels/{channel_id}/messages/{id}", "PATCH", this, (returnValue) =>
+            client.REST.DoRequest<Message>($"/channels/{channel_id}/messages/{id}", RequestMethod.PATCH, this, (returnValue) =>
             {
                 callback?.Invoke(returnValue as Message);
             });
@@ -96,17 +97,20 @@
 
         public void DeleteMessage(DiscordClient client, Action<Message> callback = null)
         {
-            client.REST.DoRequest($"/channels/{channel_id}/messages/{id}", "DELETE");
+            client.REST.DoRequest<Message>($"/channels/{channel_id}/messages/{id}", RequestMethod.DELETE, null, (returnValue) =>
+            {
+                callback?.Invoke(returnValue as Message);
+            });
         }
 
-        public void AddPinnedChannelMessage(DiscordClient client)
+        public void AddPinnedChannelMessage(DiscordClient client, Action callback = null)
         {
-            client.REST.DoRequest($"/channels/{channel_id}/pins/{id}", "PUT");
+            client.REST.DoRequest($"/channels/{channel_id}/pins/{id}", RequestMethod.PUT, null, callback);
         }
 
-        public void DeletePinnedChannelMessage(DiscordClient client)
+        public void DeletePinnedChannelMessage(DiscordClient client, Action callback = null)
         {
-            client.REST.DoRequest($"/channels/{channel_id}/pins/{id}", "DELETE");
+            client.REST.DoRequest($"/channels/{channel_id}/pins/{id}", RequestMethod.DELETE, null, callback);
         }
     }
 }

@@ -16,7 +16,7 @@
 
         public static void GetGuildAuditLog(DiscordClient client, string guildID, Action<AuditLog> callback = null)
         {
-            client.REST.DoRequest<AuditLog>($"/guilds/{guildID}/audit-logs", "GET", null, (returnValue) =>
+            client.REST.DoRequest<AuditLog>($"/guilds/{guildID}/audit-logs", RequestMethod.GET, null, (returnValue) =>
             {
                 callback?.Invoke(returnValue as AuditLog);
             });

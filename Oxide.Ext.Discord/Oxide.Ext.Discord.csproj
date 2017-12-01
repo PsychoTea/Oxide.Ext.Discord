@@ -80,6 +80,7 @@
     <Compile Include="DiscordObjects\Presence.cs" />
     <Compile Include="DiscordEvents\Ready.cs" />
     <Compile Include="DiscordEvents\Resumed.cs" />
+    <Compile Include="DiscordObjects\RateLimit.cs" />
     <Compile Include="DiscordObjects\Reaction.cs" />
     <Compile Include="DiscordObjects\Role.cs" />
     <Compile Include="DiscordObjects\User.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="RESTObjects\ObjectPosition.cs" />
     <Compile Include="RESTObjects\WebhookPayload.cs" />
     <Compile Include="REST\Bucket.cs" />
+    <Compile Include="REST\GlobalRateLimit.cs" />
     <Compile Include="REST\Request.cs" />
     <Compile Include="REST\RequestMethod.cs" />
     <Compile Include="REST\RESTHandler.cs" />
