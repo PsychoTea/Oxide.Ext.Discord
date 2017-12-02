@@ -61,6 +61,8 @@
 
                 FireRequests();
             }
+
+            this.Disposed = true;
         }
 
         private void FireRequests()
