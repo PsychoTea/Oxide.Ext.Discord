@@ -1,4 +1,4 @@
-namespace Oxide.Ext.Discord.REST
+namespace Oxide.Ext.Discord.WebSockets
 {
     using System;
     using System.IO;
@@ -11,13 +11,16 @@ namespace Oxide.Ext.Discord.REST
     using Oxide.Ext.Discord.Exceptions;
     using WebSocketSharp;
 
-    public class SocketHandler
+    public class SocketListner
     {
         private DiscordClient client;
 
-        public SocketHandler(DiscordClient client)
+        private Socket webSocket;
+
+        public SocketListner(DiscordClient client, Socket socket)
         {
             this.client = client;
+            this.webSocket = socket;
         }
 
         public void SocketOpened(object sender, EventArgs e)
@@ -42,7 +45,8 @@ namespace Oxide.Ext.Discord.REST
             };
 
             var sp = JsonConvert.SerializeObject(payload);
-            client.SendData(sp);
+
+            webSocket.Send(sp);
 
             client.CallHook("DiscordSocket_WebSocketOpened");
         }
@@ -427,7 +431,8 @@ namespace Oxide.Ext.Discord.REST
                 case "7":
                     {
                         Interface.Oxide.LogInfo($"[DiscordExt] Reconnect has been called (opcode 7)! Reconnecting...");
-                        client.Socket.ConnectAsync();
+
+                        webSocket.Connect(client.WSSURL);
                         break;
                     }
 

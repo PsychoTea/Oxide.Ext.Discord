@@ -48,6 +48,7 @@
         public static void CloseClient(DiscordClient client)
         {
             if (client == null) return;
+
             client.Disconnect();
             Clients.Remove(client);
         }
