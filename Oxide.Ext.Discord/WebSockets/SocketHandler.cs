@@ -65,7 +65,7 @@ namespace Oxide.Ext.Discord.REST
             Interface.Oxide.LogWarning($"[Discord Ext] An error has occured: Response: {e.Message}");
             client.CallHook("DiscordSocket_WebSocketErrored", null, e.Exception, e.Message);
         }
-        
+
         public void SocketMessage(object sender, MessageEventArgs e)
         {
             JsonReader reader = new JsonTextReader(new StringReader(e.Data))
@@ -74,10 +74,9 @@ namespace Oxide.Ext.Discord.REST
             };
             JObject messageObj = JObject.Load(reader);
 
-            JToken heartbeatToken;
             int lastHeartbeat = 0;
 
-            if (!messageObj.TryGetValue("s", out heartbeatToken))
+            if (!messageObj.TryGetValue("s", out JToken heartbeatToken))
             {
                 if (!int.TryParse(heartbeatToken.ToSentence(), out lastHeartbeat))
                 {
@@ -85,11 +84,11 @@ namespace Oxide.Ext.Discord.REST
                 }
             }
 
-            string eventcode = messageObj["op"].ToString();
+            string eventCode = messageObj["op"].ToString();
             string eventData = messageObj["d"].ToString();
             string eventName = messageObj["t"].ToString();
 
-            switch (eventcode)
+            switch (eventCode)
             {
                 // Dispatch (dispatches an event)
                 case "0":
@@ -455,7 +454,7 @@ namespace Oxide.Ext.Discord.REST
 
                 default:
                     {
-                        Interface.Oxide.LogInfo($"[DiscordExt] Unhandled OP code: code {eventcode}, message: {e.Data}");
+                        Interface.Oxide.LogInfo($"[DiscordExt] Unhandled OP code: code {eventCode}, message: {e.Data}");
                         break;
                     }
             }
