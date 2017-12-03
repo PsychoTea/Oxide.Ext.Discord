@@ -65,7 +65,7 @@ namespace Oxide.Ext.Discord.REST
             Interface.Oxide.LogWarning($"[Discord Ext] An error has occured: Response: {e.Message}");
             client.CallHook("DiscordSocket_WebSocketErrored", null, e.Exception, e.Message);
         }
-        
+
         public void SocketMessage(object sender, MessageEventArgs e)
         {
             JsonReader reader = new JsonTextReader(new StringReader(e.Data))
