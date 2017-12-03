@@ -26,9 +26,7 @@ namespace Oxide.Ext.Discord
         public RESTHandler REST { get; private set; }
 
         public string WSSURL { get; private set; }
-
-        public UpkeepHandler UpHandler { get; private set; }
-
+        
         public WebSocket Socket { get; private set; } = null;
 
         private SocketHandler handler;
@@ -106,7 +104,6 @@ namespace Oxide.Ext.Discord
 
             Socket = new WebSocket(WSSURL + "/?v=6&encoding=json");
             handler = new SocketHandler(this);
-            UpHandler = new UpkeepHandler(this);
             Socket.OnOpen += handler.SocketOpened;
             Socket.OnClose += handler.SocketClosed;
             Socket.OnError += handler.SocketErrored;

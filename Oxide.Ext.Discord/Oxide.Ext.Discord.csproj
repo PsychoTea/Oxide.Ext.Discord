@@ -112,7 +112,6 @@
     <Compile Include="WebSockets\SocketHandler.cs" />
     <Compile Include="DiscordClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WebSockets\UpkeepHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Oxide.Core, Version=2.0.3440.0, Culture=neutral, processorArchitecture=MSIL">
