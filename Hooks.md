@@ -207,3 +207,179 @@ void Discord_GuildMemberUpdate(GuildMemberUpdate update)
 ```
 
  - Called when a guild member is updated.
+
+## Discord_GuildMembersChunk
+
+```csharp
+void Discord_GuildMembersChunk(GuildMembersChunk chunk) 
+{
+  PrintWarning("A request for GuildMembersChunk was made!");
+}
+```
+
+- Called in respone when Request Guild Members is requested.
+
+## Discord_GuildRoleCreate
+
+```csharp
+void Discord_GuildRoleCreate(GuildRoleCreate create) 
+{
+  PrintWarning("A new role has been created!");
+}
+```
+
+- Called when a new role is created.
+ 
+## Discord_GuildRoleUpdate 
+
+```csharp
+void Discord_GuildRoleUpdate(GuildRoleUpdate update) 
+{
+  PrintWarning("A role was updated!");
+}
+```
+
+- Called when an existing role is updated.
+
+## Discord_GuildRoleDelete
+
+```csharp
+void Discord_GuildRoleDelete(GuildRoleDelete delete) 
+{
+  PrintWarning("A role was deleted!");
+}
+```
+
+- Called when an existing role is deleted.
+
+##Discord_MessageCreate
+
+```csharp
+void Discord_MessageCreate(Message message) 
+{
+  PrintWarning("A message was created!");
+}
+```
+
+- Called when a message is created.
+
+##Discord_MessageUpdate
+
+```csharp
+void Discord_MessageUpdate(Message message) 
+{
+  PrintWarning("A message was updated!");
+}
+```
+
+- Called when a message is updated.
+
+##Discord_MessageDelete
+
+```csharp
+void Discord_MessageDelete(MessageDelete delete) 
+{
+  PrintWarning("A message was deleted!");
+}
+```
+
+- Called when a message is deleted
+
+##Discord_MessageDeleteBulk
+
+```csharp
+void Discord_MessageDeleteBulk(MessageDeleteBulk delete) 
+{
+  PrintWarning("A message was deleted!");
+}
+```
+
+- Called when a message is deleted
+
+##Discord_MessageReactionAdd
+
+```csharp
+void Discord_MessageReactionAdd(MessageReactionAdd add) 
+{
+  PrintWarning("A reaction was added to a message!");
+}
+```
+
+- Called when a reaction is added to a message.
+
+##Discord_MessageReactionRemove
+
+```csharp
+void Discord_MessageReactionRemove(MessageReactionUpdate remove) 
+{
+  PrintWarning("A reaction was removed from a message!");
+}
+```
+
+- Called when a reaction is removed from a message.
+
+##Discord_MessageReactionRemoveAll
+
+```csharp
+void Discord_MessageReactionRemoveAll(MessageReactionRemoveAll remove) 
+{
+  PrintWarning("All reactions were removed from a message!");
+}
+```
+
+- Called when ALL reactions from a message are removed.
+
+##Discord_PresenceUpdate
+
+```csharp
+void Discord_PresenceUpdate(PresenceUpdate update) 
+{
+  PrintWarning("A users presence was updated!");
+}
+```
+
+- Called when a user updates their presence.
+
+##Discord_TypingStart
+
+```csharp
+void Discord_TypingStart(TypingStart update) 
+{
+  PrintWarning("A user has started typing!");
+}
+```
+
+- Called when a user starts typing.
+
+##Discord_UserUpdate
+
+```csharp
+void Discord_UserUpdate(User update) 
+{
+  PrintWarning("A user was updated!");
+}
+```
+
+- Called when a user is updated.
+
+##Discord_WebhooksUpdate
+
+```csharp
+void Discord_WebhooksUpdate(WebhooksUpdate update) 
+{
+  PrintWarning("A webhook was updated!");
+}
+```
+
+- Called when a webhook is updated.
+
+##Discord_UnhandledEvent
+
+```csharp
+void Discord_UnhandledEvent(object message) 
+{
+  PrintWarning("An event was unhandled!");
+}
+```
+
+- Called when an event is unhandled by the extension.
