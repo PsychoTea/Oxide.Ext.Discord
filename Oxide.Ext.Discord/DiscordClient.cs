@@ -1,4 +1,4 @@
-namespace Oxide.Ext.Discord.WebSockets
+namespace Oxide.Ext.Discord
 {
     using System;
     using System.Collections.Generic;
@@ -12,6 +12,7 @@ namespace Oxide.Ext.Discord.WebSockets
     using Oxide.Ext.Discord.Attributes;
     using Oxide.Ext.Discord.DiscordObjects;
     using Oxide.Ext.Discord.Exceptions;
+    using Oxide.Ext.Discord.REST;
     using WebSocketSharp;
 
     public class DiscordClient
@@ -117,7 +118,7 @@ namespace Oxide.Ext.Discord.WebSockets
         {
             if (!IsClosed())
             {
-                Socket.CloseAsync();
+                Socket?.CloseAsync();
             }
 
             WSSURL = string.Empty;
@@ -126,9 +127,9 @@ namespace Oxide.Ext.Discord.WebSockets
 
         public bool IsAlive() => Socket?.IsAlive ?? false;
 
-        public bool IsClosing() => Socket.ReadyState == WebSocketState.Closing;
+        public bool IsClosing() => Socket?.ReadyState == WebSocketState.Closing;
 
-        public bool IsClosed() => Socket.ReadyState == WebSocketState.Closed;
+        public bool IsClosed() => Socket?.ReadyState == WebSocketState.Closed;
 
         public void SendData(string contents) => Socket.Send(contents);
 
@@ -209,7 +210,7 @@ namespace Oxide.Ext.Discord.WebSockets
 
         private void GetURL(Action callback)
         {
-            REST.DoRequest<JObject>("/gateway", "GET", null, (data) =>
+            REST.DoRequest<JObject>("/gateway", RequestMethod.GET, null, (data) =>
             {
                 WSSURL = (data as JObject).GetValue("url").ToString();
                 callback.Invoke();

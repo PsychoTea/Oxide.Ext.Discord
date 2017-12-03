@@ -13,7 +13,6 @@ TODO: Explain how to get an API key
 using Oxide.Ext.Discord;
 using Oxide.Ext.Discord.Attributes;
 using Oxide.Ext.Discord.DiscordObjects;
-using Oxide.Ext.Discord.WebSockets;
 
 namespace Oxide.Plugins
 {
@@ -30,7 +29,7 @@ namespace Oxide.Plugins
             Discord.CreateClient(this, "<api key here>"); // Create a new DiscordClient
         }
 
-        // Called when 
+        // Called when the connection is completed
         void DiscordSocket_Initialized()
         {
             Puts("Discord connected!");
@@ -55,4 +54,6 @@ namespace Oxide.Plugins
 ```
 
 ### Hooks
-~~Up to date hooks at dylansmr.us/discord/~~ Not available, hooks will be available at dylansmr.us at some point.
+Some hooks are available in the [Hooks.md file](Hooks.md)
+
+TODO: add all the hooks
