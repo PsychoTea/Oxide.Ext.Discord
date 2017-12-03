@@ -252,7 +252,7 @@ void Discord_GuildRoleDelete(GuildRoleDelete delete)
 
 - Called when an existing role is deleted.
 
-##Discord_MessageCreate
+## Discord_MessageCreate
 
 ```csharp
 void Discord_MessageCreate(Message message) 
@@ -263,7 +263,7 @@ void Discord_MessageCreate(Message message)
 
 - Called when a message is created.
 
-##Discord_MessageUpdate
+## Discord_MessageUpdate
 
 ```csharp
 void Discord_MessageUpdate(Message message) 
@@ -274,7 +274,7 @@ void Discord_MessageUpdate(Message message)
 
 - Called when a message is updated.
 
-##Discord_MessageDelete
+## Discord_MessageDelete
 
 ```csharp
 void Discord_MessageDelete(MessageDelete delete) 
@@ -285,7 +285,7 @@ void Discord_MessageDelete(MessageDelete delete)
 
 - Called when a message is deleted
 
-##Discord_MessageDeleteBulk
+## Discord_MessageDeleteBulk
 
 ```csharp
 void Discord_MessageDeleteBulk(MessageDeleteBulk delete) 
@@ -296,7 +296,7 @@ void Discord_MessageDeleteBulk(MessageDeleteBulk delete)
 
 - Called when a message is deleted
 
-##Discord_MessageReactionAdd
+## Discord_MessageReactionAdd
 
 ```csharp
 void Discord_MessageReactionAdd(MessageReactionAdd add) 
@@ -307,7 +307,7 @@ void Discord_MessageReactionAdd(MessageReactionAdd add)
 
 - Called when a reaction is added to a message.
 
-##Discord_MessageReactionRemove
+## Discord_MessageReactionRemove
 
 ```csharp
 void Discord_MessageReactionRemove(MessageReactionUpdate remove) 
@@ -318,7 +318,7 @@ void Discord_MessageReactionRemove(MessageReactionUpdate remove)
 
 - Called when a reaction is removed from a message.
 
-##Discord_MessageReactionRemoveAll
+## Discord_MessageReactionRemoveAll
 
 ```csharp
 void Discord_MessageReactionRemoveAll(MessageReactionRemoveAll remove) 
@@ -329,7 +329,7 @@ void Discord_MessageReactionRemoveAll(MessageReactionRemoveAll remove)
 
 - Called when ALL reactions from a message are removed.
 
-##Discord_PresenceUpdate
+## Discord_PresenceUpdate
 
 ```csharp
 void Discord_PresenceUpdate(PresenceUpdate update) 
@@ -340,7 +340,7 @@ void Discord_PresenceUpdate(PresenceUpdate update)
 
 - Called when a user updates their presence.
 
-##Discord_TypingStart
+## Discord_TypingStart
 
 ```csharp
 void Discord_TypingStart(TypingStart update) 
@@ -351,7 +351,7 @@ void Discord_TypingStart(TypingStart update)
 
 - Called when a user starts typing.
 
-##Discord_UserUpdate
+## Discord_UserUpdate
 
 ```csharp
 void Discord_UserUpdate(User update) 
@@ -362,7 +362,7 @@ void Discord_UserUpdate(User update)
 
 - Called when a user is updated.
 
-##Discord_WebhooksUpdate
+## Discord_WebhooksUpdate
 
 ```csharp
 void Discord_WebhooksUpdate(WebhooksUpdate update) 
@@ -373,7 +373,7 @@ void Discord_WebhooksUpdate(WebhooksUpdate update)
 
 - Called when a webhook is updated.
 
-##Discord_UnhandledEvent
+## Discord_UnhandledEvent
 
 ```csharp
 void Discord_UnhandledEvent(object message) 
