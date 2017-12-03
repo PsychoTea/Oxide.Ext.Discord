@@ -4,25 +4,13 @@
 ```csharp
 void DiscordSocket_Initalized(DiscordClient client)
 {
-	Puts("Client Initalized!");
+    Puts("Client Initalized!");
 }
 ```
 
  - Called when the client is created, and the plugin can use it.
- - No return behavior
- 
-## DiscordSocket_SocketConnecting
-```csharp
-object DiscordSocket_SocketConnecting(string url)
-{
-	Puts($"Discord Extension is using {url} as its websocket url!");
-	return null;
-}
-```
+ - No return behavior.
 
- - Called before the client connects to Discord's websocket.
- - Return any non-null value to cancel.
- 
 ## DiscordSocket_HeartbeatSent
 ```csharp
 void DiscordSocket_HeartbeatSent()
@@ -65,9 +53,9 @@ void DiscordSocket_WebSocketErrored(Exception exception, string message)
 ```
 
  - Called when the web socket errors.
- - Exception may be type Exception and not a string.
- - No return behavior
+ - No return behavior.
  
+
 # Discord API Event Hooks
 
 ## Discord_Ready
@@ -235,7 +223,7 @@ void Discord_GuildMemberUpdate(GuildMemberUpdate update, GuildMember oldMember)
 ```csharp
 void Discord_GuildMembersChunk(GuildMembersChunk chunk)
 {
-	Puts("A guild members chunk has been recieved!")
+    Puts("A guild members chunk has been recieved!")
 }
 ```
 
@@ -245,7 +233,7 @@ void Discord_GuildMembersChunk(GuildMembersChunk chunk)
 ```csharp
 void Discord_GuildRoleCreate(Role role)
 {
-	Puts("A new role has been created!");
+    Puts("A new role has been created!");
 }
 ```
 
@@ -265,7 +253,7 @@ void Discord_GuildRoleUpdate(Role newRole, Role oldRole)
 ```csharp
 void Discord_GuildRoleDelete(Role role)
 {
-	Puts("A role has been deleted!");
+    Puts("A role has been deleted!");
 }
 ```
 
@@ -275,7 +263,7 @@ void Discord_GuildRoleDelete(Role role)
 ```csharp
 void Discord_MessageCreate(Message message)
 {
-	Puts("A new message has been created!");
+    Puts("A new message has been created!");
 }
 ```
 
@@ -285,17 +273,17 @@ void Discord_MessageCreate(Message message)
 ```csharp
 void Discord_MessageUpdate(Message message)
 {
-	Puts("A message has been updated!");
+    Puts("A message has been updated!");
 }
 ```
 
- - Called whena  message is updated.
+ - Called when a message is updated.
 
 ## Discord_MessageDelete
 ```csharp
 void Discord_MessageDelete(MessageDelete message)
 {
-	Puts("A message has been deleted!");
+    Puts("A message has been deleted!");
 }
 ```
 
@@ -305,7 +293,7 @@ void Discord_MessageDelete(MessageDelete message)
 ```csharp
 void Discord_MessageDeleteBulk(MessageDeleteBulk bulk)
 {
-	Puts("A bulk of messages have been deleted!");
+    Puts("A bulk of messages have been deleted!");
 }
 ```
 
@@ -315,7 +303,7 @@ void Discord_MessageDeleteBulk(MessageDeleteBulk bulk)
 ```csharp
 void Discord_MessageReactionAdd(MessageReactionUpdate update)
 {
-	Puts("A reaction has been added to a message!");
+    Puts("A reaction has been added to a message!");
 }
 ```
 
@@ -325,7 +313,7 @@ void Discord_MessageReactionAdd(MessageReactionUpdate update)
 ```csharp
 void Discord_MessageReactionRemove(MessageReactionUpdate update)
 {
-	Puts("A reaction has been removed from a message!");
+    Puts("A reaction has been removed from a message!");
 }
 ```
 
@@ -335,8 +323,9 @@ void Discord_MessageReactionRemove(MessageReactionUpdate update)
 ```csharp
 void Discord_MessageReactionRemoveAll(MessageReactionRemoveAll reactions)
 {
-	Puts("All reactions have been removed from a message!");
+    Puts("All reactions have been removed from a message!");
 }
+```
 
  - Called when all reactions are removed from a message.
 
@@ -344,7 +333,7 @@ void Discord_MessageReactionRemoveAll(MessageReactionRemoveAll reactions)
 ```csharp
 void Discord_PresenceUpdate(PResenceUpdate update)
 {
-	Puts("Someone's presence has been updated!");
+    Puts("Someone's presence has been updated!");
 }
 ```
 
@@ -354,7 +343,7 @@ void Discord_PresenceUpdate(PResenceUpdate update)
 ```csharp
 void Discord_TypingStart(TypingStart start)
 {
-	Puts("Someone has started typing!");
+    Puts("Someone has started typing!");
 }
 ```
 
@@ -364,7 +353,7 @@ void Discord_TypingStart(TypingStart start)
 ```csharp
 void Discord_UserUpdate(User user)
 {
-	Puts("A user has been updated!");
+    Puts("A user has been updated!");
 }
 ```
 
@@ -374,7 +363,7 @@ void Discord_UserUpdate(User user)
 ```csharp
 void Discord_VoiceStateUpdate(VoiceState state)
 {
-	Puts("A users voice state has been updated!");
+    Puts("A users voice state has been updated!");
 }
 ```
 
@@ -384,7 +373,7 @@ void Discord_VoiceStateUpdate(VoiceState state)
 ```csharp
 void Discord_VoiceServerUpdate(VoiceServerUpdate update)
 {
-	Puts("The voice server has been updated!");
+    Puts("The voice server has been updated!");
 }
 ```
 
@@ -394,7 +383,7 @@ void Discord_VoiceServerUpdate(VoiceServerUpdate update)
 ```csharp
 void Discord_WebhooksUpdate(WebhooksUpdate webhooks)
 {
-	Puts("The webhooks have been updated!");
+    Puts("The webhooks have been updated!");
 }
 ```
 
@@ -404,7 +393,7 @@ void Discord_WebhooksUpdate(WebhooksUpdate webhooks)
 ```csharp
 void Discord_UnhandledEvent(JObject messageObject)
 {
-	Puts("An unhandlded event has occured!");
+    Puts("An unhandlded event has occured!");
 }
 ```
 
