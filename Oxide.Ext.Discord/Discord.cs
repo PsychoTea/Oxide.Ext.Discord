@@ -4,7 +4,6 @@
     using System.Linq;
     using Oxide.Core.Plugins;
     using Oxide.Ext.Discord.Exceptions;
-    using Oxide.Ext.Discord.REST;
 
     public class Discord
     {
@@ -49,6 +48,7 @@
         public static void CloseClient(DiscordClient client)
         {
             if (client == null) return;
+
             client.Disconnect();
             Clients.Remove(client);
         }

@@ -6,7 +6,18 @@ Should you encounter an issue, please feel free to create an issue here.
 Want to contribute? Create a fork of the repo and create a pull request for any changes you wish to make!
 
 ### Getting your API Key
-TODO: Explain how to get an API key
+An API key is used to authenticate requests made to and from Discord.
+
+NOTE: DO NOT SHARE YOUR API KEY/TOKEN. Sharing your token may result in punishments from Discord if the token is used to abuse the API.
+
+Steps to obtain an API Key.
+
+1) Visit the official Discord Developers page here. [Discord Developer Documenation](https://discordapp.com/developers/applications/me)
+2) Click "New App".
+3) Name your app and click create! NOTE: A description isn't required.
+4) You will now be redirected to your created app, at the point you will need to click "Create a Bot User".
+5) Under the newly created bot section you will see "Token" below "Username", reveal the token and copy it into your plugin.
+6) Now it's time to add your new bot to your guild! To add your bot to your guild you must visit this link and replace "botUserID" with the client ID found at the top of your discord app. https://discordapp.com/oauth2/authorize?client_id=botUserID&scope=bot&permissions=8 NOTE: "permissions=8" in the link will provide the bot with administrative permissions so you won't have to give it some.
 
 ### Plugin Example
 ```csharp
@@ -44,7 +55,8 @@ namespace Oxide.Plugins
         // Called when a message is created on the Discord server
         void Discord_MessageCreate(Message message)
         {
-            message.CreateReaction(Client, ":sad:"); // Add a sad reaction to the message
+            // Add a sad reaction to the message
+            message.CreateReaction(Client, ":sad:");
 
             // Post the message to chat
             server.Broadcast($"Discord Message: {message.author.username} - {message.content}");
@@ -54,6 +66,4 @@ namespace Oxide.Plugins
 ```
 
 ### Hooks
-Some hooks are available in the [Hooks.md file](Hooks.md)
-
-TODO: add all the hooks
+All hooks are available in the [Hooks.md file](Hooks.md).
