@@ -44,7 +44,8 @@ namespace Oxide.Plugins
         // Called when a message is created on the Discord server
         void Discord_MessageCreate(Message message)
         {
-            message.CreateReaction(Client, ":sad:"); // Add a sad reaction to the message
+			// Add a sad reaction to the message
+            message.CreateReaction(Client, ":sad:");
 
             // Post the message to chat
             server.Broadcast($"Discord Message: {message.author.username} - {message.content}");
@@ -54,6 +55,4 @@ namespace Oxide.Plugins
 ```
 
 ### Hooks
-Some hooks are available in the [Hooks.md file](Hooks.md)
-
-TODO: add all the hooks
+All hooks are available in the [Hooks.md file](Hooks.md).
