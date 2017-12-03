@@ -55,7 +55,7 @@ namespace Oxide.Plugins
         // Called when a message is created on the Discord server
         void Discord_MessageCreate(Message message)
         {
-			// Add a sad reaction to the message
+            // Add a sad reaction to the message
             message.CreateReaction(Client, ":sad:");
 
             // Post the message to chat
