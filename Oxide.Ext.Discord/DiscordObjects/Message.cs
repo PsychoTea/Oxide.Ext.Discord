@@ -55,8 +55,10 @@
         }
         public void Reply(DiscordClient client, string message, bool ping = true, Action<Message> callback = null)
         {
-            Message newMessage = new Message();
-            newMessage.content = ping ? $"<@{author.id}> {message}" : message;
+            Message newMessage = new Message()
+            {
+                content = ping ? $"<@{author.id}> {message}" : message
+            };
             client.REST.DoRequest<Message>($"/channels/{channel_id}/messages", RequestMethod.POST, newMessage, (returnValue) =>
             {
                 callback?.Invoke(returnValue as Message);
@@ -64,9 +66,11 @@
         }
         public void Reply(DiscordClient client, Embed embed, bool ping = true, Action<Message> callback = null)
         {
-            Message newMessage = new Message();
-            newMessage.content = ping ? $"<@{author.id}>" : null;
-            newMessage.embed = embed;
+            Message newMessage = new Message()
+            {
+                content = ping ? $"<@{author.id}>" : null,
+                embed = embed
+            };
             client.REST.DoRequest<Message>($"/channels/{channel_id}/messages", RequestMethod.POST, newMessage, (returnValue) =>
             {
                 callback?.Invoke(returnValue as Message);
