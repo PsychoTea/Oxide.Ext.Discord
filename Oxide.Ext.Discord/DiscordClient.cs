@@ -13,6 +13,7 @@ namespace Oxide.Ext.Discord
     using Oxide.Ext.Discord.DiscordObjects;
     using Oxide.Ext.Discord.Exceptions;
     using Oxide.Ext.Discord.REST;
+    using Oxide.Ext.Discord.WebSockets;
     using WebSocketSharp;
 
     public class DiscordClient
@@ -26,12 +27,8 @@ namespace Oxide.Ext.Discord
         public RESTHandler REST { get; private set; }
 
         public string WSSURL { get; private set; }
-
-        public UpkeepHandler UpHandler { get; private set; }
-
-        public WebSocket Socket { get; private set; } = null;
-
-        private SocketHandler handler;
+        
+        private Socket webSocket;
 
         private Timer timer;
 
@@ -52,14 +49,36 @@ namespace Oxide.Ext.Discord
             RegisterPlugin(plugin);
 
             Settings.ApiToken = apiKey;
+
             REST = new RESTHandler(Settings.ApiToken);
+            webSocket = new Socket(this);
 
             if (!Discord.Clients.Any(x => x.Settings.ApiToken == apiKey))
             {
                 throw new InvalidCreationException();
             }
 
-            this.Connect();
+            if (!string.IsNullOrEmpty(WSSURL))
+            {
+                webSocket.Connect(WSSURL);
+                return;
+            }
+
+            this.GetURL(url =>
+            {
+                WSSURL = url;
+
+                webSocket.Connect(WSSURL);
+            });
+        }
+
+        public void Disconnect()
+        {
+            webSocket?.Disconnect();
+
+            WSSURL = string.Empty;
+
+            REST?.Shutdown();
         }
 
         public void UpdatePluginReference(Plugin plugin = null)
@@ -77,62 +96,7 @@ namespace Oxide.Ext.Discord
                 }
             }
         }
-
-        public void Connect()
-        {
-            if (!string.IsNullOrEmpty(WSSURL))
-            {
-                this.CreateSocket();
-                return;
-            }
-
-            this.GetURL(() =>
-            {
-                this.CreateSocket();
-            });
-        }
-
-        public void CreateSocket()
-        {
-            if (string.IsNullOrEmpty(WSSURL))
-            {
-                throw new NoURLException();
-            }
-
-            if (Socket != null && Socket.ReadyState != WebSocketState.Closed)
-            {
-                throw new SocketRunningException(this);
-            }
-
-            Socket = new WebSocket(WSSURL + "/?v=6&encoding=json");
-            handler = new SocketHandler(this);
-            UpHandler = new UpkeepHandler(this);
-            Socket.OnOpen += handler.SocketOpened;
-            Socket.OnClose += handler.SocketClosed;
-            Socket.OnError += handler.SocketErrored;
-            Socket.OnMessage += handler.SocketMessage;
-            Socket.ConnectAsync();
-        }
-
-        public void Disconnect()
-        {
-            if (!IsClosed())
-            {
-                Socket?.CloseAsync();
-            }
-
-            WSSURL = string.Empty;
-            REST?.Shutdown();
-        }
-
-        public bool IsAlive() => Socket?.IsAlive ?? false;
-
-        public bool IsClosing() => Socket?.ReadyState == WebSocketState.Closing;
-
-        public bool IsClosed() => Socket?.ReadyState == WebSocketState.Closed;
-
-        public void SendData(string contents) => Socket.Send(contents);
-
+        
         public void RegisterPlugin(Plugin plugin)
         {
             var search = Plugins.Where(x => x.Title == plugin.Title);
@@ -191,14 +155,16 @@ namespace Oxide.Ext.Discord
             };
 
             string message = JsonConvert.SerializeObject(packet);
-            Socket.Send(message);
+            webSocket.Send(message);
 
             this.CallHook("DiscordSocket_HeartbeatSent");
         }
 
         private void HeartbeatElapsed(object sender, ElapsedEventArgs e)
         {
-            if (!Socket.IsAlive || IsClosing() || IsClosed())
+            if (!webSocket.IsAlive() || 
+                webSocket.IsClosed() || 
+                webSocket.IsClosed())
             {
                 timer.Dispose();
                 timer = null;
@@ -208,12 +174,13 @@ namespace Oxide.Ext.Discord
             SendHeartbeat();
         }
 
-        private void GetURL(Action callback)
+        private void GetURL(Action<string> callback)
         {
             REST.DoRequest<JObject>("/gateway", RequestMethod.GET, null, (data) =>
             {
-                WSSURL = (data as JObject).GetValue("url").ToString();
-                callback.Invoke();
+                string wsURL = (data as JObject).GetValue("url").ToString();
+
+                callback.Invoke(wsURL);
             });
         }
     }

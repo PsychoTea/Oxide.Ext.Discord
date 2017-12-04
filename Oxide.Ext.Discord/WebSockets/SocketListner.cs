@@ -1,4 +1,4 @@
-namespace Oxide.Ext.Discord.REST
+namespace Oxide.Ext.Discord.WebSockets
 {
     using System;
     using System.IO;
@@ -11,13 +11,16 @@ namespace Oxide.Ext.Discord.REST
     using Oxide.Ext.Discord.Exceptions;
     using WebSocketSharp;
 
-    public class SocketHandler
+    public class SocketListner
     {
         private DiscordClient client;
 
-        public SocketHandler(DiscordClient client)
+        private Socket webSocket;
+
+        public SocketListner(DiscordClient client, Socket socket)
         {
             this.client = client;
+            this.webSocket = socket;
         }
 
         public void SocketOpened(object sender, EventArgs e)
@@ -42,7 +45,8 @@ namespace Oxide.Ext.Discord.REST
             };
 
             var sp = JsonConvert.SerializeObject(payload);
-            client.SendData(sp);
+
+            webSocket.Send(sp);
 
             client.CallHook("DiscordSocket_WebSocketOpened");
         }
@@ -74,10 +78,9 @@ namespace Oxide.Ext.Discord.REST
             };
             JObject messageObj = JObject.Load(reader);
 
-            JToken heartbeatToken;
             int lastHeartbeat = 0;
 
-            if (!messageObj.TryGetValue("s", out heartbeatToken))
+            if (!messageObj.TryGetValue("s", out JToken heartbeatToken))
             {
                 if (!int.TryParse(heartbeatToken.ToSentence(), out lastHeartbeat))
                 {
@@ -85,11 +88,11 @@ namespace Oxide.Ext.Discord.REST
                 }
             }
 
-            string eventcode = messageObj["op"].ToString();
+            string eventCode = messageObj["op"].ToString();
             string eventData = messageObj["d"].ToString();
             string eventName = messageObj["t"].ToString();
 
-            switch (eventcode)
+            switch (eventCode)
             {
                 // Dispatch (dispatches an event)
                 case "0":
@@ -428,7 +431,8 @@ namespace Oxide.Ext.Discord.REST
                 case "7":
                     {
                         Interface.Oxide.LogInfo($"[DiscordExt] Reconnect has been called (opcode 7)! Reconnecting...");
-                        client.Socket.ConnectAsync();
+
+                        webSocket.Connect(client.WSSURL);
                         break;
                     }
 
@@ -455,7 +459,7 @@ namespace Oxide.Ext.Discord.REST
 
                 default:
                     {
-                        Interface.Oxide.LogInfo($"[DiscordExt] Unhandled OP code: code {eventcode}, message: {e.Data}");
+                        Interface.Oxide.LogInfo($"[DiscordExt] Unhandled OP code: code {eventCode}, message: {e.Data}");
                         break;
                     }
             }

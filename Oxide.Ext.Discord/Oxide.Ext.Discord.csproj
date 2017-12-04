@@ -109,10 +109,10 @@
     <Compile Include="SocketObjects\Payload.cs" />
     <Compile Include="SocketObjects\PayloadProperty.cs" />
     <Compile Include="DiscordSettings.cs" />
-    <Compile Include="WebSockets\SocketHandler.cs" />
+    <Compile Include="WebSockets\Socket.cs" />
+    <Compile Include="WebSockets\SocketListner.cs" />
     <Compile Include="DiscordClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WebSockets\UpkeepHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Oxide.Core, Version=2.0.3440.0, Culture=neutral, processorArchitecture=MSIL">
