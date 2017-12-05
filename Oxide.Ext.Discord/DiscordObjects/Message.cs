@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Text;
-    using System.Web;
+    using Oxide.Ext.Discord.Helpers;
     using Oxide.Ext.Discord.REST;
 
     public class Message
