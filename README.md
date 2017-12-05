@@ -1,4 +1,4 @@
-# Oxide.Ext.Discord [![Master](https://ci.appveyor.com/api/projects/status/github/Oxide.Ext.Discord/branch/master)](https://ci.appveyor.com/project/PsychoTea/oxide-ext-discord/branch/master)
+# Oxide.Ext.Discord [![Master](https://ci.appveyor.com/api/projects/status/github/PsychoTea/Oxide.Ext.Discord/branch/master?svg=true)](https://ci.appveyor.com/project/PsychoTea/oxide-ext-discord/branch/master)
 An extension for Oxide, which acts as a bridge between Oxide plugins and the Discord API. Currently being developed by PsychoTea, and co-developed by DylanSMR. Please submit any questions to us via Discord, Oxide, or GitHub.
 
 Should you encounter an issue, please feel free to create an issue here.
@@ -9,8 +9,8 @@ Want to contribute? Create a fork of the repo and create a pull request for any 
 
 Build | Branch
 ----- | ------
-[![Master](https://ci.appveyor.com/api/projects/status/github/Oxide.Ext.Discord/branch/master)](https://ci.appveyor.com/project/PsychoTea/oxide-ext-discord/branch/master) | Master
-[![Develop](https://ci.appveyor.com/api/projects/status/github/Oxide.Ext.Discord/branch/develop)](https://ci.appveyor.com/project/PsychoTea/oxide-ext-discord/branch/develop) | Develop
+[![Master](https://ci.appveyor.com/api/projects/status/github/PsychoTea/Oxide.Ext.Discord/branch/master?svg=true)](https://ci.appveyor.com/project/PsychoTea/oxide-ext-discord/branch/master) | Master
+[![Develop](https://ci.appveyor.com/api/projects/status/github/PsychoTea/Oxide.Ext.Discord/branch/develop?svg=true)](https://ci.appveyor.com/project/PsychoTea/oxide-ext-discord/branch/develop) | Develop
 
 ### Getting your API Key
 An API key is used to authenticate requests made to and from Discord.
