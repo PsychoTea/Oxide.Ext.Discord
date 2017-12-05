@@ -122,10 +122,6 @@
 
         private void ParseHeaders(WebHeaderCollection headers, RestResponse response)
         {
-            // Kind of a mess
-            // Kind of needs tidying
-            // Kind of not sure the best way to go about that
-
             string rateRetryAfterHeader = headers.Get("Retry-After");
             string rateLimitGlobalHeader = headers.Get("X-RateLimit-Global");
 
