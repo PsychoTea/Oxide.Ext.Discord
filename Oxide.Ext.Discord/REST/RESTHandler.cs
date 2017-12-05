@@ -38,12 +38,16 @@
             CreateRequest(method, url, headers, data, obj => callback?.Invoke());
         }
 
-        public void DoRequest<T>(string url, RequestMethod method, object data, Action<object> callback)
+        public void DoRequest<T>(string url, RequestMethod method, object data, Action<T> callback)
         {
             CreateRequest(method, url, headers, data, response =>
             {
-                var callbackObj = JsonConvert.DeserializeObject(response.Data, typeof(T));
-                callback.Invoke(callbackObj);
+                if (callback != null)
+                {
+                    var callbackObj = JsonConvert.DeserializeObject<T>(response.Data);
+
+                    callback.Invoke(callbackObj);
+                }
             });
         }
         
