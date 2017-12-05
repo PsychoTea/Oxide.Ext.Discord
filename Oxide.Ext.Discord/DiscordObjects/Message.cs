@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Text;
-    using System.Web;
+    using Oxide.Ext.Discord.Helpers;
     using Oxide.Ext.Discord.REST;
 
     public class Message
@@ -48,10 +48,28 @@
         {
             message.content = ping ? $"<@{author.id}> {message.content}" : message.content;
 
-            client.REST.DoRequest<Message>($"/channels/{channel_id}/messages", RequestMethod.POST, message, (returnValue) =>
+            client.REST.DoRequest($"/channels/{channel_id}/messages", RequestMethod.POST, message, callback);
+        }
+
+        public void Reply(DiscordClient client, string message, bool ping = true, Action<Message> callback = null)
+        {
+            Message newMessage = new Message()
             {
-                callback?.Invoke(returnValue as Message);
-            });
+                content = ping ? $"<@{author.id}> {message}" : message
+            };
+
+            Reply(client, newMessage, ping, callback);
+        }
+
+        public void Reply(DiscordClient client, Embed embed, bool ping = true, Action<Message> callback = null)
+        {
+            Message newMessage = new Message()
+            {
+                content = ping ? $"<@{author.id}>" : null,
+                embed = embed
+            };
+
+            Reply(client, newMessage, ping, callback);
         }
 
         public void CreateReaction(DiscordClient client, string emoji, Action callback = null)
@@ -76,10 +94,7 @@
             byte[] encodedEmoji = Encoding.UTF8.GetBytes(emoji);
             string hexString = HttpUtility.UrlEncode(encodedEmoji);
 
-            client.REST.DoRequest<List<User>>($"/channels/{channel_id}/messages/{id}/reactions/{hexString}", RequestMethod.GET, null, (returnValue) =>
-            {
-                callback?.Invoke(returnValue as List<User>);
-            });
+            client.REST.DoRequest($"/channels/{channel_id}/messages/{id}/reactions/{hexString}", RequestMethod.GET, null, callback);
         }
 
         public void DeleteAllReactions(DiscordClient client, Action callback = null)
@@ -89,18 +104,12 @@
 
         public void EditMessage(DiscordClient client, Action<Message> callback = null)
         {
-            client.REST.DoRequest<Message>($"/channels/{channel_id}/messages/{id}", RequestMethod.PATCH, this, (returnValue) =>
-            {
-                callback?.Invoke(returnValue as Message);
-            });
+            client.REST.DoRequest<Message>($"/channels/{channel_id}/messages/{id}", RequestMethod.PATCH, this, callback);
         }
 
         public void DeleteMessage(DiscordClient client, Action<Message> callback = null)
         {
-            client.REST.DoRequest<Message>($"/channels/{channel_id}/messages/{id}", RequestMethod.DELETE, null, (returnValue) =>
-            {
-                callback?.Invoke(returnValue as Message);
-            });
+            client.REST.DoRequest<Message>($"/channels/{channel_id}/messages/{id}", RequestMethod.DELETE, null, callback);
         }
 
         public void AddPinnedChannelMessage(DiscordClient client, Action callback = null)

@@ -13,26 +13,17 @@
 
         public static void GetInvite(DiscordClient client, string inviteCode, Action<Invite> callback = null)
         {
-            client.REST.DoRequest<Invite>($"/invites/{inviteCode}", RequestMethod.GET, null, (returnValue) =>
-            {
-                callback?.Invoke(returnValue as Invite);
-            });
+            client.REST.DoRequest($"/invites/{inviteCode}", RequestMethod.GET, null, callback);
         }
 
         public void DeleteInvite(DiscordClient client, Action<Invite> callback = null)
         {
-            client.REST.DoRequest<Invite>($"/invites/{code}", RequestMethod.DELETE, null, (returnValue) =>
-            {
-                callback?.Invoke(returnValue as Invite);
-            });
+            client.REST.DoRequest($"/invites/{code}", RequestMethod.DELETE, null, callback);
         }
 
         public void AcceptInvite(DiscordClient client, Action<Invite> callback = null)
         {
-            client.REST.DoRequest<Invite>($"/invites/{code}", RequestMethod.POST, null, (returnValue) =>
-            {
-                callback?.Invoke(returnValue as Invite);
-            });
+            client.REST.DoRequest($"/invites/{code}", RequestMethod.POST, null, callback);
         }
     }
 }

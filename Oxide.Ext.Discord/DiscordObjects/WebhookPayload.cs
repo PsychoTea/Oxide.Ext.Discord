@@ -1,7 +1,6 @@
-﻿namespace Oxide.Ext.Discord.RESTObjects
+﻿namespace Oxide.Ext.Discord.DiscordObjects
 {
     using System.Collections.Generic;
-    using Oxide.Ext.Discord.DiscordObjects;
 
     public class WebhookPayload
     {
