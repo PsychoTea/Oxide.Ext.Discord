@@ -110,26 +110,5 @@
         {
             client.REST.DoRequest($"/channels/{channelID}/recipients/{id}", RequestMethod.DELETE, null, callback);
         }
-
-        public override bool Equals(object obj)
-        {
-            if (this == null || obj == null)
-            {
-                return false;
-            }
-
-            if (obj is User user)
-            {
-                return user.id == this.id;
-            }
-
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode() => base.GetHashCode();
-
-        public static bool operator ==(User user1, User user2) => user1.Equals(user2);
-
-        public static bool operator !=(User user1, User user2) => !user1.Equals(user2);
     }
 }
