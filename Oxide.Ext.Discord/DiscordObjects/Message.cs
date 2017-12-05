@@ -53,6 +53,23 @@
                 callback?.Invoke(returnValue as Message);
             });
         }
+        public void Reply(DiscordClient client, string message, bool ping = true, Action<Message> callback = null)
+        {
+            Message newMessage = new Message()
+            {
+                content = ping ? $"<@{author.id}> {message}" : message
+            };
+            Reply(client, newMessage, ping, callback);
+        }
+        public void Reply(DiscordClient client, Embed embed, bool ping = true, Action<Message> callback = null)
+        {
+            Message newMessage = new Message()
+            {
+                content = ping ? $"<@{author.id}>" : null,
+                embed = embed
+            };
+            Reply(client, newMessage, ping, callback);
+        }
 
         public void CreateReaction(DiscordClient client, string emoji, Action callback = null)
         {
