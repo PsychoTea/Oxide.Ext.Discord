@@ -102,11 +102,11 @@
                 output = reader.ReadToEnd().Trim();
             }
 
-            this.ParseHeaders(response.Headers, output);
+            this.Response = new RestResponse(output);
+
+            this.ParseHeaders(response.Headers, this.Response);
 
             response.Close();
-
-            this.Response = new RestResponse(output);
 
             Callback?.Invoke(this.Response);
 
@@ -120,7 +120,7 @@
             this.InProgress = false;
         }
 
-        private void ParseHeaders(WebHeaderCollection headers, string response)
+        private void ParseHeaders(WebHeaderCollection headers, RestResponse response)
         {
             // Kind of a mess
             // Kind of needs tidying
@@ -139,7 +139,7 @@
                     bool.TryParse(rateLimitGlobalHeader, out rateLimitGlobal) &&
                     rateLimitGlobal)
                 {
-                    RateLimit limit = JsonConvert.DeserializeObject<RateLimit>(response);
+                    RateLimit limit = response.ParseData<RateLimit>();
 
                     if (limit.global)
                     {
