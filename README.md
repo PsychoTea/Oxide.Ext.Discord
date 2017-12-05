@@ -1,5 +1,5 @@
 # Oxide.Ext.Discord [![Build](https://ci.appveyor.com/api/projects/status/github/PsychoTea/Oxide.Ext.Discord?svg=true)](https://ci.appveyor.com/project/PsychoTea/oxide-ext-discord)
-An extension for Oxide, which acts as a bridge between Oxide plugins and the Discord API. Currently being developed by PsychoTea, and co-developed by DylanSMR. Please submit any questions to us via Discord, Oxide, or GitHub.
+**Oxide.Ext.Discord** is an Oxide extension which acts as a bridge between Oxide plugins and the Discord API. Currently being developed by PsychoTea, and co-developed by DylanSMR. Please submit any questions to us via Discord, Oxide, or GitHub.
 
 Should you encounter an issue, please feel free to create an issue here.
 
@@ -8,7 +8,7 @@ Want to contribute? Create a fork of the repo and create a pull request for any 
 ### Getting your API Key
 An API key is used to authenticate requests made to and from Discord.
 
-NOTE: DO NOT SHARE YOUR API KEY/TOKEN. Sharing your token may result in punishments from Discord if the token is used to abuse the API.
+**NOTE: DO NOT SHARE YOUR API KEY/TOKEN.** Sharing your token may result in punishments from Discord (including a platform-wide ban) if the token is used to abuse the API.
 
 Steps to obtain an API Key.
 
