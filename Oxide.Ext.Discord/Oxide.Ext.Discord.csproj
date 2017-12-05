@@ -94,9 +94,9 @@
     <Compile Include="Exceptions\NoURLException.cs" />
     <Compile Include="Exceptions\SocketRunningException.cs" />
     <Compile Include="Helpers\HttpUtility.cs" />
-    <Compile Include="RESTObjects\Nick.cs" />
-    <Compile Include="RESTObjects\ObjectPosition.cs" />
-    <Compile Include="RESTObjects\WebhookPayload.cs" />
+    <Compile Include="DiscordObjects\Nick.cs" />
+    <Compile Include="DiscordObjects\ObjectPosition.cs" />
+    <Compile Include="DiscordObjects\WebhookPayload.cs" />
     <Compile Include="REST\Bucket.cs" />
     <Compile Include="REST\GlobalRateLimit.cs" />
     <Compile Include="REST\Request.cs" />
