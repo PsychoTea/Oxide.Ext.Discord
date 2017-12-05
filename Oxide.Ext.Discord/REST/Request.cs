@@ -110,6 +110,8 @@
 
         private void Close()
         {
+            // This may sometimes be causing InvalidOperationExceptions,
+            // not sure
             this.bucket.Remove(this);
 
             this.InProgress = false;
