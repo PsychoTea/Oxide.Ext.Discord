@@ -1,4 +1,4 @@
-# Oxide.Ext.Discord [Master](https://ci.appveyor.com/api/projects/status/Oxide.Ext.Discord/branch/master?retina=true) [Develop](https://ci.appveyor.com/api/projects/status/Oxide.Ext.Discord/branch/develop?retina=true)
+# Oxide.Ext.Discord [![Master](https://ci.appveyor.com/api/projects/status/Oxide.Ext.Discord/branch/master?retina=true)](https://ci.appveyor.com/api/projects/status/Oxide.Ext.Discord/branch/master?retina=true) [![Develop](https://ci.appveyor.com/api/projects/status/Oxide.Ext.Discord/branch/develop?retina=true)](https://ci.appveyor.com/api/projects/status/Oxide.Ext.Discord/branch/develop?retina=true)
 An extension for Oxide, which acts as a bridge between Oxide plugins and the Discord API. Currently being developed by PsychoTea, and co-developed by DylanSMR. Please submit any questions to us via Discord, Oxide, or GitHub.
 
 Should you encounter an issue, please feel free to create an issue here.
