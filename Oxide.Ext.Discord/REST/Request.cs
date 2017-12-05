@@ -15,7 +15,7 @@
         private const string URLBase = "https://discordapp.com/api";
 
         public RequestMethod Method { get; }
-
+        
         public string Route { get; }
 
         public string Endpoint { get; }
@@ -82,7 +82,12 @@
             catch (WebException ex)
             {
                 var httpResponse = ex.Response as HttpWebResponse;
-                string message = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
+
+                string message;
+                using (var reader = new StreamReader(ex.Response.GetResponseStream()))
+                {
+                    message = reader.ReadToEnd().Trim();
+                }
 
                 Interface.Oxide.LogWarning($"[Discord Ext] An error occured whilst submitting a request to {req.RequestUri} (code {httpResponse.StatusCode}): {message}");
 
@@ -97,7 +102,7 @@
                 output = reader.ReadToEnd().Trim();
             }
 
-            ParseHeaders(response.Headers, output);
+            this.ParseHeaders(response.Headers, output);
 
             response.Close();
 
@@ -110,8 +115,6 @@
 
         private void Close()
         {
-            // This may sometimes be causing InvalidOperationExceptions,
-            // not sure
             this.bucket.Remove(this);
 
             this.InProgress = false;
@@ -119,6 +122,10 @@
 
         private void ParseHeaders(WebHeaderCollection headers, string response)
         {
+            // Kind of a mess
+            // Kind of needs tidying
+            // Kind of not sure the best way to go about that
+
             string rateRetryAfterHeader = headers.Get("Retry-After");
             string rateLimitGlobalHeader = headers.Get("X-RateLimit-Global");
 
