@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using Oxide.Ext.Discord.REST;
-    using Oxide.Ext.Discord.RESTObjects;
 
     public class User
     {
