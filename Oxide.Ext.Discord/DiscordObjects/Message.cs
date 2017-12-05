@@ -59,10 +59,7 @@
             {
                 content = ping ? $"<@{author.id}> {message}" : message
             };
-            client.REST.DoRequest<Message>($"/channels/{channel_id}/messages", RequestMethod.POST, newMessage, (returnValue) =>
-            {
-                callback?.Invoke(returnValue as Message);
-            });
+            Reply(client, newMessage, ping, callback);
         }
         public void Reply(DiscordClient client, Embed embed, bool ping = true, Action<Message> callback = null)
         {
@@ -71,10 +68,7 @@
                 content = ping ? $"<@{author.id}>" : null,
                 embed = embed
             };
-            client.REST.DoRequest<Message>($"/channels/{channel_id}/messages", RequestMethod.POST, newMessage, (returnValue) =>
-            {
-                callback?.Invoke(returnValue as Message);
-            });
+            Reply(client, newMessage, ping, callback);
         }
 
         public void CreateReaction(DiscordClient client, string emoji, Action callback = null)
