@@ -15,7 +15,7 @@
         private const string URLBase = "https://discordapp.com/api";
 
         public RequestMethod Method { get; }
-        
+
         public string Route { get; }
 
         public string Endpoint { get; }
@@ -95,7 +95,7 @@
                 this.Close();
                 return;
             }
-            
+
             string output;
             using (var reader = new StreamReader(response.GetResponseStream()))
             {
@@ -132,14 +132,11 @@
             if (!string.IsNullOrEmpty(rateRetryAfterHeader) &&
                 !string.IsNullOrEmpty(rateLimitGlobalHeader))
             {
-                int rateRetryAfter;
-                bool rateLimitGlobal;
-
-                if (int.TryParse(rateRetryAfterHeader, out rateRetryAfter) &&
-                    bool.TryParse(rateLimitGlobalHeader, out rateLimitGlobal) &&
+                if (int.TryParse(rateRetryAfterHeader, out int rateRetryAfter) &&
+                    bool.TryParse(rateLimitGlobalHeader, out bool rateLimitGlobal) &&
                     rateLimitGlobal)
                 {
-                    RateLimit limit = response.ParseData<RateLimit>();
+                    var limit = response.ParseData<RateLimit>();
 
                     if (limit.global)
                     {
@@ -152,20 +149,18 @@
             string rateRemainingHeader = headers.Get("X-RateLimit-Remaining");
             string rateResetHeader = headers.Get("X-RateLimit-Reset");
 
-            if (!string.IsNullOrEmpty(rateLimitHeader) &&
-                !string.IsNullOrEmpty(rateResetHeader) &&
-                !string.IsNullOrEmpty(rateResetHeader))
-            {
-                int rateLimit, rateRemaining, rateReset;
+            if (string.IsNullOrEmpty(rateLimitHeader) ||
+                string.IsNullOrEmpty(rateResetHeader) ||
+                string.IsNullOrEmpty(rateResetHeader))
+                return;
 
-                if (int.TryParse(rateLimitHeader, out rateLimit) &&
-                    int.TryParse(rateRemainingHeader, out rateRemaining) &&
-                    int.TryParse(rateResetHeader, out rateReset))
-                {
-                    bucket.Limit = rateLimit;
-                    bucket.Remaining = rateRemaining;
-                    bucket.Reset = rateReset;
-                }
+            if (int.TryParse(rateLimitHeader, out int rateLimit) &&
+                int.TryParse(rateRemainingHeader, out int rateRemaining) &&
+                int.TryParse(rateResetHeader, out int rateReset))
+            {
+                bucket.Limit = rateLimit;
+                bucket.Remaining = rateRemaining;
+                bucket.Reset = rateReset;
             }
         }
     }
