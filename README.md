@@ -7,6 +7,8 @@ Want to contribute? Create a fork of the repo and create a pull request for any 
 
 ### Builds
 
+Build | Branch
+----- | ------
 [![Master](https://ci.appveyor.com/api/projects/status/Oxide.Ext.Discord/branch/master)](https://ci.appveyor.com/project/PsychoTea/oxide-ext-discord/branch/master) | Master
 [![Develop](https://ci.appveyor.com/api/projects/status/Oxide.Ext.Discord/branch/develop)](https://ci.appveyor.com/project/PsychoTea/oxide-ext-discord/branch/develop) | Develop
 
