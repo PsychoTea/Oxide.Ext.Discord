@@ -87,6 +87,7 @@
                 Interface.Oxide.LogWarning($"[Discord Ext] An error occured whilst submitting a request to {req.RequestUri} (code {httpResponse.StatusCode}): {message}");
 
                 httpResponse.Close();
+                this.Close();
                 return;
             }
             
@@ -104,6 +105,11 @@
 
             Callback?.Invoke(this.Response);
 
+            this.Close();
+        }
+
+        private void Close()
+        {
             this.bucket.Remove(this);
 
             this.InProgress = false;
