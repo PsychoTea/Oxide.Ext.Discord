@@ -1,8 +1,8 @@
-﻿using System.Text;
-
-namespace Oxide.Ext.Discord.Helpers
+﻿namespace Oxide.Ext.Discord.Helpers
 {
-    class HttpUtility
+    using System.Text;
+
+    public class HttpUtility
     {
         public static string UrlEncode(byte[] bytes)
         {
@@ -22,7 +22,7 @@ namespace Oxide.Ext.Discord.Helpers
                 }
             }
 
-            byte[] hex = new byte[bytes.Length + num1 * 2];
+            byte[] hex = new byte[(bytes.Length + num1) * 2];
             int num2 = 0;
 
             for (int j = 0; j < bytes.Length; j++)
@@ -61,9 +61,9 @@ namespace Oxide.Ext.Discord.Helpers
 
         internal static bool IsSafe(char ch)
         {
-            if (ch >= 'a' && ch <= 'z' || 
-                ch >= 'A' && ch <= 'Z' || 
-                ch >= '0' && ch <= '9')
+            if ((ch >= 'a' && ch <= 'z') || 
+                (ch >= 'A' && ch <= 'Z') || 
+                (ch >= '0' && ch <= '9'))
             {
                 return true;
             }
@@ -83,11 +83,13 @@ namespace Oxide.Ext.Discord.Helpers
                         {
                             break;
                         }
+
                     case '+':
                     case ',':
                         {
                             return false;
                         }
+
                     default:
                         {
                             if (chr != '\u005F')
