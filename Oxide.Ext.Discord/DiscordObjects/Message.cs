@@ -46,7 +46,7 @@
 
         public void Reply(DiscordClient client, Message message, bool ping = true, Action<Message> callback = null)
         {
-            message.content = ping ? $"<@{author.id}> {message.content}" : message.content;
+            message.content = ping ? message.content.Contains($"<@{author.id}>") ? message.content : $" <@{author.id}> {message.content}" : message.content;
 
             client.REST.DoRequest($"/channels/{channel_id}/messages", RequestMethod.POST, message, callback);
         }
