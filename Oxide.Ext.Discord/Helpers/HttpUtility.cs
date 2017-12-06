@@ -22,7 +22,7 @@
                 }
             }
 
-            byte[] hex = new byte[(bytes.Length + num1) * 2];
+            byte[] hex = new byte[bytes.Length + (num1 * 2)];
             int num2 = 0;
 
             for (int j = 0; j < bytes.Length; j++)
