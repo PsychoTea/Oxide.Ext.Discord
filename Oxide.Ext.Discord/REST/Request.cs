@@ -115,10 +115,11 @@
             catch (Exception ex)
             {
                 Interface.Oxide.LogException("[Discord Ext] Request callback raised an exception", ex);
+            }
+            finally
+            {
                 this.Close();
             }
-
-            this.Close();
         }
 
         private void Close()
