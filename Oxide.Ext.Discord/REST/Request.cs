@@ -108,7 +108,15 @@
 
             response.Close();
 
-            Callback?.Invoke(this.Response);
+            try
+            {
+                Callback?.Invoke(this.Response);
+            }
+            catch (Exception ex)
+            {
+                Interface.Oxide.LogException("[Discord Ext] Request callback raised an exception", ex);
+                this.Close();
+            }
 
             this.Close();
         }
