@@ -28,6 +28,7 @@ Obtaining an API Key:
 5) Under the newly created bot section, under "Username" you will see "Token". Reveal the token and copy it into your plugin.
 6) Now it's time to add your new bot to your guild! To add your bot to your guild you must visit the following link, and replace "botUserID" with the client ID found at the top of your Discord app settings page:
 https://discordapp.com/oauth2/authorize?client_id=botUserID&scope=bot&permissions=8
+
 *NOTE: "permissions=8" in the link will provide the bot with administrative permissions so you won't have to give it some.*
 
 ### Plugin Example
