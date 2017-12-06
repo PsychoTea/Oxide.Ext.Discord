@@ -93,9 +93,10 @@
     <Compile Include="Exceptions\InvalidCreationException.cs" />
     <Compile Include="Exceptions\NoURLException.cs" />
     <Compile Include="Exceptions\SocketRunningException.cs" />
-    <Compile Include="RESTObjects\Nick.cs" />
-    <Compile Include="RESTObjects\ObjectPosition.cs" />
-    <Compile Include="RESTObjects\WebhookPayload.cs" />
+    <Compile Include="Helpers\HttpUtility.cs" />
+    <Compile Include="DiscordObjects\Nick.cs" />
+    <Compile Include="DiscordObjects\ObjectPosition.cs" />
+    <Compile Include="DiscordObjects\WebhookPayload.cs" />
     <Compile Include="REST\Bucket.cs" />
     <Compile Include="REST\GlobalRateLimit.cs" />
     <Compile Include="REST\Request.cs" />
@@ -131,7 +132,6 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Transactions" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -141,8 +141,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>echo Copying $(TargetPath) to C:\RustServer\rust_legacy_server\rust_server_Data\Managed\$(TargetFileName)
-copy $(TargetPath) C:\RustServer\rust_legacy_server\rust_server_Data\Managed\$(TargetFileName)</PostBuildEvent>
+    <PostBuildEvent>if "$(Username)"=="Ben" (  
+  echo Copying $(TargetPath) to C:\RustServer\rust_legacy_server\rust_server_Data\Managed\$(TargetFileName)
+  copy $(TargetPath) C:\RustServer\rust_legacy_server\rust_server_Data\Managed\$(TargetFileName)
+)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

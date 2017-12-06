@@ -1,4 +1,4 @@
-﻿namespace Oxide.Ext.Discord.RESTObjects
+﻿namespace Oxide.Ext.Discord.DiscordObjects
 {
     using System.Collections.Generic;
 

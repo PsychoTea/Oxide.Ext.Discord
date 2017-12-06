@@ -35,42 +35,39 @@
 
         public void DoRequest(string url, RequestMethod method, object data, Action callback)
         {
-            CreateRequest(method, url, headers, data, obj => callback?.Invoke());
+            CreateRequest(method, url, headers, data, response => callback?.Invoke());
         }
 
-        public void DoRequest<T>(string url, RequestMethod method, object data, Action<object> callback)
+        public void DoRequest<T>(string url, RequestMethod method, object data, Action<T> callback)
         {
             CreateRequest(method, url, headers, data, response =>
             {
-                var callbackObj = JsonConvert.DeserializeObject(response.Data, typeof(T));
-                callback.Invoke(callbackObj);
+                callback?.Invoke(response.ParseData<T>());
             });
         }
-        
+
         private void CreateRequest(RequestMethod method, string url, Dictionary<string, string> headers, object data, Action<RestResponse> callback)
         {
             // this is bad I know, but I'm way too fucking lazy to go 
             // and rewrite every single fucking REST request call
             string[] parts = url.Split('/');
 
-            string route = string.Join("/", parts.Take(3).ToArray()).TrimEnd('/');
+            string route = string.Join("/", parts.Take(3).ToArray());
+            route = route.TrimEnd('/');
 
             string endpoint = "/" + string.Join("/", parts.Skip(3).ToArray());
             endpoint = endpoint.TrimEnd('/');
-            
+
             var request = new Request(method, route, endpoint, headers, data, callback);
-            BucketRequest(request, callback);
+            BucketRequest(request);
         }
 
-        private void BucketRequest(Request request, Action<RestResponse> callback)
+        private void BucketRequest(Request request)
         {
-            buckets.ForEach(x =>
+            foreach (var item in new List<Bucket>(buckets).Where(x => x.Disposed))
             {
-                if (x.Disposed)
-                {
-                    buckets.Remove(x);
-                }
-            });
+                buckets.Remove(item);
+            }
 
             var bucket = buckets.SingleOrDefault(x => x.Method == request.Method &&
                                                       x.Route == request.Route);
@@ -83,7 +80,7 @@
 
             var newBucket = new Bucket(request.Method, request.Route);
             buckets.Add(newBucket);
-            
+
             newBucket.Queue(request);
         }
     }

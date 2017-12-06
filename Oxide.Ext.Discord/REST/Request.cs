@@ -82,34 +82,45 @@
             catch (WebException ex)
             {
                 var httpResponse = ex.Response as HttpWebResponse;
-                string message = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
+
+                string message;
+                using (var reader = new StreamReader(ex.Response.GetResponseStream()))
+                {
+                    message = reader.ReadToEnd().Trim();
+                }
 
                 Interface.Oxide.LogWarning($"[Discord Ext] An error occured whilst submitting a request to {req.RequestUri} (code {httpResponse.StatusCode}): {message}");
 
                 httpResponse.Close();
+                this.Close();
                 return;
             }
-            
+
             string output;
             using (var reader = new StreamReader(response.GetResponseStream()))
             {
                 output = reader.ReadToEnd().Trim();
             }
 
-            ParseHeaders(response.Headers, output);
+            this.Response = new RestResponse(output);
+
+            this.ParseHeaders(response.Headers, this.Response);
 
             response.Close();
 
-            this.Response = new RestResponse(output);
-
             Callback?.Invoke(this.Response);
 
+            this.Close();
+        }
+
+        private void Close()
+        {
             this.bucket.Remove(this);
 
             this.InProgress = false;
         }
 
-        private void ParseHeaders(WebHeaderCollection headers, string response)
+        private void ParseHeaders(WebHeaderCollection headers, RestResponse response)
         {
             string rateRetryAfterHeader = headers.Get("Retry-After");
             string rateLimitGlobalHeader = headers.Get("X-RateLimit-Global");
@@ -117,14 +128,11 @@
             if (!string.IsNullOrEmpty(rateRetryAfterHeader) &&
                 !string.IsNullOrEmpty(rateLimitGlobalHeader))
             {
-                int rateRetryAfter;
-                bool rateLimitGlobal;
-
-                if (int.TryParse(rateRetryAfterHeader, out rateRetryAfter) &&
-                    bool.TryParse(rateLimitGlobalHeader, out rateLimitGlobal) &&
+                if (int.TryParse(rateRetryAfterHeader, out int rateRetryAfter) &&
+                    bool.TryParse(rateLimitGlobalHeader, out bool rateLimitGlobal) &&
                     rateLimitGlobal)
                 {
-                    RateLimit limit = JsonConvert.DeserializeObject<RateLimit>(response);
+                    var limit = response.ParseData<RateLimit>();
 
                     if (limit.global)
                     {
@@ -137,20 +145,18 @@
             string rateRemainingHeader = headers.Get("X-RateLimit-Remaining");
             string rateResetHeader = headers.Get("X-RateLimit-Reset");
 
-            if (!string.IsNullOrEmpty(rateLimitHeader) &&
-                !string.IsNullOrEmpty(rateResetHeader) &&
-                !string.IsNullOrEmpty(rateResetHeader))
-            {
-                int rateLimit, rateRemaining, rateReset;
+            if (string.IsNullOrEmpty(rateLimitHeader) ||
+                string.IsNullOrEmpty(rateResetHeader) ||
+                string.IsNullOrEmpty(rateResetHeader))
+                return;
 
-                if (int.TryParse(rateLimitHeader, out rateLimit) &&
-                    int.TryParse(rateRemainingHeader, out rateRemaining) &&
-                    int.TryParse(rateResetHeader, out rateReset))
-                {
-                    bucket.Limit = rateLimit;
-                    bucket.Remaining = rateRemaining;
-                    bucket.Reset = rateReset;
-                }
+            if (int.TryParse(rateLimitHeader, out int rateLimit) &&
+                int.TryParse(rateRemainingHeader, out int rateRemaining) &&
+                int.TryParse(rateResetHeader, out int rateReset))
+            {
+                bucket.Limit = rateLimit;
+                bucket.Remaining = rateRemaining;
+                bucket.Reset = rateReset;
             }
         }
     }

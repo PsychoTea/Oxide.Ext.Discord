@@ -109,12 +109,14 @@ namespace Oxide.Ext.Discord
         {
             if (specificPlugin != null)
             {
+                if (!specificPlugin.IsLoaded) return null;
+
                 return specificPlugin.CallHook(hookname, args);
             }
 
             Dictionary<string, object> returnValues = new Dictionary<string, object>();
 
-            foreach (var plugin in Plugins)
+            foreach (var plugin in Plugins.Where(x => x.IsLoaded))
             {
                 var retVal = plugin.CallHook(hookname, args);
                 returnValues.Add(plugin.Title, retVal);
