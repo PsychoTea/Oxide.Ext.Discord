@@ -92,7 +92,10 @@
                 Interface.Oxide.LogWarning($"[Discord Ext] An error occured whilst submitting a request to {req.RequestUri} (code {httpResponse.StatusCode}): {message}");
 
                 httpResponse.Close();
-                this.Close();
+
+                bool shouldRemove = (int)httpResponse.StatusCode != 429;
+                this.Close(shouldRemove);
+
                 return;
             }
 
@@ -118,13 +121,16 @@
             }
             finally
             {
-                this.Close();
+                this.Close(true);
             }
         }
 
-        private void Close()
+        private void Close(bool remove)
         {
-            this.bucket.Remove(this);
+            if (remove)
+            {
+                this.bucket.Remove(this);
+            }
 
             this.InProgress = false;
         }
