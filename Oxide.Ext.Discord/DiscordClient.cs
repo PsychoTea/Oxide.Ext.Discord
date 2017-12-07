@@ -14,7 +14,6 @@ namespace Oxide.Ext.Discord
     using Oxide.Ext.Discord.Exceptions;
     using Oxide.Ext.Discord.REST;
     using Oxide.Ext.Discord.WebSockets;
-    using WebSocketSharp;
 
     public class DiscordClient
     {
