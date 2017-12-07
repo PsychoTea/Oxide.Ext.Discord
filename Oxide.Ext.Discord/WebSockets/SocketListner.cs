@@ -54,7 +54,9 @@ namespace Oxide.Ext.Discord.WebSockets
         public void SocketClosed(object sender, CloseEventArgs e)
         {
             if (e.Code == 4004)
+            {
                 throw new APIKeyException();
+            }
 
             if (!e.WasClean)
             {
