@@ -59,6 +59,10 @@ namespace Oxide.Ext.Discord.WebSockets
             if (!e.WasClean)
             {
                 Interface.Oxide.LogWarning($"[Discord Ext] Discord connection closed uncleanly: code {e.Code}, Reason: {e.Reason}");
+
+                Interface.Oxide.LogWarning($"[Discord Ext] Attempting to reconnect to Discord...");
+
+                webSocket.Connect(client.WSSURL);
             }
 
             client.CallHook("DiscordSocket_WebSocketClosed", null, e.Reason, e.Code, e.WasClean);
