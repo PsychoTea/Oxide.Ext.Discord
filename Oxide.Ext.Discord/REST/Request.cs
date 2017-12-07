@@ -89,8 +89,13 @@
                     message = reader.ReadToEnd().Trim();
                 }
 
+                if (int.Parse(httpResponse.StatusCode.ToString()) == 429)
+                {
+                    httpResponse.Close();
+                    this.InProgress = false;
+                    return;
+                }
                 Interface.Oxide.LogWarning($"[Discord Ext] An error occured whilst submitting a request to {req.RequestUri} (code {httpResponse.StatusCode}): {message}");
-
                 httpResponse.Close();
                 this.Close();
                 return;
