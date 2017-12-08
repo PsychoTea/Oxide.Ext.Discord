@@ -50,6 +50,7 @@
         {
             this.bucket = bucket;
             this.InProgress = true;
+            this.StartTime = DateTime.UtcNow;
 
             string url = URLBase + Route + Endpoint;
 
@@ -139,7 +140,7 @@
             this.InProgress = false;
         }
 
-        public bool HasTimedOut() => (DateTime.Now - StartTime).TotalSeconds > RequestMaxLength;
+        public bool HasTimedOut() => (DateTime.UtcNow - StartTime).TotalSeconds > RequestMaxLength;
 
         private void ParseHeaders(WebHeaderCollection headers, RestResponse response)
         {
