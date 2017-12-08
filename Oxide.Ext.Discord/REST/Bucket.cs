@@ -75,7 +75,7 @@
                 return;
             }
 
-            if (Remaining == 0 && Reset > TimeSinceEpoch())
+            if (Remaining == 0 && Reset >= TimeSinceEpoch())
             {
                 return;
             }
