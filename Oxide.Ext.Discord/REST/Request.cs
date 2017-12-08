@@ -22,6 +22,8 @@
 
         public string Endpoint { get; }
 
+        public string RequestURL => URLBase + Route + Endpoint;
+
         public Dictionary<string, string> Headers { get; }
 
         public object Data { get; }
@@ -51,10 +53,8 @@
             this.bucket = bucket;
             this.InProgress = true;
             this.StartTime = DateTime.UtcNow;
-
-            string url = URLBase + Route + Endpoint;
-
-            var req = WebRequest.Create(url);
+            
+            var req = WebRequest.Create(RequestURL);
             req.Method = Method.ToString();
             req.Timeout = 3000;
 
