@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
+    using Oxide.Core;
 
     public class Bucket : List<Request>
     {
@@ -67,6 +68,8 @@
 
         private void FireRequests()
         {
+            CleanRequests();
+
             if (GlobalRateLimit.Hit)
             {
                 return;
@@ -84,6 +87,17 @@
 
             var nextItem = this.First();
             nextItem.Fire(this);
+        }
+
+        private void CleanRequests()
+        {
+            var timedOut = this.Where(x => x.HasTimedOut()).ToList();
+
+            timedOut.ForEach(x =>
+            {
+                Interface.Oxide.LogWarning($"[Discord Ext] Closing request (timed out): {x.Route + x.Endpoint} [{x.Method}]");
+                x.Close();
+            });
         }
 
         private double TimeSinceEpoch() => (DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds;

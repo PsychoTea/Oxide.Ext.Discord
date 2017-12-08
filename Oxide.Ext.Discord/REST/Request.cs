@@ -13,6 +13,8 @@
     public class Request
     {
         private const string URLBase = "https://discordapp.com/api";
+        
+        private const double RequestMaxLength = 10d;
 
         public RequestMethod Method { get; }
 
@@ -27,6 +29,8 @@
         public RestResponse Response { get; private set; }
 
         public Action<RestResponse> Callback { get; }
+
+        public DateTime StartTime { get; private set; }
 
         public bool InProgress { get; private set; } = false;
 
@@ -121,11 +125,11 @@
             }
             finally
             {
-                this.Close(true);
+                this.Close();
             }
         }
 
-        private void Close(bool remove)
+        public void Close(bool remove = true)
         {
             if (remove)
             {
@@ -134,6 +138,8 @@
 
             this.InProgress = false;
         }
+
+        public bool HasTimedOut() => (DateTime.Now - StartTime).TotalSeconds > RequestMaxLength;
 
         private void ParseHeaders(WebHeaderCollection headers, RestResponse response)
         {
