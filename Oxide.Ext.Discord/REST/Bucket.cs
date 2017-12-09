@@ -91,7 +91,11 @@
 
         private void CleanRequests()
         {
-            var requests = new List<Request>(this).Where(x => x.HasTimedOut());
+            List<Request> requests;
+            lock (this)
+            {
+                requests = new List<Request>(this).Where(x => x.HasTimedOut()).ToList();
+            }
 
             foreach (var req in requests)
             {
