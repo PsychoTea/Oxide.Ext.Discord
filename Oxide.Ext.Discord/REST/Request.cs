@@ -32,7 +32,7 @@
 
         public Action<RestResponse> Callback { get; }
 
-        public DateTime StartTime { get; private set; }
+        public DateTime? StartTime { get; private set; } = null;
 
         public bool InProgress { get; private set; } = false;
 
@@ -140,7 +140,14 @@
             this.InProgress = false;
         }
 
-        public bool HasTimedOut() => (DateTime.UtcNow - StartTime).TotalSeconds > RequestMaxLength;
+        public bool HasTimedOut()
+        {
+            if (!this.InProgress || StartTime == null) return false;
+
+            var timeSpan = DateTime.UtcNow - StartTime;
+
+            return timeSpan.HasValue && (timeSpan.Value.TotalSeconds > RequestMaxLength);
+        }
 
         private void ParseHeaders(WebHeaderCollection headers, RestResponse response)
         {
