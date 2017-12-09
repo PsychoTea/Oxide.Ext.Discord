@@ -13,12 +13,16 @@
     public class Request
     {
         private const string URLBase = "https://discordapp.com/api";
+        
+        private const double RequestMaxLength = 10d;
 
         public RequestMethod Method { get; }
 
         public string Route { get; }
 
         public string Endpoint { get; }
+
+        public string RequestURL => URLBase + Route + Endpoint;
 
         public Dictionary<string, string> Headers { get; }
 
@@ -27,6 +31,8 @@
         public RestResponse Response { get; private set; }
 
         public Action<RestResponse> Callback { get; }
+
+        public DateTime StartTime { get; private set; }
 
         public bool InProgress { get; private set; } = false;
 
@@ -46,10 +52,9 @@
         {
             this.bucket = bucket;
             this.InProgress = true;
-
-            string url = URLBase + Route + Endpoint;
-
-            var req = WebRequest.Create(url);
+            this.StartTime = DateTime.UtcNow;
+            
+            var req = WebRequest.Create(RequestURL);
             req.Method = Method.ToString();
             req.Timeout = 3000;
 
@@ -121,11 +126,11 @@
             }
             finally
             {
-                this.Close(true);
+                this.Close();
             }
         }
 
-        private void Close(bool remove)
+        public void Close(bool remove = true)
         {
             if (remove)
             {
@@ -134,6 +139,8 @@
 
             this.InProgress = false;
         }
+
+        public bool HasTimedOut() => (DateTime.UtcNow - StartTime).TotalSeconds > RequestMaxLength;
 
         private void ParseHeaders(WebHeaderCollection headers, RestResponse response)
         {
