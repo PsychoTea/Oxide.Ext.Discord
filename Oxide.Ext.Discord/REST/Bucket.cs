@@ -68,7 +68,7 @@
 
         private void FireRequests()
         {
-            CleanRequests();
+            this.CleanRequests();
 
             if (GlobalRateLimit.Hit)
             {
@@ -91,13 +91,13 @@
 
         private void CleanRequests()
         {
-            var timedOut = this.Where(x => x.HasTimedOut()).ToList();
+            var requests = new List<Request>(this).Where(x => x.HasTimedOut());
 
-            timedOut.ForEach(x =>
+            foreach (var req in requests)
             {
-                Interface.Oxide.LogWarning($"[Discord Ext] Closing request (timed out): {x.Route + x.Endpoint} [{x.Method}]");
-                x.Close();
-            });
+                Interface.Oxide.LogWarning($"[Discord Ext] Closing request (timed out): {req.Route + req.Endpoint} [{req.Method}]");
+                req.Close();
+            }
         }
 
         private double TimeSinceEpoch() => (DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds;
