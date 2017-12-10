@@ -91,7 +91,11 @@
 
         private void CleanRequests()
         {
-            var requests = new List<Request>(this).Where(x => x.HasTimedOut());
+            List<Request> requests;
+            lock (this)
+            {
+                requests = new List<Request>(this).Where(x => x.HasTimedOut()).ToList();
+            }
 
             foreach (var req in requests)
             {
@@ -100,6 +104,6 @@
             }
         }
 
-        private double TimeSinceEpoch() => (DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds;
+        private double TimeSinceEpoch() => (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
     }
 }
