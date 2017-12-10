@@ -94,7 +94,16 @@
                     message = reader.ReadToEnd().Trim();
                 }
 
+                this.Response = new RestResponse(message);
+
+                this.ParseHeaders(httpResponse.Headers, this.Response);
+
                 Interface.Oxide.LogWarning($"[Discord Ext] An error occured whilst submitting a request to {req.RequestUri} (code {httpResponse.StatusCode}): {message}");
+
+                if ((int)httpResponse.StatusCode == 429)
+                {
+                    Interface.Oxide.LogWarning($"[Discord Ext] Ratelimit info: remaining: {bucket.Remaining}, limit: {bucket.Limit}, reset: {bucket.Reset}, time now: {bucket.TimeSinceEpoch()}");
+                }
 
                 httpResponse.Close();
 
