@@ -53,92 +53,19 @@
             this.bucket = bucket;
             this.InProgress = true;
             this.StartTime = DateTime.UtcNow;
-            
-            WebRequest req = null;
-            try
-            {
-                req = WebRequest.Create(RequestURL);
-                req.Method = Method.ToString();
-                req.Timeout = 5000;
-            }
-            catch (NullReferenceException nre)
-            {
-                Interface.Oxide.LogException($"Exception thrown in Request.Fire (request creation)", nre);
-                Interface.Oxide.LogError($"req == null {req == null}");
-                Interface.Oxide.LogError($"method == null {Method.ToString() == null}");
 
-                this.Close(false);
-                return;
-            }
+            var req = WebRequest.Create(RequestURL);
+            req.Method = Method.ToString();
+            req.Timeout = 5000;
 
-            try
+            if (Headers != null)
             {
-                if (Headers != null)
-                {
-                    req.SetRawHeaders(Headers);
-                }
-            }
-            catch (NullReferenceException nre)
-            {
-                Interface.Oxide.LogException($"Exception thrown in Request.Fire (setting headers)", nre);
-                Interface.Oxide.LogError($"req == null {req == null}");
-                Interface.Oxide.LogError($"Headers == null {Headers == null}");
-
-                this.Close(false);
-                return;
+                req.SetRawHeaders(Headers);
             }
 
             if (Data != null)
             {
-                string contents = JsonConvert.SerializeObject(Data, new JsonSerializerSettings()
-                {
-                    NullValueHandling = NullValueHandling.Ignore
-                });
-
-                byte[] bytes = null;
-                try
-                {
-                    bytes = Encoding.ASCII.GetBytes(contents);
-                }
-                catch (NullReferenceException nre)
-                {
-                    Interface.Oxide.LogException($"Exception thrown in Request.Fire (getting contents bytes)", nre);
-                    Interface.Oxide.LogError($"contents == null {contents == null}");
-
-                    this.Close(false);
-                    return;
-                }
-
-                try
-                {
-                    req.ContentLength = bytes.Length;
-                }
-                catch (NullReferenceException nre)
-                {
-                    Interface.Oxide.LogException($"Exception thrown in Request.Fire (setting content length)", nre);
-                    Interface.Oxide.LogError($"req == null {req == null}");
-                    Interface.Oxide.LogError($"bytes == null {bytes == null}");
-
-                    this.Close(false);
-                    return;
-                }
-
-                try
-                {
-                    using (var stream = req.GetRequestStream())
-                    {
-                        stream.Write(bytes, 0, bytes.Length);
-                    }
-                }
-                catch (NullReferenceException nre)
-                {
-                    Interface.Oxide.LogException($"Exception thrown in Request.Fire (writing request stream)", nre);
-                    Interface.Oxide.LogError($"req == null {req == null}");
-                    Interface.Oxide.LogError($"bytes == null {bytes == null}");
-
-                    this.Close(false);
-                    return;
-                }
+                WriteRequestData(req, Data);
             }
 
             HttpWebResponse response;
@@ -150,27 +77,17 @@
             {
                 var httpResponse = ex.Response as HttpWebResponse;
 
-                string message = null;
-                try
+                if (httpResponse == null)
                 {
-                    using (var reader = new StreamReader(ex.Response.GetResponseStream()))
-                    {
-                        message = reader.ReadToEnd().Trim();
-                    }
-                }
-                catch (NullReferenceException nre)
-                {
-                    Interface.Oxide.LogException($"Exception thrown in Request.Fire (reading error response stream)", nre);
-                    Interface.Oxide.LogError($"ex == null {ex == null}");
-                    Interface.Oxide.LogError($"httpResponse == null {httpResponse == null}");
+                    Interface.Oxide.LogException($"[Discord Ext] A web request exception occured (internal error).", ex);
+                    Interface.Oxide.LogError($"[Discord Ext] Request URL: [{Method.ToString()}] {RequestURL}");
+                    Interface.Oxide.LogError($"[Discord Ext] Exception message: {ex.Message}");
 
                     this.Close(false);
                     return;
                 }
 
-                this.Response = new RestResponse(message);
-
-                this.ParseHeaders(httpResponse.Headers, this.Response);
+                string message = this.ParseResponse(ex.Response);
 
                 Interface.Oxide.LogWarning($"[Discord Ext] An error occured whilst submitting a request to {req.RequestUri} (code {httpResponse.StatusCode}): {message}");
 
@@ -187,53 +104,7 @@
                 return;
             }
 
-            string output = "";
-
-            try
-            {
-                using (var reader = new StreamReader(response.GetResponseStream()))
-                {
-                    output = reader.ReadToEnd().Trim();
-                }
-            }
-            catch (NullReferenceException nre)
-            {
-                Interface.Oxide.LogException($"Exception thrown in Request.Fire (reading response stream contents)", nre);
-                Interface.Oxide.LogError($"response == null {response == null}");
-
-                this.Close(false);
-                return;
-            }
-
-            this.Response = new RestResponse(output);
-
-            try
-            {
-                this.ParseHeaders(response.Headers, this.Response);
-            }
-            catch (NullReferenceException nre)
-            {
-                Interface.Oxide.LogException($"Exception thrown in Request.Fire (parsing headers)", nre);
-                Interface.Oxide.LogError($"response == null {response == null}");
-                Interface.Oxide.LogError($"response.Headers == null {response?.Headers == null}");
-                Interface.Oxide.LogError($"response == null {this.Response == null}");
-
-                this.Close(false);
-                return;
-            }
-
-            try
-            {
-                response.Close();
-            }
-            catch (NullReferenceException nre)
-            {
-                Interface.Oxide.LogException($"Exception thrown in Request.Fire (closing request)", nre);
-                Interface.Oxide.LogError($"response == null {response == null}");
-
-                this.Close(false);
-                return;
-            }
+            this.ParseResponse(response);
 
             try
             {
@@ -266,6 +137,37 @@
             var timeSpan = DateTime.UtcNow - StartTime;
 
             return timeSpan.HasValue && (timeSpan.Value.TotalSeconds > RequestMaxLength);
+        }
+
+        private void WriteRequestData(WebRequest request, object data)
+        {
+            string contents = JsonConvert.SerializeObject(Data, new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
+
+            byte[] bytes = Encoding.ASCII.GetBytes(contents);
+            request.ContentLength = bytes.Length;
+
+            using (var stream = request.GetRequestStream())
+            {
+                stream.Write(bytes, 0, bytes.Length);
+            }
+        }
+
+        private string ParseResponse(WebResponse response)
+        {
+            string message;
+            using (var reader = new StreamReader(response.GetResponseStream()))
+            {
+                message = reader.ReadToEnd().Trim();
+            }
+
+            this.Response = new RestResponse(message);
+
+            this.ParseHeaders(response.Headers, this.Response);
+
+            return message;
         }
 
         private void ParseHeaders(WebHeaderCollection headers, RestResponse response)
