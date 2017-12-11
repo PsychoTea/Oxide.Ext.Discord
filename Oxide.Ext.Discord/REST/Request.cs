@@ -54,13 +54,38 @@
             this.InProgress = true;
             this.StartTime = DateTime.UtcNow;
 
-            var req = WebRequest.Create(RequestURL);
-            req.Method = Method.ToString();
-            req.Timeout = 5000;
-
-            if (Headers != null)
+            WebRequest req = null;
+            try
             {
-                req.SetRawHeaders(Headers);
+                req = WebRequest.Create(RequestURL);
+                req.Method = Method.ToString();
+                req.Timeout = 5000;
+            }
+            catch (NullReferenceException nre)
+            {
+                Interface.Oxide.LogException($"Exception thrown in Request.Fire (request creation)", nre);
+                Interface.Oxide.LogError($"req == null {req == null}");
+                Interface.Oxide.LogError($"method == null {Method.ToString() == null}");
+
+                this.Close(false);
+                return;
+            }
+
+            try
+            {
+                if (Headers != null)
+                {
+                    req.SetRawHeaders(Headers);
+                }
+            }
+            catch (NullReferenceException nre)
+            {
+                Interface.Oxide.LogException($"Exception thrown in Request.Fire (setting headers)", nre);
+                Interface.Oxide.LogError($"req == null {req == null}");
+                Interface.Oxide.LogError($"Headers == null {Headers == null}");
+
+                this.Close(false);
+                return;
             }
 
             if (Data != null)
@@ -70,12 +95,49 @@
                     NullValueHandling = NullValueHandling.Ignore
                 });
 
-                byte[] bytes = Encoding.ASCII.GetBytes(contents);
-                req.ContentLength = bytes.Length;
-
-                using (var stream = req.GetRequestStream())
+                byte[] bytes = null;
+                try
                 {
-                    stream.Write(bytes, 0, bytes.Length);
+                    bytes = Encoding.ASCII.GetBytes(contents);
+                }
+                catch (NullReferenceException nre)
+                {
+                    Interface.Oxide.LogException($"Exception thrown in Request.Fire (getting contents bytes)", nre);
+                    Interface.Oxide.LogError($"contents == null {contents == null}");
+
+                    this.Close(false);
+                    return;
+                }
+
+                try
+                {
+                    req.ContentLength = bytes.Length;
+                }
+                catch (NullReferenceException nre)
+                {
+                    Interface.Oxide.LogException($"Exception thrown in Request.Fire (setting content length)", nre);
+                    Interface.Oxide.LogError($"req == null {req == null}");
+                    Interface.Oxide.LogError($"bytes == null {bytes == null}");
+
+                    this.Close(false);
+                    return;
+                }
+
+                try
+                {
+                    using (var stream = req.GetRequestStream())
+                    {
+                        stream.Write(bytes, 0, bytes.Length);
+                    }
+                }
+                catch (NullReferenceException nre)
+                {
+                    Interface.Oxide.LogException($"Exception thrown in Request.Fire (writing request stream)", nre);
+                    Interface.Oxide.LogError($"req == null {req == null}");
+                    Interface.Oxide.LogError($"bytes == null {bytes == null}");
+
+                    this.Close(false);
+                    return;
                 }
             }
 
@@ -88,10 +150,22 @@
             {
                 var httpResponse = ex.Response as HttpWebResponse;
 
-                string message;
-                using (var reader = new StreamReader(ex.Response.GetResponseStream()))
+                string message = null;
+                try
                 {
-                    message = reader.ReadToEnd().Trim();
+                    using (var reader = new StreamReader(ex.Response.GetResponseStream()))
+                    {
+                        message = reader.ReadToEnd().Trim();
+                    }
+                }
+                catch (NullReferenceException nre)
+                {
+                    Interface.Oxide.LogException($"Exception thrown in Request.Fire (reading error response stream)", nre);
+                    Interface.Oxide.LogError($"ex == null {ex == null}");
+                    Interface.Oxide.LogError($"httpResponse == null {httpResponse == null}");
+
+                    this.Close(false);
+                    return;
                 }
 
                 this.Response = new RestResponse(message);
@@ -113,17 +187,53 @@
                 return;
             }
 
-            string output;
-            using (var reader = new StreamReader(response.GetResponseStream()))
+            string output = "";
+
+            try
             {
-                output = reader.ReadToEnd().Trim();
+                using (var reader = new StreamReader(response.GetResponseStream()))
+                {
+                    output = reader.ReadToEnd().Trim();
+                }
+            }
+            catch (NullReferenceException nre)
+            {
+                Interface.Oxide.LogException($"Exception thrown in Request.Fire (reading response stream contents)", nre);
+                Interface.Oxide.LogError($"response == null {response == null}");
+
+                this.Close(false);
+                return;
             }
 
             this.Response = new RestResponse(output);
 
-            this.ParseHeaders(response.Headers, this.Response);
+            try
+            {
+                this.ParseHeaders(response.Headers, this.Response);
+            }
+            catch (NullReferenceException nre)
+            {
+                Interface.Oxide.LogException($"Exception thrown in Request.Fire (parsing headers)", nre);
+                Interface.Oxide.LogError($"response == null {response == null}");
+                Interface.Oxide.LogError($"response.Headers == null {response?.Headers == null}");
+                Interface.Oxide.LogError($"response == null {this.Response == null}");
 
-            response.Close();
+                this.Close(false);
+                return;
+            }
+
+            try
+            {
+                response.Close();
+            }
+            catch (NullReferenceException nre)
+            {
+                Interface.Oxide.LogException($"Exception thrown in Request.Fire (closing request)", nre);
+                Interface.Oxide.LogError($"response == null {response == null}");
+
+                this.Close(false);
+                return;
+            }
 
             try
             {
@@ -198,6 +308,9 @@
             {
                 bucket.Reset = rateReset;
             }
+
+            Interface.Oxide.LogInfo($"Recieved ratelimit deets: {bucket.Limit}, {bucket.Remaining}, {bucket.Reset}, time now: {bucket.TimeSinceEpoch()}");
+            Interface.Oxide.LogInfo($"Time until reset: {(bucket.Reset - (int)bucket.TimeSinceEpoch())}");
         }
     }
 }
