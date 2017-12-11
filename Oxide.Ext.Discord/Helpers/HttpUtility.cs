@@ -2,7 +2,7 @@
 {
     using System.Text;
 
-    public class HttpUtility
+    public static class HttpUtility
     {
         public static string UrlEncode(byte[] bytes)
         {
