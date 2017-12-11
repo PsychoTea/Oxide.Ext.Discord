@@ -53,7 +53,7 @@
             this.bucket = bucket;
             this.InProgress = true;
             this.StartTime = DateTime.UtcNow;
-
+            
             WebRequest req = null;
             try
             {
@@ -309,8 +309,8 @@
                 bucket.Reset = rateReset;
             }
 
-            Interface.Oxide.LogInfo($"Recieved ratelimit deets: {bucket.Limit}, {bucket.Remaining}, {bucket.Reset}, time now: {bucket.TimeSinceEpoch()}");
-            Interface.Oxide.LogInfo($"Time until reset: {(bucket.Reset - (int)bucket.TimeSinceEpoch())}");
+            //Interface.Oxide.LogInfo($"Recieved ratelimit deets: {bucket.Limit}, {bucket.Remaining}, {bucket.Reset}, time now: {bucket.TimeSinceEpoch()}");
+            //Interface.Oxide.LogInfo($"Time until reset: {(bucket.Reset - (int)bucket.TimeSinceEpoch())}");
         }
     }
 }
