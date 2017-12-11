@@ -116,9 +116,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Oxide.Core, Version=2.0.3440.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Oxide.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Rust_Projects\dev_server\RustDedicated_Data\Managed\Oxide.Core.dll</HintPath>
+      <HintPath>Dependencies\Oxide.Core.dll</HintPath>
     </Reference>
     <Reference Include="Oxide.References, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
