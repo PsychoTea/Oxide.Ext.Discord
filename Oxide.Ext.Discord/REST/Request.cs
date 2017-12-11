@@ -58,14 +58,14 @@
             req.Method = Method.ToString();
             req.Timeout = 5000;
 
-            if (Headers != null)
+            if (this.Headers != null)
             {
-                req.SetRawHeaders(Headers);
+                req.SetRawHeaders(this.Headers);
             }
 
-            if (Data != null)
+            if (this.Data != null)
             {
-                WriteRequestData(req, Data);
+                WriteRequestData(req, this.Data);
             }
 
             HttpWebResponse response;
