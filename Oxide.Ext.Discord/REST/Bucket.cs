@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
-    using Oxide.Core;
 
     public class Bucket : List<Request>
     {
@@ -69,7 +68,7 @@
         private void FireRequests()
         {
             //this.CleanRequests();
-
+            
             if (GlobalRateLimit.Hit)
             {
                 return;
@@ -79,14 +78,13 @@
             {
                 return;
             }
-
+            
             if (this.Any(x => x.InProgress))
             {
                 return;
             }
 
             var nextItem = this.First();
-            
             nextItem.Fire(this);
         }
 
@@ -101,6 +99,6 @@
         //    }
         //}
 
-        public double TimeSinceEpoch() => DateTimeOffset.UtcNow.Offset.TotalSeconds;
+        public double TimeSinceEpoch() => (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
     }
 }
