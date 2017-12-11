@@ -14,6 +14,8 @@
         {
         }
 
+        //public override bool SupportsReloading => true;
+
         public override string Name => "Discord";
 
         public override string Author => "PsychoTea & DylanSMR";
