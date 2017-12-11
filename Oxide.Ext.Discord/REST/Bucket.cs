@@ -68,13 +68,13 @@
 
         private void FireRequests()
         {
-            this.CleanRequests();
+            //this.CleanRequests();
 
             if (GlobalRateLimit.Hit)
             {
                 return;
             }
-
+            
             if (Remaining == 0 && Reset >= TimeSinceEpoch())
             {
                 return;
@@ -86,24 +86,21 @@
             }
 
             var nextItem = this.First();
+            
             nextItem.Fire(this);
         }
 
-        private void CleanRequests()
-        {
-            List<Request> requests;
-            lock (this)
-            {
-                requests = new List<Request>(this).Where(x => x.HasTimedOut()).ToList();
-            }
+        //private void CleanRequests()
+        //{
+        //    var requests = new List<Request>(this);
 
-            foreach (var req in requests)
-            {
-                Interface.Oxide.LogWarning($"[Discord Ext] Closing request (timed out): {req.Route + req.Endpoint} [{req.Method}]");
-                req.Close();
-            }
-        }
+        //    foreach (var req in requests.Where(x => x.HasTimedOut()))
+        //    {
+        //        Interface.Oxide.LogWarning($"[Discord Ext] Closing request (timed out): {req.Route + req.Endpoint} [{req.Method}]");
+        //        req.Close();
+        //    }
+        //}
 
-        public double TimeSinceEpoch() => (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
+        public double TimeSinceEpoch() => DateTimeOffset.UtcNow.Offset.TotalSeconds;
     }
 }
