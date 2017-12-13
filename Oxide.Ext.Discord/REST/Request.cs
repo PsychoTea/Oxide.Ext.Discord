@@ -13,7 +13,7 @@
     public class Request
     {
         private const string URLBase = "https://discordapp.com/api";
-        
+
         private const double RequestMaxLength = 10d;
 
         public RequestMethod Method { get; }
@@ -53,30 +53,19 @@
             this.bucket = bucket;
             this.InProgress = true;
             this.StartTime = DateTime.UtcNow;
-            
+
             var req = WebRequest.Create(RequestURL);
             req.Method = Method.ToString();
-            req.Timeout = 3000;
+            req.Timeout = 5000;
 
-            if (Headers != null)
+            if (this.Headers != null)
             {
-                req.SetRawHeaders(Headers);
+                req.SetRawHeaders(this.Headers);
             }
 
-            if (Data != null)
+            if (this.Data != null)
             {
-                string contents = JsonConvert.SerializeObject(Data, new JsonSerializerSettings()
-                {
-                    NullValueHandling = NullValueHandling.Ignore
-                });
-
-                byte[] bytes = Encoding.ASCII.GetBytes(contents);
-                req.ContentLength = bytes.Length;
-
-                using (var stream = req.GetRequestStream())
-                {
-                    stream.Write(bytes, 0, bytes.Length);
-                }
+                WriteRequestData(req, this.Data);
             }
 
             HttpWebResponse response;
@@ -88,21 +77,23 @@
             {
                 var httpResponse = ex.Response as HttpWebResponse;
 
-                string message;
-                using (var reader = new StreamReader(ex.Response.GetResponseStream()))
+                if (httpResponse == null)
                 {
-                    message = reader.ReadToEnd().Trim();
+                    Interface.Oxide.LogException($"[Discord Ext] A web request exception occured (internal error).", ex);
+                    Interface.Oxide.LogError($"[Discord Ext] Request URL: [{Method.ToString()}] {RequestURL}");
+                    Interface.Oxide.LogError($"[Discord Ext] Exception message: {ex.Message}");
+
+                    this.Close(false);
+                    return;
                 }
 
-                this.Response = new RestResponse(message);
-
-                this.ParseHeaders(httpResponse.Headers, this.Response);
+                string message = this.ParseResponse(ex.Response);
 
                 Interface.Oxide.LogWarning($"[Discord Ext] An error occured whilst submitting a request to {req.RequestUri} (code {httpResponse.StatusCode}): {message}");
 
                 if ((int)httpResponse.StatusCode == 429)
                 {
-                    Interface.Oxide.LogWarning($"[Discord Ext] Ratelimit info: remaining: {bucket.Remaining}, limit: {bucket.Limit}, reset: {bucket.Reset}, time now: {bucket.TimeSinceEpoch()}");
+                    Interface.Oxide.LogWarning($"[Discord Ext] Ratelimit info: remaining: {bucket.Remaining}, limit: {bucket.Limit}, reset: {bucket.Reset}, time now: {Helpers.Time.TimeSinceEpoch()}");
                 }
 
                 httpResponse.Close();
@@ -113,17 +104,7 @@
                 return;
             }
 
-            string output;
-            using (var reader = new StreamReader(response.GetResponseStream()))
-            {
-                output = reader.ReadToEnd().Trim();
-            }
-
-            this.Response = new RestResponse(output);
-
-            this.ParseHeaders(response.Headers, this.Response);
-
-            response.Close();
+            this.ParseResponse(response);
 
             try
             {
@@ -158,24 +139,53 @@
             return timeSpan.HasValue && (timeSpan.Value.TotalSeconds > RequestMaxLength);
         }
 
+        private void WriteRequestData(WebRequest request, object data)
+        {
+            string contents = JsonConvert.SerializeObject(Data, new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
+
+            byte[] bytes = Encoding.ASCII.GetBytes(contents);
+            request.ContentLength = bytes.Length;
+
+            using (var stream = request.GetRequestStream())
+            {
+                stream.Write(bytes, 0, bytes.Length);
+            }
+        }
+
+        private string ParseResponse(WebResponse response)
+        {
+            string message;
+            using (var reader = new StreamReader(response.GetResponseStream()))
+            {
+                message = reader.ReadToEnd().Trim();
+            }
+
+            this.Response = new RestResponse(message);
+
+            this.ParseHeaders(response.Headers, this.Response);
+
+            return message;
+        }
+
         private void ParseHeaders(WebHeaderCollection headers, RestResponse response)
         {
             string rateRetryAfterHeader = headers.Get("Retry-After");
             string rateLimitGlobalHeader = headers.Get("X-RateLimit-Global");
 
             if (!string.IsNullOrEmpty(rateRetryAfterHeader) &&
-                !string.IsNullOrEmpty(rateLimitGlobalHeader))
+                !string.IsNullOrEmpty(rateLimitGlobalHeader) &&
+                int.TryParse(rateRetryAfterHeader, out int rateRetryAfter) &&
+                bool.TryParse(rateLimitGlobalHeader, out bool rateLimitGlobal) &&
+                rateLimitGlobal)
             {
-                if (int.TryParse(rateRetryAfterHeader, out int rateRetryAfter) &&
-                    bool.TryParse(rateLimitGlobalHeader, out bool rateLimitGlobal) &&
-                    rateLimitGlobal)
-                {
-                    var limit = response.ParseData<RateLimit>();
+                var limit = response.ParseData<RateLimit>();
 
-                    if (limit.global)
-                    {
-                        GlobalRateLimit.Reached(rateRetryAfter);
-                    }
+                if (limit.global)
+                {
+                    GlobalRateLimit.Reached(rateRetryAfter);
                 }
             }
 
@@ -183,19 +193,26 @@
             string rateRemainingHeader = headers.Get("X-RateLimit-Remaining");
             string rateResetHeader = headers.Get("X-RateLimit-Reset");
 
-            if (string.IsNullOrEmpty(rateLimitHeader) ||
-                string.IsNullOrEmpty(rateResetHeader) ||
-                string.IsNullOrEmpty(rateResetHeader))
-                return;
-
-            if (int.TryParse(rateLimitHeader, out int rateLimit) &&
-                int.TryParse(rateRemainingHeader, out int rateRemaining) &&
-                int.TryParse(rateResetHeader, out int rateReset))
+            if (!string.IsNullOrEmpty(rateLimitHeader) &&
+                int.TryParse(rateLimitHeader, out int rateLimit))
             {
                 bucket.Limit = rateLimit;
+            }
+
+            if (!string.IsNullOrEmpty(rateRemainingHeader) &&
+                int.TryParse(rateRemainingHeader, out int rateRemaining))
+            {
                 bucket.Remaining = rateRemaining;
+            }
+
+            if (!string.IsNullOrEmpty(rateResetHeader) &&
+                int.TryParse(rateResetHeader, out int rateReset))
+            {
                 bucket.Reset = rateReset;
             }
+
+            ////Interface.Oxide.LogInfo($"Recieved ratelimit deets: {bucket.Limit}, {bucket.Remaining}, {bucket.Reset}, time now: {bucket.TimeSinceEpoch()}");
+            ////Interface.Oxide.LogInfo($"Time until reset: {(bucket.Reset - (int)bucket.TimeSinceEpoch())}");
         }
     }
 }

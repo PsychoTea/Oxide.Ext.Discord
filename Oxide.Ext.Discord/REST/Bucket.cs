@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
-    using Oxide.Core;
+    using Oxide.Ext.Discord.Helpers;
 
     public class Bucket : List<Request>
     {
@@ -68,18 +68,18 @@
 
         private void FireRequests()
         {
-            this.CleanRequests();
-
+            ////this.CleanRequests();
+            
             if (GlobalRateLimit.Hit)
             {
                 return;
             }
-
-            if (Remaining == 0 && Reset >= TimeSinceEpoch())
+            
+            if (Remaining == 0 && Reset >= Time.TimeSinceEpoch())
             {
                 return;
             }
-
+            
             if (this.Any(x => x.InProgress))
             {
                 return;
@@ -89,21 +89,15 @@
             nextItem.Fire(this);
         }
 
-        private void CleanRequests()
-        {
-            List<Request> requests;
-            lock (this)
-            {
-                requests = new List<Request>(this).Where(x => x.HasTimedOut()).ToList();
-            }
+        ////private void CleanRequests()
+        ////{
+        ////    var requests = new List<Request>(this);
 
-            foreach (var req in requests)
-            {
-                Interface.Oxide.LogWarning($"[Discord Ext] Closing request (timed out): {req.Route + req.Endpoint} [{req.Method}]");
-                req.Close();
-            }
-        }
-
-        public double TimeSinceEpoch() => (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
+        ////    foreach (var req in requests.Where(x => x.HasTimedOut()))
+        ////    {
+        ////        Interface.Oxide.LogWarning($"[Discord Ext] Closing request (timed out): {req.Route + req.Endpoint} [{req.Method}]");
+        ////        req.Close();
+        ////    }
+        ////}
     }
 }
