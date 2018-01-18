@@ -183,7 +183,7 @@
 
         public void RemoveGuildMemberRole(DiscordClient client, string userID, string roleID, Action callback = null)
         {
-            client.REST.DoRequest($"/guilds/{id}/members/{userID}/{roleID}", RequestMethod.DELETE, null, callback);
+            client.REST.DoRequest($"/guilds/{id}/members/{userID}/roles/{roleID}", RequestMethod.DELETE, null, callback);
         }
 
         public void RemoveGuildMember(DiscordClient client, GuildMember member, Action callback = null) => RemoveGuildMember(client, member.user.id, callback);
