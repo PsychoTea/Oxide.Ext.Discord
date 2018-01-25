@@ -58,7 +58,7 @@ namespace Oxide.Ext.Discord.WebSockets
                 throw new APIKeyException();
             }
 
-            if (!e.WasClean)
+            if (!e.WasClean || e.Code == 1001)
             {
                 Interface.Oxide.LogWarning($"[Discord Ext] Discord connection closed uncleanly: code {e.Code}, Reason: {e.Reason}");
 
