@@ -29,11 +29,13 @@ namespace Oxide.Ext.Discord
         
         private Socket webSocket;
 
+        public bool AutoReconnect {get; private set; } = true;
+
         private Timer timer;
 
         private int lastHeartbeat;
 
-        public void Initialize(Plugin plugin, string apiKey)
+        public void Initialize(Plugin plugin, string apiKey, bool autoReconnect)
         {
             if (string.IsNullOrEmpty(apiKey))
             {
@@ -69,6 +71,8 @@ namespace Oxide.Ext.Discord
 
                 webSocket.Connect(WSSURL);
             });
+
+            this.AutoReconnect = autoReconnect;
         }
 
         public void Disconnect()
