@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-
-namespace Oxide.Ext.Discord.REST
+﻿namespace Oxide.Ext.Discord.REST
 {
+    using Newtonsoft.Json;
+
     public class RestResponse
     {
         public string Data { get; }

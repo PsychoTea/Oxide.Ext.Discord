@@ -101,7 +101,7 @@
 
         public void CreateGuildChannel(DiscordClient client, Channel channel, Action<Channel> callback = null) => CreateGuildChannel(client, channel.name, channel.type, channel.bitrate, channel.user_limit, channel.permission_overwrites, callback);
 
-        public void CreateGuildChannel(DiscordClient client, string name, string type, int? bitrate, int? userLimit, List<Overwrite> permissionOverwrites, Action<Channel> callback = null)
+        public void CreateGuildChannel(DiscordClient client, string name, int? type, int? bitrate, int? userLimit, List<Overwrite> permissionOverwrites, Action<Channel> callback = null)
         {
             var jsonObj = new Dictionary<string, object>()
             {
@@ -183,7 +183,7 @@
 
         public void RemoveGuildMemberRole(DiscordClient client, string userID, string roleID, Action callback = null)
         {
-            client.REST.DoRequest($"/guilds/{id}/members/{userID}/{roleID}", RequestMethod.DELETE, null, callback);
+            client.REST.DoRequest($"/guilds/{id}/members/{userID}/roles/{roleID}", RequestMethod.DELETE, null, callback);
         }
 
         public void RemoveGuildMember(DiscordClient client, GuildMember member, Action callback = null) => RemoveGuildMember(client, member.user.id, callback);

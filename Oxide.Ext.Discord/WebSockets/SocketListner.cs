@@ -54,11 +54,24 @@ namespace Oxide.Ext.Discord.WebSockets
         public void SocketClosed(object sender, CloseEventArgs e)
         {
             if (e.Code == 4004)
-                throw new APIKeyException();
-
-            if (!e.WasClean)
             {
-                Interface.Oxide.LogWarning($"[Discord Ext] Discord connection closed uncleanly: code {e.Code}, Reason: {e.Reason}");
+                throw new APIKeyException();
+            }
+                    
+            if (!e.WasClean || e.Code == 1001 || client.AutoReconnect)
+            {
+                if (!e.WasClean)
+                {
+                    Interface.Oxide.LogWarning($"[Discord Ext] Discord connection closed uncleanly: code {e.Code}, Reason: {e.Reason}");
+                } 
+                else 
+                {
+                    Interface.Oxide.LogWarning($"[Discord Ext] Discord connection closed: code {e.Code}, Reason: {e.Reason}");
+                }
+
+                Interface.Oxide.LogWarning($"[Discord Ext] Attempting to reconnect to Discord...");
+
+                webSocket.Connect(client.WSSURL);
             }
 
             client.CallHook("DiscordSocket_WebSocketClosed", null, e.Reason, e.Code, e.WasClean);

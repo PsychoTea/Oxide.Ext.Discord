@@ -14,7 +14,6 @@ namespace Oxide.Ext.Discord
     using Oxide.Ext.Discord.Exceptions;
     using Oxide.Ext.Discord.REST;
     using Oxide.Ext.Discord.WebSockets;
-    using WebSocketSharp;
 
     public class DiscordClient
     {
@@ -30,11 +29,13 @@ namespace Oxide.Ext.Discord
         
         private Socket webSocket;
 
+        public bool AutoReconnect {get; private set; } = true;
+
         private Timer timer;
 
         private int lastHeartbeat;
 
-        public void Initialize(Plugin plugin, string apiKey)
+        public void Initialize(Plugin plugin, string apiKey, bool autoReconnect)
         {
             if (string.IsNullOrEmpty(apiKey))
             {
@@ -70,6 +71,8 @@ namespace Oxide.Ext.Discord
 
                 webSocket.Connect(WSSURL);
             });
+
+            this.AutoReconnect = autoReconnect;
         }
 
         public void Disconnect()
@@ -109,12 +112,14 @@ namespace Oxide.Ext.Discord
         {
             if (specificPlugin != null)
             {
+                if (!specificPlugin.IsLoaded) return null;
+
                 return specificPlugin.CallHook(hookname, args);
             }
 
             Dictionary<string, object> returnValues = new Dictionary<string, object>();
 
-            foreach (var plugin in Plugins)
+            foreach (var plugin in Plugins.Where(x => x.IsLoaded))
             {
                 var retVal = plugin.CallHook(hookname, args);
                 returnValues.Add(plugin.Title, retVal);

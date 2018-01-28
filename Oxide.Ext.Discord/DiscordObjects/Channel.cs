@@ -8,7 +8,7 @@
     {
         public string id { get; set; }
 
-        public string type { get; set; }
+        public int? type { get; set; }
 
         public int? position { get; set; }
 
