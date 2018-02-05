@@ -58,7 +58,7 @@ namespace Oxide.Ext.Discord.WebSockets
                 throw new APIKeyException();
             }
                     
-            if (!e.WasClean || e.Code == 1001 || client.AutoReconnect)
+            if ((!e.WasClean || e.Code == 1001 || client.AutoReconnect) && !Interface.Oxide.IsShuttingDown)
             {
                 if (!e.WasClean)
                 {
