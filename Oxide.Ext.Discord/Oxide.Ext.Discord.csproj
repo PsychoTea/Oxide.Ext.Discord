@@ -97,6 +97,7 @@
     <Compile Include="DiscordObjects\Nick.cs" />
     <Compile Include="DiscordObjects\ObjectPosition.cs" />
     <Compile Include="DiscordObjects\WebhookPayload.cs" />
+    <Compile Include="OptionalSettings.cs" />
     <Compile Include="REST\Bucket.cs" />
     <Compile Include="REST\GlobalRateLimit.cs" />
     <Compile Include="REST\Request.cs" />

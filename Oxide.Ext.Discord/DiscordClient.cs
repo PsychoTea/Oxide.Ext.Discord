@@ -34,6 +34,13 @@ namespace Oxide.Ext.Discord
 
         private int lastHeartbeat;
 
+        public OptionalSettings OptionalSettings { get; set; }
+
+        public void RegisterSettings(OptionalSettings settings)
+        {
+            this.OptionalSettings = settings;
+        }
+
         public void Initialize(Plugin plugin, string apiKey)
         {
             if (string.IsNullOrEmpty(apiKey))

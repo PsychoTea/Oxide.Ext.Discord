@@ -9,7 +9,7 @@
     {
         public static List<DiscordClient> Clients { get; private set; } = new List<DiscordClient>();
 
-        public static void CreateClient(Plugin plugin, string apiKey)
+        public static void CreateClient(Plugin plugin, string apiKey, OptionalSettings settings)
         {
             if (plugin == null)
             {
@@ -35,6 +35,7 @@
 
                 client.RegisterPlugin(plugin);
                 client.UpdatePluginReference(plugin);
+                client.RegisterSettings(settings);
                 client.CallHook("DiscordSocket_Initialized", plugin);
                 return;
             }
