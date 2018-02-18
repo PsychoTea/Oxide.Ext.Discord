@@ -58,16 +58,9 @@ namespace Oxide.Ext.Discord.WebSockets
                 throw new APIKeyException();
             }
                     
-            if ((!e.WasClean || e.Code == 1001 || client.AutoReconnect) && !Interface.Oxide.IsShuttingDown)
+            if (!e.WasClean)
             {
-                if (!e.WasClean)
-                {
-                    Interface.Oxide.LogWarning($"[Discord Ext] Discord connection closed uncleanly: code {e.Code}, Reason: {e.Reason}");
-                } 
-                else 
-                {
-                    Interface.Oxide.LogWarning($"[Discord Ext] Discord connection closed: code {e.Code}, Reason: {e.Reason}");
-                }
+                Interface.Oxide.LogWarning($"[Discord Ext] Discord connection closed uncleanly: code {e.Code}, Reason: {e.Reason}");
 
                 Interface.Oxide.LogWarning($"[Discord Ext] Attempting to reconnect to Discord...");
 
