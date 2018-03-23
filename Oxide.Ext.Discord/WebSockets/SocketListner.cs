@@ -147,6 +147,7 @@ namespace Oxide.Ext.Discord.WebSockets
                                 {
                                     Ready ready = JsonConvert.DeserializeObject<Ready>(eventData);
                                     resume.session_id = ready.session_id;
+                                    resume.token = client.Settings.ApiToken;
                                     client.CallHook("Discord_Ready", null, ready);
                                     break;
                                 }
