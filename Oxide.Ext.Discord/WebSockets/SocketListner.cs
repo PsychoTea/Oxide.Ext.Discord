@@ -80,7 +80,6 @@ namespace Oxide.Ext.Discord.WebSockets
             
             if (!Interface.Oxide.IsShuttingDown)
             {
-
                 Interface.Oxide.LogWarning($"Connection closed.. CODE: {e.Code}");
                 Interface.Oxide.LogWarning($"[Discord Ext] Attempting to reconnect to Discord...");
 
