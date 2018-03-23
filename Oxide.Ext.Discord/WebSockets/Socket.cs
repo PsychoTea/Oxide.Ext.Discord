@@ -37,7 +37,6 @@
             socket.OnClose += listner.SocketClosed;
             socket.OnError += listner.SocketErrored;
             socket.OnMessage += listner.SocketMessage;
-
             socket.ConnectAsync();
         }
 
