@@ -41,6 +41,7 @@
     <Compile Include="DiscordEvents\GuildBan.cs" />
     <Compile Include="DiscordEvents\GuildMemberAdd.cs" />
     <Compile Include="DiscordEvents\GuildMemberRemove.cs" />
+    <Compile Include="DiscordEvents\Resume.cs" />
     <Compile Include="DiscordEvents\TypingStart.cs" />
     <Compile Include="DiscordEvents\VoiceServerUpdate.cs" />
     <Compile Include="DiscordEvents\WebhooksUpdate.cs" />

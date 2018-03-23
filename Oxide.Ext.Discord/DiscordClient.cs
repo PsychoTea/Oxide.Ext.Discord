@@ -164,7 +164,6 @@ namespace Oxide.Ext.Discord
         private void HeartbeatElapsed(object sender, ElapsedEventArgs e)
         {
             if (!webSocket.IsAlive() || 
-                webSocket.IsClosed() || 
                 webSocket.IsClosed())
             {
                 timer.Dispose();
