@@ -53,7 +53,6 @@ namespace Oxide.Ext.Discord.WebSockets
                     }
                 };
                 var sp = JsonConvert.SerializeObject(payload);
-                Interface.Oxide.LogInfo(sp);
                 webSocket.Send(sp);
 
             } else
