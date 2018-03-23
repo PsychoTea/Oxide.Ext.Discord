@@ -9,7 +9,7 @@
     {
         public static List<DiscordClient> Clients { get; private set; } = new List<DiscordClient>();
 
-        public static void CreateClient(Plugin plugin, string apiKey, bool autoReconnect = true)
+        public static void CreateClient(Plugin plugin, string apiKey)
         {
             if (plugin == null)
             {
@@ -42,7 +42,7 @@
             // Create a new DiscordClient
             var newClient = new DiscordClient();
             Clients.Add(newClient);
-            newClient.Initialize(plugin, apiKey, autoReconnect);
+            newClient.Initialize(plugin, apiKey);
         }
 
         public static void CloseClient(DiscordClient client)
