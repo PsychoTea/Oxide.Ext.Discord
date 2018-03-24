@@ -51,7 +51,8 @@ namespace Oxide.Ext.Discord.WebSockets
                 var sp = JsonConvert.SerializeObject(payload);
                 webSocket.Send(sp);
 
-            } else
+            }
+            else
             {
                 var payload = new Packet()
                 {
@@ -72,14 +73,14 @@ namespace Oxide.Ext.Discord.WebSockets
             {
                 throw new APIKeyException();
             }
-            
+
             if (!Interface.Oxide.IsShuttingDown)
             {
                 Interface.Oxide.LogWarning($"[Discord Ext] Connection closed.. CODE: {e.Code}");
 
                 webSocket.reconnectAttempts++;
-                int interval = webSocket.reconnectAttempts < 50 ? 3 : webSocket.reconnectAttempts < 100 ?  10 : 60;
-                reconnectTimer.Interval = (interval*1000);
+                int interval = webSocket.reconnectAttempts < 50 ? 3 : webSocket.reconnectAttempts < 100 ? 10 : 60;
+                reconnectTimer.Interval = (interval * 1000);
                 reconnectTimer.Elapsed += ConnectTimer;
                 reconnectTimer.Start();
                 Interface.Oxide.LogWarning($"[Discord Ext] Attempting to reconnect in {interval} seconds...");
@@ -88,7 +89,7 @@ namespace Oxide.Ext.Discord.WebSockets
             client.CallHook("DiscordSocket_WebSocketClosed", null, e.Reason, e.Code, e.WasClean);
         }
 
-        private void ConnectTimer(Object source, System.Timers.ElapsedEventArgs e) 
+        private void ConnectTimer(Object source, System.Timers.ElapsedEventArgs e)
         {
             webSocket.Connect(client.WSSURL);
         }
@@ -113,7 +114,7 @@ namespace Oxide.Ext.Discord.WebSockets
                 {
                     webSocket.lastHeartbeat = 0;
                 }
-                if (webSocket.resume != null) 
+                if (webSocket.resume != null)
                 {
                     webSocket.resume.seq = webSocket.lastHeartbeat;
                 }
@@ -146,7 +147,7 @@ namespace Oxide.Ext.Discord.WebSockets
                             case "RESUMED":
                                 {
                                     Resumed resumed = JsonConvert.DeserializeObject<Resumed>(eventData);
-                                    Interface.Oxide.LogInfo("[Discord Ext] Succesfully resumed session.");
+                                    Interface.Oxide.LogInfo("[Discord Ext] Successfully resumed session.");
                                     client.CallHook("Discord_Resumed", null, resumed);
                                     break;
                                 }
