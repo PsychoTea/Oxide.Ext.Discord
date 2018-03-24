@@ -78,11 +78,11 @@ namespace Oxide.Ext.Discord.WebSockets
                 Interface.Oxide.LogWarning($"[Discord Ext] Connection closed.. CODE: {e.Code}");
 
                 webSocket.reconnectAttempts++;
-                    int interval = webSocket.reconnectAttempts < 50 ? 3 : webSocket.reconnectAttempts < 100 ?  10 : 60;
-                    reconnectTimer.Interval = (interval*1000);
-                    reconnectTimer.Elapsed += ConnectTimer;
-                    reconnectTimer.Start();
-                    Interface.Oxide.LogWarning($"[Discord Ext] Attempting to reconnect in {interval} seconds...");
+                int interval = webSocket.reconnectAttempts < 50 ? 3 : webSocket.reconnectAttempts < 100 ?  10 : 60;
+                reconnectTimer.Interval = (interval*1000);
+                reconnectTimer.Elapsed += ConnectTimer;
+                reconnectTimer.Start();
+                Interface.Oxide.LogWarning($"[Discord Ext] Attempting to reconnect in {interval} seconds...");
             }
 
             client.CallHook("DiscordSocket_WebSocketClosed", null, e.Reason, e.Code, e.WasClean);
