@@ -2,6 +2,7 @@
 {
     using System;
     using Oxide.Ext.Discord.Exceptions;
+    using Oxide.Ext.Discord.DiscordEvents;
     using WebSocketSharp;
 
     public class Socket
@@ -9,6 +10,12 @@
         private DiscordClient client;
 
         private WebSocket socket;
+        
+        public int reconnectAttempts = 0;
+
+        public Resume resume;
+
+        public int lastHeartbeat = 0;
 
         private SocketListner listner;
 

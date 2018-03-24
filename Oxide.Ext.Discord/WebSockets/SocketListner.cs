@@ -18,10 +18,6 @@ namespace Oxide.Ext.Discord.WebSockets
 
         private Socket webSocket;
 
-        private int reconnectAttempts = 0;
-
-        private Resume resume = new Resume();
-
         private Timer reconnectTimer = new Timer();
 
         public SocketListner(DiscordClient client, Socket socket)
@@ -32,7 +28,7 @@ namespace Oxide.Ext.Discord.WebSockets
 
         public void SocketOpened(object sender, EventArgs e)
         {
-            if (resume.session_id.IsNullOrEmpty())
+            if (webSocket.resume == null)
             {
                 var payload = new Handshake()
                 {
@@ -60,7 +56,7 @@ namespace Oxide.Ext.Discord.WebSockets
                 var payload = new Packet()
                 {
                     op = 6,
-                    d = resume
+                    d = webSocket.resume
                 };
                 var sp = JsonConvert.SerializeObject(payload);
                 webSocket.Send(sp);
@@ -79,22 +75,15 @@ namespace Oxide.Ext.Discord.WebSockets
             
             if (!Interface.Oxide.IsShuttingDown)
             {
-                Interface.Oxide.LogWarning($"Connection closed.. CODE: {e.Code}");
+                Interface.Oxide.LogWarning($"[Discord Ext] Connection closed.. CODE: {e.Code}");
                 Interface.Oxide.LogWarning($"[Discord Ext] Attempting to reconnect to Discord...");
 
-                reconnectAttempts++;
-
-                if (reconnectAttempts <= 3) 
-                {
-                    webSocket.Connect(client.WSSURL);
-
-                } else 
-                {
-                    reconnectTimer.Interval = reconnectAttempts < 100 ? (5 * 1000) : (60 * 1000);
+                webSocket.reconnectAttempts++;
+                    int interval = webSocket.reconnectAttempts < 50 ? 3 : webSocket.reconnectAttempts < 100 ?  10 : 60;
+                    reconnectTimer.Interval = (interval*1000);
                     reconnectTimer.Elapsed += ConnectTimer;
                     reconnectTimer.Start();
-                    
-                }
+                    Interface.Oxide.LogWarning($"[Discord Ext] Reconnecting in {interval} seconds...");
             }
 
             client.CallHook("DiscordSocket_WebSocketClosed", null, e.Reason, e.Code, e.WasClean);
@@ -119,14 +108,15 @@ namespace Oxide.Ext.Discord.WebSockets
             };
             JObject messageObj = JObject.Load(reader);
 
-            int lastHeartbeat = 0;
-
-            if (!messageObj.TryGetValue("s", out JToken heartbeatToken))
+            if (messageObj.TryGetValue("s", out JToken heartbeatToken))
             {
-                if (!int.TryParse(heartbeatToken.ToSentence(), out lastHeartbeat))
+                if (!int.TryParse(heartbeatToken.ToString(), out webSocket.lastHeartbeat))
                 {
-                    lastHeartbeat = 0;
-                    resume.seq = lastHeartbeat;
+                    webSocket.lastHeartbeat = 0;
+                }
+                if (webSocket.resume != null) 
+                {
+                    webSocket.resume.seq = webSocket.lastHeartbeat;
                 }
             }
 
@@ -144,8 +134,12 @@ namespace Oxide.Ext.Discord.WebSockets
                             case "READY":
                                 {
                                     Ready ready = JsonConvert.DeserializeObject<Ready>(eventData);
-                                    resume.session_id = ready.session_id;
-                                    resume.token = client.Settings.ApiToken;
+                                    webSocket.resume = new Resume()
+                                    {
+                                        token = client.Settings.ApiToken,
+                                        session_id = ready.session_id,
+                                        seq = webSocket.lastHeartbeat
+                                    };
                                     client.CallHook("Discord_Ready", null, ready);
                                     break;
                                 }
@@ -153,6 +147,7 @@ namespace Oxide.Ext.Discord.WebSockets
                             case "RESUMED":
                                 {
                                     Resumed resumed = JsonConvert.DeserializeObject<Resumed>(eventData);
+                                    Interface.Oxide.LogInfo("[Discord Ext] Succesfully resumed session.");
                                     client.CallHook("Discord_Resumed", null, resumed);
                                     break;
                                 }
@@ -483,6 +478,8 @@ namespace Oxide.Ext.Discord.WebSockets
                 case "9":
                     {
                         Interface.Oxide.LogInfo($"[DiscordExt] Invalid Session ID opcode recieved!");
+                        webSocket.resume = null;
+                        webSocket.Connect(client.WSSURL);
                         break;
                     }
 
@@ -492,7 +489,7 @@ namespace Oxide.Ext.Discord.WebSockets
                     {
                         JToken heartbeatInterval = messageObj["d"]["heartbeat_interval"];
                         float heartbeatTime = (float)heartbeatInterval;
-                        client.CreateHeartbeat(heartbeatTime, lastHeartbeat);
+                        client.CreateHeartbeat(heartbeatTime, webSocket.lastHeartbeat);
                         break;
                     }
 
