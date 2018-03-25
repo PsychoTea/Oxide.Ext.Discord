@@ -4,11 +4,19 @@
     using System.Collections.Generic;
     using Oxide.Ext.Discord.REST;
 
+    public enum ChannelType
+    {
+        GUILD_TEXT = 0,
+        DM = 1,
+        GUILD_VOICE = 2,
+        GROUP_DM = 3,
+        GUILD_CATEGORY = 4
+    }
     public class Channel
     {
         public string id { get; set; }
 
-        public int? type { get; set; }
+        public ChannelType? type { get; set; }
 
         public int? position { get; set; }
 
@@ -30,7 +38,7 @@
         {
             client.REST.DoRequest($"/channels/{channelID}", RequestMethod.GET, null, callback);
         }
-        
+
         public void ModifyChannel(DiscordClient client, Channel newChannel, Action<Channel> callback = null)
         {
             client.REST.DoRequest($"/channels/{id}", RequestMethod.PATCH, newChannel, callback);
