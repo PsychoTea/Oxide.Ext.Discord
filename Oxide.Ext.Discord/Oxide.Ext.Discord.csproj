@@ -82,6 +82,7 @@
     <Compile Include="DiscordEvents\Resumed.cs" />
     <Compile Include="DiscordObjects\RateLimit.cs" />
     <Compile Include="DiscordObjects\Reaction.cs" />
+    <Compile Include="DiscordObjects\Resume.cs" />
     <Compile Include="DiscordObjects\Role.cs" />
     <Compile Include="DiscordObjects\User.cs" />
     <Compile Include="DiscordObjects\VoiceRegion.cs" />

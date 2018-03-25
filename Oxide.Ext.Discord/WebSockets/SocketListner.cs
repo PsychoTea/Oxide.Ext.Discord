@@ -22,32 +22,41 @@ namespace Oxide.Ext.Discord.WebSockets
             this.client = client;
             this.webSocket = socket;
         }
-
         public void SocketOpened(object sender, EventArgs e)
         {
-            var payload = new Handshake()
+            if (!webSocket.shouldResume)
             {
-                op = 2,
-                Payload = new Payload()
+                var payload = new Handshake()
                 {
-                    token = client.Settings.ApiToken,
-                    properties = new PayloadProperty()
+                    op = 2,
+                    Payload = new Payload()
                     {
-                        os = Environment.OSVersion.ToString(),
-                        browser = "orfbotpp",
-                        device = "orfbotpp",
-                        referrer = string.Empty,
-                        referring_domain = string.Empty
-                    },
-                    compress = false,
-                    large_threshold = 250
-                }
-            };
-
-            var sp = JsonConvert.SerializeObject(payload);
-
-            webSocket.Send(sp);
-
+                        token = client.Settings.ApiToken,
+                        properties = new PayloadProperty()
+                        {
+                            os = Environment.OSVersion.ToString(),
+                            browser = "orfbotpp",
+                            device = "orfbotpp",
+                            referrer = string.Empty,
+                            referring_domain = string.Empty
+                        },
+                        compress = false,
+                        large_threshold = 250
+                    }
+                };
+                var sp = JsonConvert.SerializeObject(payload);
+                webSocket.Send(sp);
+            }
+            else
+            {
+                var payload = new Packet
+                {
+                    op = 2,
+                    d = webSocket.resume
+                };
+                var sp = JsonConvert.SerializeObject(payload);
+                webSocket.Send(sp);
+            }
             client.CallHook("DiscordSocket_WebSocketOpened");
         }
 
@@ -57,7 +66,7 @@ namespace Oxide.Ext.Discord.WebSockets
             {
                 throw new APIKeyException();
             }
-                    
+
             if (!e.WasClean)
             {
                 Interface.Oxide.LogWarning($"[Discord Ext] Discord connection closed uncleanly: code {e.Code}, Reason: {e.Reason}");
@@ -108,6 +117,13 @@ namespace Oxide.Ext.Discord.WebSockets
                             case "READY":
                                 {
                                     Ready ready = JsonConvert.DeserializeObject<Ready>(eventData);
+                                    webSocket.resume = new Resume
+                                    {
+                                        token = client.Settings.ApiToken,
+                                        session_id = ready.session_id,
+                                        seq = lastHeartbeat
+                                    };
+                                    webSocket.shouldResume = true;
                                     client.CallHook("Discord_Ready", null, ready);
                                     break;
                                 }
@@ -115,6 +131,7 @@ namespace Oxide.Ext.Discord.WebSockets
                             case "RESUMED":
                                 {
                                     Resumed resumed = JsonConvert.DeserializeObject<Resumed>(eventData);
+                                    Interface.Oxide.LogInfo("[Discord Ext] Succesfully resumed last connection.");
                                     client.CallHook("Discord_Resumed", null, resumed);
                                     break;
                                 }
@@ -446,6 +463,8 @@ namespace Oxide.Ext.Discord.WebSockets
                 case "9":
                     {
                         Interface.Oxide.LogInfo($"[DiscordExt] Invalid Session ID opcode recieved!");
+                        webSocket.shouldResume = false;
+                        webSocket.Connect(client.WSSURL);
                         break;
                     }
 

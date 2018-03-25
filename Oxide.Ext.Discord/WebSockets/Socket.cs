@@ -1,6 +1,7 @@
 ﻿namespace Oxide.Ext.Discord.WebSockets
 {
     using System;
+    using Oxide.Ext.Discord.DiscordObjects;
     using Oxide.Ext.Discord.Exceptions;
     using WebSocketSharp;
 
@@ -11,6 +12,10 @@
         private WebSocket socket;
 
         private SocketListner listner;
+
+        public bool shouldResume = false;
+
+        public Resume resume;
 
         public Socket(DiscordClient client)
         {
