@@ -95,9 +95,9 @@ namespace Oxide.Ext.Discord.WebSockets
 
             int lastHeartbeat = 0;
 
-            if (!messageObj.TryGetValue("s", out JToken heartbeatToken))
+            if (messageObj.TryGetValue("s", out JToken heartbeatToken))
             {
-                if (!int.TryParse(heartbeatToken.ToSentence(), out lastHeartbeat))
+                if (!int.TryParse(heartbeatToken.ToString(), out lastHeartbeat))
                 {
                     lastHeartbeat = 0;
                 }
