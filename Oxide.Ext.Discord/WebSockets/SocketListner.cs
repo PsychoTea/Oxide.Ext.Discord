@@ -101,6 +101,7 @@ namespace Oxide.Ext.Discord.WebSockets
                 {
                     lastHeartbeat = 0;
                 }
+                webSocket.lastHeartbeat = lastHeartbeat;
             }
 
             string eventCode = messageObj["op"].ToString();
@@ -445,7 +446,7 @@ namespace Oxide.Ext.Discord.WebSockets
                 case "1":
                     {
                         Interface.Oxide.LogInfo($"[DiscordExt] Manully sent heartbeat (received opcode 1)");
-                        client.SendHeartbeat();
+                        webSocket.SendHeartbeat();
                         break;
                     }
 
@@ -474,13 +475,14 @@ namespace Oxide.Ext.Discord.WebSockets
                     {
                         JToken heartbeatInterval = messageObj["d"]["heartbeat_interval"];
                         float heartbeatTime = (float)heartbeatInterval;
-                        client.CreateHeartbeat(heartbeatTime, lastHeartbeat);
+                        webSocket.CreateHeartbeat(heartbeatTime, lastHeartbeat);
                         break;
                     }
 
                 // Heartbeat ACK (sent immediately following a client heartbeat
                 // that was received)
-                case "11": break;
+                case "11":
+                    break;
 
                 default:
                     {
