@@ -37,7 +37,7 @@ namespace Oxide.Ext.Discord
 
         private Timer _timer;
 
-        private int _lastHeartbeat;
+        private double _lastHeartbeat;
 
         public void Initialize(Plugin plugin, DiscordSettings settings)
         {
@@ -147,7 +147,7 @@ namespace Oxide.Ext.Discord
                 return;
             }
 
-            _lastHeartbeat = (int)Time.TimeSinceEpoch();
+            _lastHeartbeat = Time.TimeSinceEpoch();
 
             _timer = new Timer()
             {
@@ -249,6 +249,8 @@ namespace Oxide.Ext.Discord
             string message = JsonConvert.SerializeObject(packet);
             _webSocket.Send(message);
 
+            _lastHeartbeat = Time.TimeSinceEpoch();
+
             this.CallHook("DiscordSocket_HeartbeatSent");
 
             if (Settings.Debugging)
@@ -288,7 +290,7 @@ namespace Oxide.Ext.Discord
 
             var packet = new RPayload()
             {
-                OpCode = OpCodes.VoiceStatusUpdate,
+                OpCode = OpCodes.VoiceStateUpdate,
                 Data = voiceState
             };
 
