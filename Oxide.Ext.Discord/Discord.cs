@@ -60,6 +60,7 @@
 
                 client.RegisterPlugin(plugin);
                 client.UpdatePluginReference(plugin);
+                client.Settings = settings;
                 client.CallHook("DiscordSocket_Initialized", plugin);
                 return;
             }

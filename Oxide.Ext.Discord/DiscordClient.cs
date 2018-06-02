@@ -21,13 +21,13 @@ namespace Oxide.Ext.Discord
     {
         public List<Plugin> Plugins { get; private set; } = new List<Plugin>();
 
-        public DiscordSettings Settings { get; private set; } = new DiscordSettings();
-
-        public Guild DiscordServer { get; set; }
-
         public RESTHandler REST { get; private set; }
 
         public string WSSURL { get; private set; }
+
+        public DiscordSettings Settings { get; set; } = new DiscordSettings();
+
+        public Guild DiscordServer { get; set; }
 
         public int Sequence;
 
