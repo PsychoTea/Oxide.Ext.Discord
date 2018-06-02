@@ -6,6 +6,17 @@
     using Oxide.Ext.Discord.Helpers;
     using Oxide.Ext.Discord.REST;
 
+    public enum MessageType
+    {
+        DEFAULT = 0,
+        RECIPIENT_ADD = 1,
+        RECIPIENT_REMOVE = 2,
+        CALL = 3,
+        CHANNEL_NAME_CHANGE = 4,
+        CHANNEL_ICON_CHANGE = 5,
+        CHANNEL_PINNED_MESSAGE = 6,
+        GUILD_MEMBER_JOIN = 7
+    }
     public class Message
     {
         public string id { get; set; }
@@ -42,7 +53,7 @@
 
         public string webhook_id { get; set; }
 
-        public int? type { get; set; }
+        public MessageType? type { get; set; }
 
         public void Reply(DiscordClient client, Message message, bool ping = true, Action<Message> callback = null)
         {
