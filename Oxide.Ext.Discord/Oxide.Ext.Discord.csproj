@@ -44,7 +44,9 @@
     <Compile Include="DiscordEvents\Hello.cs" />
     <Compile Include="DiscordEvents\Identify.cs" />
     <Compile Include="DiscordObjects\ActivityType.cs" />
+    <Compile Include="DiscordObjects\ChannelType.cs" />
     <Compile Include="DiscordObjects\GuildMembersRequest.cs" />
+    <Compile Include="DiscordObjects\MessageType.cs" />
     <Compile Include="DiscordObjects\Resume.cs" />
     <Compile Include="DiscordObjects\StatusTypes.cs" />
     <Compile Include="DiscordObjects\VoiceStateUpdate.cs" />
