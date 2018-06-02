@@ -5,7 +5,7 @@
     using System.Text;
     using Oxide.Ext.Discord.Helpers;
     using Oxide.Ext.Discord.REST;
-
+    
     public class Message
     {
         public string id { get; set; }
@@ -42,11 +42,14 @@
 
         public string webhook_id { get; set; }
 
-        public int? type { get; set; }
+        public MessageType? type { get; set; }
 
         public void Reply(DiscordClient client, Message message, bool ping = true, Action<Message> callback = null)
         {
-            message.content = ping ? $"<@{author.id}> {message.content}" : message.content;
+            if (ping && !string.IsNullOrEmpty(message.content) && !message.content.Contains($"<@{author.id}>"))
+            {
+                message.content = $"<@{author.id}> {message.content}";
+            }
 
             client.REST.DoRequest($"/channels/{channel_id}/messages", RequestMethod.POST, message, callback);
         }

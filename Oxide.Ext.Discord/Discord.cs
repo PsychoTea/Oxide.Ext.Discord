@@ -21,11 +21,36 @@
                 throw new APIKeyException();
             }
 
+            var settings = new DiscordSettings()
+            {
+                ApiToken = apiKey
+            };
+
+            CreateClient(plugin, settings);
+        }
+
+        public static void CreateClient(Plugin plugin, DiscordSettings settings)
+        {
+            if (plugin == null)
+            {
+                throw new PluginNullException();
+            }
+            
+            if (settings == null)
+            {
+                throw new SettingsNullException();
+            }
+
+            if (string.IsNullOrEmpty(settings.ApiToken))
+            {
+                throw new APIKeyException();
+            }
+
             // Find an existing DiscordClient and update it 
             var client = Clients.FirstOrDefault(x => x.Plugins.Any(p => p.Title == plugin.Title));
             if (client != null)
             {
-                if (client.Settings.ApiToken != apiKey)
+                if (client.Settings.ApiToken != settings.ApiToken)
                 {
                     throw new LimitedClientException();
                 }
@@ -35,6 +60,7 @@
 
                 client.RegisterPlugin(plugin);
                 client.UpdatePluginReference(plugin);
+                client.Settings = settings;
                 client.CallHook("DiscordSocket_Initialized", plugin);
                 return;
             }
@@ -42,7 +68,7 @@
             // Create a new DiscordClient
             var newClient = new DiscordClient();
             Clients.Add(newClient);
-            newClient.Initialize(plugin, apiKey);
+            newClient.Initialize(plugin, settings);
         }
 
         public static void CloseClient(DiscordClient client)

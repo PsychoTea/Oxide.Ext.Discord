@@ -1,9 +1,13 @@
-﻿using System.Text;
-
-namespace Oxide.Ext.Discord.Helpers
+﻿namespace Oxide.Ext.Discord.Helpers
 {
-    class HttpUtility
+    using System.Text;
+
+    public static class HttpUtility
     {
+        // The code in this class is horrible. I know.
+        // I got it off StackOverflow or somewhere and it does the job
+        // If anyone knows a better way of doing this, please lmk.
+
         public static string UrlEncode(byte[] bytes)
         {
             int num = 0;
@@ -22,7 +26,7 @@ namespace Oxide.Ext.Discord.Helpers
                 }
             }
 
-            byte[] hex = new byte[bytes.Length + num1 * 2];
+            byte[] hex = new byte[bytes.Length + (num1 * 2)];
             int num2 = 0;
 
             for (int j = 0; j < bytes.Length; j++)
@@ -61,9 +65,9 @@ namespace Oxide.Ext.Discord.Helpers
 
         internal static bool IsSafe(char ch)
         {
-            if (ch >= 'a' && ch <= 'z' || 
-                ch >= 'A' && ch <= 'Z' || 
-                ch >= '0' && ch <= '9')
+            if ((ch >= 'a' && ch <= 'z') ||
+                (ch >= 'A' && ch <= 'Z') ||
+                (ch >= '0' && ch <= '9'))
             {
                 return true;
             }
@@ -80,25 +84,27 @@ namespace Oxide.Ext.Discord.Helpers
                     case '*':
                     case '-':
                     case '.':
-                        {
-                            break;
-                        }
+                    {
+                        break;
+                    }
+
                     case '+':
                     case ',':
+                    {
+                        return false;
+                    }
+
+                    default:
+                    {
+                        if (chr != '\u005F')
                         {
                             return false;
                         }
-                    default:
+                        else
                         {
-                            if (chr != '\u005F')
-                            {
-                                return false;
-                            }
-                            else
-                            {
-                                break;
-                            }
+                            break;
                         }
+                    }
                 }
             }
 

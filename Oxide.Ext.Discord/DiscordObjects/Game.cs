@@ -1,11 +1,16 @@
 ﻿namespace Oxide.Ext.Discord.DiscordObjects
 {
+    using Newtonsoft.Json;
+
     public class Game
     {
-        public string name { get; set; }
+        [JsonProperty("name")]
+        public string Name { get; set; }
 
-        public int? type { get; set; }
+        [JsonProperty("type")]
+        public ActivityType Type { get; set; }
 
-        public string url { get; set; }
+        [JsonProperty("url")]
+        public string URL { get; set; }
     }
 }

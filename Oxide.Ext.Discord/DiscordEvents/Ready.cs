@@ -1,20 +1,27 @@
 ﻿namespace Oxide.Ext.Discord.DiscordEvents
 {
     using System.Collections.Generic;
+    using Newtonsoft.Json;
     using Oxide.Ext.Discord.DiscordObjects;
 
     public class Ready
     {
-        public int? v { get; set; }
+        [JsonProperty("v")]
+        public int Version { get; private set; }
+        
+        [JsonProperty("user")]
+        public User User { get; set; }
 
-        public User user { get; set; }
+        [JsonProperty("private_channels")]
+        public List<Channel> PrivateChannels { get; set; }
+        
+        [JsonProperty("guilds")]
+        public List<Guild> Guilds { get; set; }
 
-        public List<Channel> private_channels { get; set; }
+        [JsonProperty("session_id")]
+        public string SessionID { get; set; }
 
-        public List<Guild> guilds { get; set; }
-
-        public string session_id { get; set; }
-
-        public List<string> _trace { get; set; }
+        [JsonProperty("_trace")]
+        public string[] Trace { get; set; }
     }
 }
