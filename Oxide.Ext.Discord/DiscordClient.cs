@@ -6,12 +6,14 @@ namespace Oxide.Ext.Discord
     using System.Reflection;
     using System.Timers;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
     using Oxide.Core;
     using Oxide.Core.Plugins;
     using Oxide.Ext.Discord.Attributes;
+    using Oxide.Ext.Discord.DiscordEvents;
     using Oxide.Ext.Discord.DiscordObjects;
     using Oxide.Ext.Discord.Exceptions;
+    using Oxide.Ext.Discord.Gateway;
+    using Oxide.Ext.Discord.Helpers;
     using Oxide.Ext.Discord.REST;
     using Oxide.Ext.Discord.WebSockets;
 
@@ -26,40 +28,44 @@ namespace Oxide.Ext.Discord
         public RESTHandler REST { get; private set; }
 
         public string WSSURL { get; private set; }
-        
-        private Socket webSocket;
-        
-        private Timer timer;
 
-        private int lastHeartbeat;
+        public int Sequence;
 
-        public void Initialize(Plugin plugin, string apiKey)
+        public string SessionID;
+
+        private Socket _webSocket;
+
+        private Timer _timer;
+
+        private int _lastHeartbeat;
+
+        public void Initialize(Plugin plugin, DiscordSettings settings)
         {
-            if (string.IsNullOrEmpty(apiKey))
-            {
-                throw new APIKeyException();
-            }
-
             if (plugin == null)
             {
                 throw new PluginNullException();
             }
 
+            if (settings == null)
+            {
+                throw new SettingsNullException();
+            }
+
+            if (string.IsNullOrEmpty(settings.ApiToken))
+            {
+                throw new APIKeyException();
+            }
+
             RegisterPlugin(plugin);
 
-            Settings.ApiToken = apiKey;
+            Settings = settings;
 
             REST = new RESTHandler(Settings.ApiToken);
-            webSocket = new Socket(this);
-
-            if (!Discord.Clients.Any(x => x.Settings.ApiToken == apiKey))
-            {
-                throw new InvalidCreationException();
-            }
+            _webSocket = new Socket(this);
 
             if (!string.IsNullOrEmpty(WSSURL))
             {
-                webSocket.Connect(WSSURL);
+                _webSocket.Connect(WSSURL);
                 return;
             }
 
@@ -67,13 +73,13 @@ namespace Oxide.Ext.Discord
             {
                 WSSURL = url;
 
-                webSocket.Connect(WSSURL);
+                _webSocket.Connect(WSSURL);
             });
         }
 
         public void Disconnect()
         {
-            webSocket?.Disconnect();
+            _webSocket?.Disconnect();
 
             WSSURL = string.Empty;
 
@@ -95,7 +101,7 @@ namespace Oxide.Ext.Discord
                 }
             }
         }
-        
+
         public void RegisterPlugin(Plugin plugin)
         {
             var search = Plugins.Where(x => x.Title == plugin.Title);
@@ -133,42 +139,32 @@ namespace Oxide.Ext.Discord
 
         public string GetPluginNames(string delimiter = ", ") => string.Join(delimiter, Plugins.Select(x => x.Name).ToArray());
 
-        public void CreateHeartbeat(float heartbeatInterval, int lastHeartbeat)
+        public void CreateHeartbeat(float heartbeatInterval)
         {
-            this.lastHeartbeat = lastHeartbeat;
+            if (_timer != null)
+            {
+                Interface.Oxide.LogError($"[Oxide.Ext.Discord] Error: tried to create a heartbeat when one is already registered.");
+                return;
+            }
 
-            if (timer != null) return;
+            _lastHeartbeat = (int)Time.TimeSinceEpoch();
 
-            timer = new Timer()
+            _timer = new Timer()
             {
                 Interval = heartbeatInterval
             };
-            timer.Elapsed += HeartbeatElapsed;
-            timer.Start();
-        }
-
-        public void SendHeartbeat()
-        {
-            var packet = new Packet()
-            {
-                op = 1,
-                d = lastHeartbeat
-            };
-
-            string message = JsonConvert.SerializeObject(packet);
-            webSocket.Send(message);
-
-            this.CallHook("DiscordSocket_HeartbeatSent");
+            _timer.Elapsed += HeartbeatElapsed;
+            _timer.Start();
         }
 
         private void HeartbeatElapsed(object sender, ElapsedEventArgs e)
         {
-            if (!webSocket.IsAlive() || 
-                webSocket.IsClosed() || 
-                webSocket.IsClosed())
+            if (!_webSocket.IsAlive() ||
+                _webSocket.IsClosed() ||
+                _webSocket.IsClosed())
             {
-                timer.Dispose();
-                timer = null;
+                _timer.Dispose();
+                _timer = null;
                 return;
             }
 
@@ -177,12 +173,141 @@ namespace Oxide.Ext.Discord
 
         private void GetURL(Action<string> callback)
         {
-            REST.DoRequest<JObject>("/gateway", RequestMethod.GET, null, (data) =>
+            DiscordObjects.Gateway.GetGateway(this, (gateway) =>
             {
-                string wsURL = (data as JObject).GetValue("url").ToString();
+                // Example: wss://gateway.discord.gg/?v=6&encoding=json
+                string fullURL = $"{gateway.URL}/?{Connect.Serialize()}";
 
-                callback.Invoke(wsURL);
+                if (Settings.Debugging)
+                {
+                    Interface.Oxide.LogDebug($"Got Gateway url: {fullURL}");
+                }
+
+                callback.Invoke(fullURL);
             });
         }
+
+        #region Discord Events
+        
+        public void Identify()
+        {
+            // Sent immediately after connecting. Opcode 2: Identify
+            // Ref: https://discordapp.com/developers/docs/topics/gateway#identifying
+
+            Identify identify = new Identify()
+            {
+                Token = this.Settings.ApiToken,
+                Properties = new Properties()
+                {
+                    OS = "Oxide.Ext.Discord",
+                    Browser = "Oxide.Ext.Discord",
+                    Device = "Oxide.Ext.Discord"
+                },
+                Compress = false,
+                LargeThreshold = 50,
+                Shard = new List<int>() { 0, 1 }
+            };
+
+            var opcode = new SPayload()
+            {
+                OP = OpCodes.Identify,
+                Payload = identify
+            };
+            var payload = JsonConvert.SerializeObject(opcode);
+
+            _webSocket.Send(payload);
+        }
+
+        // TODO: Implement the usage of this event
+        public void Resume()
+        {
+            var resume = new Resume()
+            {
+                Sequence = this.Sequence,
+                SessionID = this.SessionID,
+                Token = string.Empty // What is this meant to be?
+            };
+
+            var packet = new RPayload()
+            {
+                OpCode = OpCodes.Resume,
+                Data = resume
+            };
+
+            string payload = JsonConvert.SerializeObject(packet);
+            _webSocket.Send(payload);
+        }
+        
+        public void SendHeartbeat()
+        {
+            var packet = new RPayload()
+            {
+                OpCode = OpCodes.Heartbeat,
+                Data = _lastHeartbeat
+            };
+
+            string message = JsonConvert.SerializeObject(packet);
+            _webSocket.Send(message);
+
+            this.CallHook("DiscordSocket_HeartbeatSent");
+
+            if (Settings.Debugging)
+            {
+                Interface.Oxide.LogDebug($"Heartbeat sent - {_timer.Interval}ms interval.");
+            }
+        }
+        
+        public void RequestGuildMembers(string query = "", int limit = 0)
+        {
+            var requestGuildMembers = new GuildMembersRequest()
+            {
+                GuildID = DiscordServer.id,
+                Query = query,
+                Limit = limit
+            };
+
+            var packet = new RPayload()
+            {
+                OpCode = OpCodes.RequestGuildMembers,
+                Data = requestGuildMembers
+            };
+
+            string payload = JsonConvert.SerializeObject(packet);
+            _webSocket.Send(payload);
+        }
+
+        public void UpdateVoiceState(string channelId, bool selfDeaf, bool selfMute)
+        {
+            var voiceState = new VoiceStateUpdate()
+            {
+                ChannelID = channelId,
+                GuildID = DiscordServer.id,
+                SelfDeaf = selfDeaf,
+                SelfMute = selfMute
+            };
+
+            var packet = new RPayload()
+            {
+                OpCode = OpCodes.VoiceStatusUpdate,
+                Data = voiceState
+            };
+
+            string payload = JsonConvert.SerializeObject(packet);
+            _webSocket.Send(payload);
+        }
+
+        public void UpdateStatus(Presence presence)
+        {
+            var opcode = new SPayload()
+            {
+                OP = OpCodes.StatusUpdate,
+                Payload = presence
+            };
+
+            var payload = JsonConvert.SerializeObject(opcode);
+            _webSocket.Send(payload);
+        }
+
+        #endregion
     }
 }
