@@ -2,6 +2,8 @@
 {
     public class DiscordSettings
     {
-        public string ApiToken { get; set; }
+        public string ApiToken;
+
+        public bool Debugging = false;
     }
 }

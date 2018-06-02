@@ -1,11 +1,19 @@
 ﻿namespace Oxide.Ext.Discord.DiscordObjects
 {
+    using Newtonsoft.Json;
+
     public class Presence
     {
-        public User user { get; set; }
+        [JsonProperty("status")]
+        public string Status { get; set; }
 
-        public string status { get; set; }
+        [JsonProperty("game")]
+        public Game Game { get; set; }
 
-        public Game game { get; set; }
+        [JsonProperty("since")]
+        public int Since { get; set; }
+
+        [JsonProperty("afk")]
+        public bool AFK { get; set; }
     }
 }
