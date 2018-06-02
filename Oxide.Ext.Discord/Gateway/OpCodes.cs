@@ -2,17 +2,20 @@
 {
     public enum OpCodes
     {
-        Dispatch = 0,
-        Heartbeat = 1,
-        Identify = 2,
-        StatusUpdate = 3,
-        VoiceStatusUpdate = 4,
-        VoiceServerPing = 5,
-        Resume = 6,
-        Reconnect = 7,
-        RequestGuildMembers = 8,
-        InvalidSession = 9,
-        Hello = 10,
-        HeartbeatACK = 11
+        // Recieve = sent to the client (this extension)
+        // Send = sent to the Discord API
+
+        Dispatch = 0,               // Recieve
+        Heartbeat = 1,              // Send/Receive
+        Identify = 2,               // Send
+        StatusUpdate = 3,           // Send
+        VoiceStateUpdate = 4,       // Send
+        VoiceServerPing = 5,        // Send
+        Resume = 6,                 // Send
+        Reconnect = 7,              // Receive
+        RequestGuildMembers = 8,    // Send
+        InvalidSession = 9,         // Receive
+        Hello = 10,                 // Receive
+        HeartbeatACK = 11           // Receive
     }
 }
