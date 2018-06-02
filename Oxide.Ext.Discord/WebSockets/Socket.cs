@@ -1,6 +1,9 @@
 ﻿namespace Oxide.Ext.Discord.WebSockets
 {
     using System;
+    using System.Timers;
+    using Newtonsoft.Json;
+    using Oxide.Ext.Discord.DiscordObjects;
     using Oxide.Ext.Discord.Exceptions;
     using WebSocketSharp;
 
@@ -12,6 +15,13 @@
 
         private SocketListner listner;
 
+        public bool shouldResume = false;
+
+        public Resume resume;
+
+        private Timer timer;
+
+        public int lastHeartbeat;
         public Socket(DiscordClient client)
         {
             this.client = client;
@@ -55,5 +65,43 @@
         public bool IsClosing() => socket?.ReadyState == WebSocketState.Closing;
 
         public bool IsClosed() => socket?.ReadyState == WebSocketState.Closed;
+
+        public void CreateHeartbeat(float heartbeatInterval, int lastHeartbeat)
+        {
+            this.lastHeartbeat = lastHeartbeat;
+
+            if (timer != null) return;
+
+            timer = new Timer()
+            {
+                Interval = heartbeatInterval
+            };
+            timer.Elapsed += HeartbeatElapsed;
+            timer.Start();
+        }
+
+        public void SendHeartbeat()
+        {
+            var packet = new Packet()
+            {
+                op = 1,
+                d = lastHeartbeat
+            };
+
+            string message = JsonConvert.SerializeObject(packet);
+            socket.Send(message);
+            client.CallHook("DiscordSocket_HeartbeatSent");
+        }
+
+        private void HeartbeatElapsed(object sender, ElapsedEventArgs e)
+        {
+            if (!IsAlive() || IsClosed())
+            {
+                timer.Dispose();
+                timer = null;
+                return;
+            }
+            SendHeartbeat();
+        }
     }
 }

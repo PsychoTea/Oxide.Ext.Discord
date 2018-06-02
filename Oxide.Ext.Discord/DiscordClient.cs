@@ -26,12 +26,8 @@ namespace Oxide.Ext.Discord
         public RESTHandler REST { get; private set; }
 
         public string WSSURL { get; private set; }
-        
-        private Socket webSocket;
-        
-        private Timer timer;
 
-        private int lastHeartbeat;
+        private Socket webSocket;
 
         public void Initialize(Plugin plugin, string apiKey)
         {
@@ -95,7 +91,7 @@ namespace Oxide.Ext.Discord
                 }
             }
         }
-        
+
         public void RegisterPlugin(Plugin plugin)
         {
             var search = Plugins.Where(x => x.Title == plugin.Title);
@@ -132,48 +128,6 @@ namespace Oxide.Ext.Discord
         }
 
         public string GetPluginNames(string delimiter = ", ") => string.Join(delimiter, Plugins.Select(x => x.Name).ToArray());
-
-        public void CreateHeartbeat(float heartbeatInterval, int lastHeartbeat)
-        {
-            this.lastHeartbeat = lastHeartbeat;
-
-            if (timer != null) return;
-
-            timer = new Timer()
-            {
-                Interval = heartbeatInterval
-            };
-            timer.Elapsed += HeartbeatElapsed;
-            timer.Start();
-        }
-
-        public void SendHeartbeat()
-        {
-            var packet = new Packet()
-            {
-                op = 1,
-                d = lastHeartbeat
-            };
-
-            string message = JsonConvert.SerializeObject(packet);
-            webSocket.Send(message);
-
-            this.CallHook("DiscordSocket_HeartbeatSent");
-        }
-
-        private void HeartbeatElapsed(object sender, ElapsedEventArgs e)
-        {
-            if (!webSocket.IsAlive() || 
-                webSocket.IsClosed() || 
-                webSocket.IsClosed())
-            {
-                timer.Dispose();
-                timer = null;
-                return;
-            }
-
-            SendHeartbeat();
-        }
 
         private void GetURL(Action<string> callback)
         {
