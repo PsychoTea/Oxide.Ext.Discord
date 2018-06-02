@@ -451,7 +451,6 @@ namespace Oxide.Ext.Discord.WebSockets
                 case OpCodes.Hello:
                 {
                     Hello hello = payload.EventData.ToObject<Hello>();
-                    Interface.Oxide.LogDebug($"hello data: {hello.ToString()}");
                     client.CreateHeartbeat(hello.HeartbeatInterval);
 
                     // Client should now perform identification
