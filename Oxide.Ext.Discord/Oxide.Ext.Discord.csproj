@@ -41,6 +41,16 @@
     <Compile Include="DiscordEvents\GuildBan.cs" />
     <Compile Include="DiscordEvents\GuildMemberAdd.cs" />
     <Compile Include="DiscordEvents\GuildMemberRemove.cs" />
+    <Compile Include="DiscordEvents\Hello.cs" />
+    <Compile Include="DiscordEvents\Identify.cs" />
+    <Compile Include="DiscordObjects\ActivityType.cs" />
+    <Compile Include="DiscordObjects\ChannelType.cs" />
+    <Compile Include="DiscordObjects\GuildMembersRequest.cs" />
+    <Compile Include="DiscordObjects\MessageType.cs" />
+    <Compile Include="DiscordObjects\Resume.cs" />
+    <Compile Include="DiscordObjects\StatusTypes.cs" />
+    <Compile Include="DiscordObjects\VoiceStateUpdate.cs" />
+    <Compile Include="Gateway\SPayload.cs" />
     <Compile Include="DiscordEvents\TypingStart.cs" />
     <Compile Include="DiscordEvents\VoiceServerUpdate.cs" />
     <Compile Include="DiscordEvents\WebhooksUpdate.cs" />
@@ -69,6 +79,7 @@
     <Compile Include="DiscordObjects\Connection.cs" />
     <Compile Include="DiscordObjects\Embed.cs" />
     <Compile Include="DiscordObjects\Emoji.cs" />
+    <Compile Include="DiscordObjects\Gateway.cs" />
     <Compile Include="DiscordObjects\Guild.cs" />
     <Compile Include="DiscordEvents\GuildEmojisUpdate.cs" />
     <Compile Include="DiscordObjects\GuildEmbed.cs" />
@@ -92,7 +103,11 @@
     <Compile Include="Exceptions\APIKeyException.cs" />
     <Compile Include="Exceptions\InvalidCreationException.cs" />
     <Compile Include="Exceptions\NoURLException.cs" />
+    <Compile Include="Exceptions\SettingsNullException.cs" />
     <Compile Include="Exceptions\SocketRunningException.cs" />
+    <Compile Include="Gateway\Connect.cs" />
+    <Compile Include="Gateway\OpCodes.cs" />
+    <Compile Include="Gateway\RPayload.cs" />
     <Compile Include="Helpers\HttpUtility.cs" />
     <Compile Include="DiscordObjects\Nick.cs" />
     <Compile Include="DiscordObjects\ObjectPosition.cs" />
@@ -104,12 +119,7 @@
     <Compile Include="REST\RequestMethod.cs" />
     <Compile Include="REST\RESTHandler.cs" />
     <Compile Include="REST\RestResponse.cs" />
-    <Compile Include="SocketObjects\DiscordPayload.cs" />
-    <Compile Include="SocketObjects\Handshake.cs" />
     <Compile Include="DiscordObjects\Message.cs" />
-    <Compile Include="SocketObjects\Packet.cs" />
-    <Compile Include="SocketObjects\Payload.cs" />
-    <Compile Include="SocketObjects\PayloadProperty.cs" />
     <Compile Include="DiscordSettings.cs" />
     <Compile Include="WebSockets\Socket.cs" />
     <Compile Include="WebSockets\SocketListner.cs" />
@@ -145,6 +155,7 @@
     <PostBuildEvent>if "$(Username)"=="Ben" (  
   echo Copying $(TargetPath) to C:\RustServer\rust_legacy_server\rust_server_Data\Managed\$(TargetFileName)
   copy $(TargetPath) C:\RustServer\rust_legacy_server\rust_server_Data\Managed\$(TargetFileName)
+  copy $(TargetPath) S:\Libraries\Documents\GitHub\LegionRust-Plugins\Oxide.Plugins-Legacy\ServerDlls
 )</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

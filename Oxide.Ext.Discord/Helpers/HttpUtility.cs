@@ -4,6 +4,10 @@
 
     public static class HttpUtility
     {
+        // The code in this class is horrible. I know.
+        // I got it off StackOverflow or somewhere and it does the job
+        // If anyone knows a better way of doing this, please lmk.
+
         public static string UrlEncode(byte[] bytes)
         {
             int num = 0;
@@ -61,8 +65,8 @@
 
         internal static bool IsSafe(char ch)
         {
-            if ((ch >= 'a' && ch <= 'z') || 
-                (ch >= 'A' && ch <= 'Z') || 
+            if ((ch >= 'a' && ch <= 'z') ||
+                (ch >= 'A' && ch <= 'Z') ||
                 (ch >= '0' && ch <= '9'))
             {
                 return true;
@@ -80,27 +84,27 @@
                     case '*':
                     case '-':
                     case '.':
-                        {
-                            break;
-                        }
+                    {
+                        break;
+                    }
 
                     case '+':
                     case ',':
+                    {
+                        return false;
+                    }
+
+                    default:
+                    {
+                        if (chr != '\u005F')
                         {
                             return false;
                         }
-
-                    default:
+                        else
                         {
-                            if (chr != '\u005F')
-                            {
-                                return false;
-                            }
-                            else
-                            {
-                                break;
-                            }
+                            break;
                         }
+                    }
                 }
             }
 

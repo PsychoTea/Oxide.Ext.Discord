@@ -8,7 +8,7 @@
     {
         public string id { get; set; }
 
-        public int? type { get; set; }
+        public ChannelType? type { get; set; }
 
         public int? position { get; set; }
 
@@ -30,7 +30,7 @@
         {
             client.REST.DoRequest($"/channels/{channelID}", RequestMethod.GET, null, callback);
         }
-        
+
         public void ModifyChannel(DiscordClient client, Channel newChannel, Action<Channel> callback = null)
         {
             client.REST.DoRequest($"/channels/{id}", RequestMethod.PATCH, newChannel, callback);
