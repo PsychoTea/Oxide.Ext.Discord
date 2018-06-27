@@ -143,10 +143,11 @@
         {
             string contents = JsonConvert.SerializeObject(Data, new JsonSerializerSettings()
             {
-                NullValueHandling = NullValueHandling.Ignore
+                NullValueHandling = NullValueHandling.Ignore,
+
             });
 
-            byte[] bytes = Encoding.ASCII.GetBytes(contents);
+            byte[] bytes = Encoding.UTF8.GetBytes(contents);
             request.ContentLength = bytes.Length;
 
             using (var stream = request.GetRequestStream())
