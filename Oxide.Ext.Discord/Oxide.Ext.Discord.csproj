@@ -44,6 +44,7 @@
     <Compile Include="DiscordEvents\Hello.cs" />
     <Compile Include="DiscordEvents\Identify.cs" />
     <Compile Include="DiscordObjects\ActivityType.cs" />
+    <Compile Include="DiscordObjects\BanObject.cs" />
     <Compile Include="DiscordObjects\ChannelType.cs" />
     <Compile Include="DiscordObjects\GuildMembersRequest.cs" />
     <Compile Include="DiscordObjects\MessageType.cs" />
