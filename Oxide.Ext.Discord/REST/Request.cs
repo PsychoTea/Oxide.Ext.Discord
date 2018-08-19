@@ -38,6 +38,9 @@
 
         private Bucket bucket;
 
+        private int rateRetryAfter, rateLimit, rateRemaining, rateReset;
+        private bool rateLimitGlobal;
+
         public Request(RequestMethod method, string route, string endpoint, Dictionary<string, string> headers, object data, Action<RestResponse> callback)
         {
             this.Method = method;
@@ -183,8 +186,8 @@
 
             if (!string.IsNullOrEmpty(rateRetryAfterHeader) &&
                 !string.IsNullOrEmpty(rateLimitGlobalHeader) &&
-                int.TryParse(rateRetryAfterHeader, out int rateRetryAfter) &&
-                bool.TryParse(rateLimitGlobalHeader, out bool rateLimitGlobal) &&
+                int.TryParse(rateRetryAfterHeader, out rateRetryAfter) &&
+                bool.TryParse(rateLimitGlobalHeader, out rateLimitGlobal) &&
                 rateLimitGlobal)
             {
                 var limit = response.ParseData<RateLimit>();
@@ -200,19 +203,19 @@
             string rateResetHeader = headers.Get("X-RateLimit-Reset");
 
             if (!string.IsNullOrEmpty(rateLimitHeader) &&
-                int.TryParse(rateLimitHeader, out int rateLimit))
+                int.TryParse(rateLimitHeader, out rateLimit))
             {
                 bucket.Limit = rateLimit;
             }
 
             if (!string.IsNullOrEmpty(rateRemainingHeader) &&
-                int.TryParse(rateRemainingHeader, out int rateRemaining))
+                int.TryParse(rateRemainingHeader, out rateRemaining))
             {
                 bucket.Remaining = rateRemaining;
             }
 
             if (!string.IsNullOrEmpty(rateResetHeader) &&
-                int.TryParse(rateResetHeader, out int rateReset))
+                int.TryParse(rateResetHeader, out rateReset))
             {
                 bucket.Reset = rateReset;
             }
