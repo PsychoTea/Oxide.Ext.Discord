@@ -146,9 +146,9 @@
             client.REST.DoRequest($"/guilds/{id}/members/{userID}", RequestMethod.PUT, jsonObj, callback);
         }
 
-        public void ModifyGuildMember(DiscordClient client, GuildMember member, List<Role> roles, string channelId, Action callback = null) => this.ModifyGuildMember(client, member.user.id, member.nick, roles, member.deaf, member.mute, channelId, callback);
+        public void ModifyGuildMember(DiscordClient client, GuildMember member, List<string> roles, string channelId, Action callback = null) => this.ModifyGuildMember(client, member.user.id, member.nick, roles, member.deaf, member.mute, channelId, callback);
 
-        public void ModifyGuildMember(DiscordClient client, string userID, string nick, List<Role> roles, bool mute, bool deaf, string channelId, Action callback = null)
+        public void ModifyGuildMember(DiscordClient client, string userID, string nick, List<string> roles, bool mute, bool deaf, string channelId, Action callback = null)
         {
             var jsonObj = new Dictionary<string, object>()
             {
