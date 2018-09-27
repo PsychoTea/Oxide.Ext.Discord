@@ -92,7 +92,6 @@ namespace Oxide.Ext.Discord.WebSockets
                         case "READY":
                         {
                             client.UpdatePluginReference();
-                            client.CallHook("DiscordSocket_Initialized");
                             
                             Ready ready = payload.EventData.ToObject<Ready>();
 
@@ -109,7 +108,8 @@ namespace Oxide.Ext.Discord.WebSockets
 
                             client.DiscordServer = ready.Guilds.FirstOrDefault();
                             client.SessionID = ready.SessionID;
-
+                            
+                            client.CallHook("DiscordSocket_Initialized");
                             client.CallHook("Discord_Ready", null, ready);
                             break;
                         }
