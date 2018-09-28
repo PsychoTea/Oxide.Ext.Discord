@@ -22,6 +22,32 @@
         public bool? verified { get; set; }
 
         public string email { get; set; }
+        
+        public DateTime CreatedAt
+        {
+            get
+            {     
+                long id = long.Parse(this.id);
+
+                long remainder;
+                string result = string.Empty;
+
+                while (id > 0)
+                {
+                    remainder = id % 2;
+                    id /= 2;
+                    result = remainder.ToString() + result;
+                }
+
+                while (result.Length < 64) result = "0" + result;
+
+                result = result.Substring(0, 42);
+
+                var AgeInSeconds = (Convert.ToInt64(result, 2) + 1420070400000) / 1000;
+
+                return new DateTime(1970, 1, 1).AddSeconds(AgeInSeconds);
+            }
+        }
 
         public static void GetCurrentUser(DiscordClient client, Action<User> callback = null)
         {
