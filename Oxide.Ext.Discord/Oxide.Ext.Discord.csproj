@@ -109,6 +109,7 @@
     <Compile Include="Gateway\Connect.cs" />
     <Compile Include="Gateway\OpCodes.cs" />
     <Compile Include="Gateway\RPayload.cs" />
+    <Compile Include="Helpers\CreationTime.cs" />
     <Compile Include="Helpers\HttpUtility.cs" />
     <Compile Include="DiscordObjects\Nick.cs" />
     <Compile Include="DiscordObjects\ObjectPosition.cs" />
