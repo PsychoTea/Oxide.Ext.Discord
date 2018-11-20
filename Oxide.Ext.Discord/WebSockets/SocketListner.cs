@@ -194,14 +194,14 @@ namespace Oxide.Ext.Discord.WebSockets
 
                         case "GUILD_BAN_ADD":
                         {
-                            User bannedUser = payload.EventData.ToObject<User>();
+                            User bannedUser = payload.EventData.ToObject<BanObject>().user;
                             client.CallHook("Discord_GuildBanAdd", null, bannedUser);
                             break;
                         }
 
                         case "GUILD_BAN_REMOVE":
                         {
-                            User unbannedUser = payload.EventData.ToObject<User>();
+                            User unbannedUser = payload.EventData.ToObject<BanObject>().user;
                             client.CallHook("Discord_GuildBanRemove", null, unbannedUser);
                             break;
                         }
