@@ -56,6 +56,7 @@
 
             var req = WebRequest.Create(RequestURL);
             req.Method = Method.ToString();
+            req.ContentLength = 0;
             req.Timeout = 5000;
 
             if (this.Headers != null)
@@ -141,7 +142,7 @@
 
         private void WriteRequestData(WebRequest request, object data)
         {
-            string contents = JsonConvert.SerializeObject(Data, new JsonSerializerSettings()
+            string contents = JsonConvert.SerializeObject(data, new JsonSerializerSettings()
             {
                 NullValueHandling = NullValueHandling.Ignore
             });
