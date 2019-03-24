@@ -89,7 +89,7 @@
                     Interface.Oxide.LogError($"[Discord Ext] Request URL: [{Method.ToString()}] {RequestURL}");
                     Interface.Oxide.LogError($"[Discord Ext] Exception message: {ex.Message}");
 
-                    this.Close(false);
+                    this.Close();
                     return;
                 }
 
