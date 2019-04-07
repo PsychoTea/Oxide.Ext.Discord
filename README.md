@@ -54,7 +54,7 @@ namespace Oxide.Plugins
         }
 
         // Called when the connection is completed
-        void DiscordSocket_Initialized()
+        void Discord_Ready(Ready ready)
         {
             Puts("Discord connected!");
 
