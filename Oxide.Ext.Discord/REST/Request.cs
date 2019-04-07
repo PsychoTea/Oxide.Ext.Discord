@@ -57,7 +57,7 @@
             var req = WebRequest.Create(RequestURL);
             req.Method = Method.ToString();
             req.ContentType = "application/json";
-            req.Timeout = 5000;
+            req.Timeout = 20000;
 
             if (this.Headers != null)
             {
@@ -72,8 +72,7 @@
             {
                 req.ContentLength = 0;
             }
-
-
+            
             HttpWebResponse response;
             try
             {
@@ -87,7 +86,7 @@
                 {
                     Interface.Oxide.LogException($"[Discord Ext] A web request exception occured (internal error).", ex);
                     Interface.Oxide.LogError($"[Discord Ext] Request URL: [{Method.ToString()}] {RequestURL}");
-                    Interface.Oxide.LogError($"[Discord Ext] Exception message: {ex.Message}");
+                    // Interface.Oxide.LogError($"[Discord Ext] Exception message: {ex.Message}");
 
                     this.Close();
                     return;
@@ -96,7 +95,7 @@
                 string message = this.ParseResponse(ex.Response);
 
                 Interface.Oxide.LogWarning($"[Discord Ext] An error occured whilst submitting a request to {req.RequestUri} (code {httpResponse.StatusCode}): {message}");
-
+                
                 if ((int)httpResponse.StatusCode == 429)
                 {
                     Interface.Oxide.LogWarning($"[Discord Ext] Ratelimit info: remaining: {bucket.Remaining}, limit: {bucket.Limit}, reset: {bucket.Reset}, time now: {Helpers.Time.TimeSinceEpoch()}");
