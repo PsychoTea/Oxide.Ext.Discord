@@ -100,7 +100,8 @@ namespace Oxide.Ext.Discord.WebSockets
                     {
                         Interface.Oxide.LogDebug($"Recieved OpCode 0, event: {payload.EventName}");
                     }
-                    
+
+                    // Listed here: https://discordapp.com/developers/docs/topics/gateway#commands-and-events-gateway-events
                     switch (payload.EventName)
                     {
                         case "READY":
