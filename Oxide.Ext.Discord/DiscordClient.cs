@@ -217,8 +217,7 @@ namespace Oxide.Ext.Discord
 
             _webSocket.Send(payload);
         }
-
-        // TODO: Implement the usage of this event
+        
         public void Resume()
         {
             var resume = new Resume()

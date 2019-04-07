@@ -16,6 +16,8 @@ namespace Oxide.Ext.Discord.WebSockets
 
         private Socket webSocket;
 
+        private bool hasConnectedOnce = false;
+
         public SocketListner(DiscordClient client, Socket socket)
         {
             this.client = client;
@@ -24,12 +26,19 @@ namespace Oxide.Ext.Discord.WebSockets
 
         public void SocketOpened(object sender, EventArgs e)
         {
+            if (this.hasConnectedOnce)
+            {
+                client.Resume();
+            }
+
             if (client.Settings.Debugging)
             {
                 Interface.Oxide.LogDebug($"Discord WebSocket opened.");
             }
 
             client.CallHook("DiscordSocket_WebSocketOpened");
+
+            this.hasConnectedOnce = true;
         }
 
         public void SocketClosed(object sender, CloseEventArgs e)
@@ -52,7 +61,12 @@ namespace Oxide.Ext.Discord.WebSockets
 
                 webSocket.Connect(client.WSSURL);
             }
-
+            else
+            {
+                client.Disconnect();
+                Discord.CloseClient(client);
+            }
+            
             client.CallHook("DiscordSocket_WebSocketClosed", null, e.Reason, e.Code, e.WasClean);
         }
 
@@ -93,7 +107,7 @@ namespace Oxide.Ext.Discord.WebSockets
                         {
                             client.UpdatePluginReference();
                             client.CallHook("DiscordSocket_Initialized");
-                            
+
                             Ready ready = payload.EventData.ToObject<Ready>();
 
                             if (ready.Guilds.Count > 1)
@@ -109,7 +123,7 @@ namespace Oxide.Ext.Discord.WebSockets
 
                             client.DiscordServer = ready.Guilds.FirstOrDefault();
                             client.SessionID = ready.SessionID;
-
+                            
                             client.CallHook("Discord_Ready", null, ready);
                             break;
                         }

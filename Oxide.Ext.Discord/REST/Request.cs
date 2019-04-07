@@ -56,8 +56,9 @@
 
             var req = WebRequest.Create(RequestURL);
             req.Method = Method.ToString();
+            req.ContentType = "application/json";
+            req.Timeout = 20000;
             req.ContentLength = 0;
-            req.Timeout = 5000;
 
             if (this.Headers != null)
             {
@@ -68,7 +69,11 @@
             {
                 WriteRequestData(req, this.Data);
             }
-
+            else
+            {
+                req.ContentLength = 0;
+            }
+            
             HttpWebResponse response;
             try
             {
@@ -82,16 +87,16 @@
                 {
                     Interface.Oxide.LogException($"[Discord Ext] A web request exception occured (internal error).", ex);
                     Interface.Oxide.LogError($"[Discord Ext] Request URL: [{Method.ToString()}] {RequestURL}");
-                    Interface.Oxide.LogError($"[Discord Ext] Exception message: {ex.Message}");
+                    // Interface.Oxide.LogError($"[Discord Ext] Exception message: {ex.Message}");
 
-                    this.Close(false);
+                    this.Close();
                     return;
                 }
 
                 string message = this.ParseResponse(ex.Response);
 
                 Interface.Oxide.LogWarning($"[Discord Ext] An error occured whilst submitting a request to {req.RequestUri} (code {httpResponse.StatusCode}): {message}");
-
+                
                 if ((int)httpResponse.StatusCode == 429)
                 {
                     Interface.Oxide.LogWarning($"[Discord Ext] Ratelimit info: remaining: {bucket.Remaining}, limit: {bucket.Limit}, reset: {bucket.Reset}, time now: {Helpers.Time.TimeSinceEpoch()}");
@@ -147,7 +152,7 @@
                 NullValueHandling = NullValueHandling.Ignore
             });
 
-            byte[] bytes = Encoding.ASCII.GetBytes(contents);
+            byte[] bytes = Encoding.UTF8.GetBytes(contents);
             request.ContentLength = bytes.Length;
 
             using (var stream = request.GetRequestStream())

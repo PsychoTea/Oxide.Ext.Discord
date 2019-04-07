@@ -8,8 +8,6 @@
 
     public class DiscordExtension : Extension
     {
-        internal static readonly Version AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
-
         public DiscordExtension(ExtensionManager manager) : base(manager)
         {
         }
@@ -20,7 +18,7 @@
 
         public override string Author => "PsychoTea & DylanSMR";
 
-        public override VersionNumber Version => new VersionNumber(AssemblyVersion.Major, AssemblyVersion.Minor, AssemblyVersion.Build);
+        public override VersionNumber Version => new VersionNumber(1, 0, 1);
 
         public override void OnModLoad()
         {
