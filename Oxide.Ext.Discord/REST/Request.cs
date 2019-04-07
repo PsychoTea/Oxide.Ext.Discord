@@ -58,6 +58,7 @@
             req.Method = Method.ToString();
             req.ContentType = "application/json";
             req.Timeout = 20000;
+            req.ContentLength = 0;
 
             if (this.Headers != null)
             {
@@ -146,7 +147,7 @@
 
         private void WriteRequestData(WebRequest request, object data)
         {
-            string contents = JsonConvert.SerializeObject(Data, new JsonSerializerSettings()
+            string contents = JsonConvert.SerializeObject(data, new JsonSerializerSettings()
             {
                 NullValueHandling = NullValueHandling.Ignore
             });
